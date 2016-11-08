@@ -1,7 +1,7 @@
 Package: sedproxy
 Title: Analysis and Simulation of Sediment Climate Proxy Data
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
   c(person("Thomas", "Laepple", email = "tlaepple@awi.de", role = c("aut")), 
     person("Andrew", "Dolman", email = "andydolman@gmail.com", role = c("aut", "cre")))
 Description: Analysis and Simulation of Sediment Climate Proxy Data.
@@ -11,3 +11,4 @@ License: ECUS private
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
+Suggests: testthat
