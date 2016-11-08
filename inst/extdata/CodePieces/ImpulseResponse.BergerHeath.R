@@ -11,8 +11,7 @@ ImpulseResponse.BergerHeath <- function(z, d, z0 = 0) {
   return(result)
 }
 
-z <- seq(0, 15, length.out = 100)
-plot(z, ImpulseResponse.BergerHeath(z, 10), type = "l")
-abline(v = 10)
-
-integrate(ImpulseResponse.BergerHeath, lower = 0, upper = 20, d = 10)
+z <- seq(-100, 100, length.out = 1000)
+plot(z, ImpulseResponse.BergerHeath(z, 50, 0), type = "l")
+abline(v = 50)
+integrate(ImpulseResponse.BergerHeath, lower = -100, upper = 100, d = 10)
