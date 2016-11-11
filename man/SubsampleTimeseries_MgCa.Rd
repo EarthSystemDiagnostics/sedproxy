@@ -31,6 +31,7 @@ plot(tss)
 biowidth.time = 10
 result <- SubsampleTimeseries_MgCa(tss, timepoints, biowidth.time, 100)
 plot(result$time, result$data, type = "l")
+par(mfcol = c(1, 1))
 
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 0, frequency = 1/100)
 timepoints<-c(time(tss)[1:1000])
