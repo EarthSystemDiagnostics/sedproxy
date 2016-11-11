@@ -7,12 +7,12 @@
 SubsampleTimeseries_MgCa(tss, timepoints, biowidth.time, NForam = 30)
 }
 \arguments{
-\item{tss}{a pTs object containing an equidistant timeseries, (e.g. model
-result or interpolated time series), units = kyr}
+\item{tss}{a ts object containing an equidistant timeseries, (e.g. model
+result or interpolated time series)}
 
 \item{timepoints}{the timepoints at which to sample the time series}
 
-\item{biowidth.time}{width of the averaging window in years}
+\item{biowidth.time}{width of the averaging window in no. of time points}
 
 \item{NForam}{Number of foraminifera sampled per timepoint}
 }
