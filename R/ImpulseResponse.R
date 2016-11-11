@@ -1,4 +1,4 @@
-#' ImpulseResponse
+#' @title ImpulseResponse
 #'
 #' @param z depth relative to focus horizon
 #' @param d mixing depth
@@ -30,3 +30,6 @@ ImpulseResponse <- function(z, d, z0 = 0) {
   result[z > (z0 + d)] <- 0
   return(result)
 }
+
+
+
