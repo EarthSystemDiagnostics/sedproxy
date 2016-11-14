@@ -3,11 +3,11 @@
 #' @param tss a ts object containing an equidistant timeseries, (e.g. model
 #'   result or interpolated time series)
 #' @param timepoints the timepoints at which to sample the time series
-#' @param biowidth.time width of the averaging window in no. of time points
+#' @param biowidth_timesteps width of the averaging window in no. of time points
 #' @param NForam Number of foraminifera sampled per timepoint
 #' @description Resamples an equidistant sampled timeseries (e.g. model result)
 #'   at the specified "timepoints" by simulating the foraminifera sampling
-#' @return a list list(time, data)
+#' @return a list containing the resampled data values and times
 #' @export SubsampleTimeseries_MgCa
 #'
 #' @examples
@@ -15,35 +15,36 @@
 #' timepoints <- c(time(tss))
 #' par(mfcol = c(1, 2))
 #' plot(tss)
-#' biowidth.time = 10
-#' result <- SubsampleTimeseries_MgCa(tss, timepoints, biowidth.time, 100)
+#' biowidth_timesteps = 10
+#' result <- SubsampleTimeseries_MgCa(tss, timepoints, biowidth_timesteps, 100)
 #' plot(result$time, result$data, type = "l")
 #' par(mfcol = c(1, 1))
 #'
 #' tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 0, frequency = 1/100)
 #' timepoints<-c(time(tss)[1:1000])
-#' biowidth.time=100
-#' result<-SubsampleTimeseries_MgCa(tss,timepoints,biowidth.time, NForam = 30)
+#' biowidth_timesteps=100
+#' result<-SubsampleTimeseries_MgCa(tss,timepoints,biowidth_timesteps, NForam = 30)
 #'
 #' plot(tss)
 #' lines(data~time, data = result, col = "Red")
 
 SubsampleTimeseries_MgCa <- function(tss,
                                      timepoints,
-                                     biowidth.time,
+                                     biowidth_timesteps,
                                      NForam = 30)
 {
   time_step <- 1 / frequency(tss)
   #width of the transfer function
   #(compromise 4x biowidth contains most of the area of the impulse response)
   z <- seq(
-    from = -1 * biowidth.time,
-    to = 3 * biowidth.time,
+    from = -1 * biowidth_timesteps,
+    to = 3 * biowidth_timesteps,
     by = 1
   )
   #impulse response in year units; use inverted z
+  # 1*biowidth into existing sediment, 3*biowidth into "future" sediment
   weights <-
-    ImpulseResponse(-z, biowidth.time, z0 = 0)
+    ImpulseResponse(-z, biowidth_timesteps, z0 = 0)
 
   #Go in the index space; index.time contains the indices of the timepoints as index# in tss
   index.time <- (timepoints - c(time(tss[1])) + 1) / time_step
@@ -57,7 +58,7 @@ SubsampleTimeseries_MgCa <- function(tss,
 
 
   index.time0 <-
-    (biowidth.time + 1) #Index of the weight which corresponds to time 0
+    (biowidth_timesteps + 1) #Index of the weight which corresponds to time 0
 
   result <- list()
   result$data <- rep(NA, length(timepoints))

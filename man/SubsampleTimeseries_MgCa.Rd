@@ -4,7 +4,7 @@
 \alias{SubsampleTimeseries_MgCa}
 \title{SubsampleTimeseries_MgCa}
 \usage{
-SubsampleTimeseries_MgCa(tss, timepoints, biowidth.time, NForam = 30)
+SubsampleTimeseries_MgCa(tss, timepoints, biowidth_timesteps, NForam = 30)
 }
 \arguments{
 \item{tss}{a ts object containing an equidistant timeseries, (e.g. model
@@ -12,12 +12,12 @@ result or interpolated time series)}
 
 \item{timepoints}{the timepoints at which to sample the time series}
 
-\item{biowidth.time}{width of the averaging window in no. of time points}
+\item{biowidth_timesteps}{width of the averaging window in no. of time points}
 
 \item{NForam}{Number of foraminifera sampled per timepoint}
 }
 \value{
-a list list(time, data)
+a list containing the resampled data values and times
 }
 \description{
 Resamples an equidistant sampled timeseries (e.g. model result)
@@ -28,15 +28,15 @@ tss <- ts(c(rep(0, 100), 1, rep(0, 99)), (1:200) / 1000)
 timepoints <- c(time(tss))
 par(mfcol = c(1, 2))
 plot(tss)
-biowidth.time = 10
-result <- SubsampleTimeseries_MgCa(tss, timepoints, biowidth.time, 100)
+biowidth_timesteps = 10
+result <- SubsampleTimeseries_MgCa(tss, timepoints, biowidth_timesteps, 100)
 plot(result$time, result$data, type = "l")
 par(mfcol = c(1, 1))
 
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 0, frequency = 1/100)
 timepoints<-c(time(tss)[1:1000])
-biowidth.time=100
-result<-SubsampleTimeseries_MgCa(tss,timepoints,biowidth.time, NForam = 30)
+biowidth_timesteps=100
+result<-SubsampleTimeseries_MgCa(tss,timepoints,biowidth_timesteps, NForam = 30)
 
 plot(tss)
 lines(data~time, data = result, col = "Red")
