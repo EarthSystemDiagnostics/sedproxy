@@ -11,7 +11,7 @@ vignette: >
 
 ## function `SubsampleTimeseries_MgCa`
 
-An event occurs at timestep 101, its signal is "mixed in" to older sediment up to 1 * the bioturbation depth, and into future sediments. 
+An event occurs at timestep 100, its signal is "mixed in" to older sediment up to 1 * the bioturbation depth, and into future sediments. 
 
 ```{r , fig.show='hold'}
 library(sedproxy)
@@ -19,6 +19,7 @@ tss <- ts(c(rep(0, 100), 1, rep(0, 99)), (1:200) / 1000)
 timepoints <- c(time(tss))
 biowidth_timesteps <- 10
 Nforams <- 100
+set.seed(1)
 result <- SubsampleTimeseries_MgCa(tss, timepoints, biowidth_timesteps, Nforams)
 plot(tss)
 abline(v = 100, col = "Red")
