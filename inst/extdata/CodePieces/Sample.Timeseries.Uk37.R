@@ -23,7 +23,7 @@ weights<-ImpulseResponse.BergerHeath(z,biowidth.time,0) #impulse response in yea
 weights<-weights/sum(weights)
 
     bioturbated<-filter(tss,weights,circular=TRUE)
-    index.time<- (timepoints-c(time(tss[1])))*1000+1
+    index.time<- (timepoints-c(time(tss)[1]))*1000+1 # bug, needs to be time(tss)[1]
     index.time<-index.time[index.time>0]
     result.data<-bioturbated[index.time]
     result.time<-c(time(tss))[index.time]

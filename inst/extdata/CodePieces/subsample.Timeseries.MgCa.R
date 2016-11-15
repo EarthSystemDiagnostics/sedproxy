@@ -28,7 +28,7 @@ subsample.Timeseries.MgCa <-
       ImpulseResponse.BergerHeath(-z, biowidth.time, 0) #impulse response in year units; use inverted z
 
     #Go in the index space; index.time contains the indices of the timepoints as index# in tss
-    index.time <- (timepoints - c(time(tss[1]))) * 1000 + 1
+    index.time <- (timepoints - c(time(tss)[1])) * 1000 + 1
     index.time <-
       index.time[index.time > 0] #Only use points inside the timeseries
     N.tss <- length(tss) #length of the timeseries
