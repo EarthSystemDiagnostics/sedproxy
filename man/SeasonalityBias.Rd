@@ -4,7 +4,7 @@
 \alias{SeasonalityBias}
 \title{Resample a seasonal cycle simulating the seasonal contribution}
 \usage{
-SeasonalityBias(sst.clim, timepoints, proxy.clim, NForam = 30)
+SeasonalityBias(sst.clim, timepoints, proxy.clim, n_samples = Inf)
 }
 \arguments{
 \item{sst.clim}{ts object containing the monthly SST climatology (12 values)}
@@ -13,7 +13,7 @@ SeasonalityBias(sst.clim, timepoints, proxy.clim, NForam = 30)
 
 \item{proxy.clim}{ts object containing the monthly Foram population index (12 values)}
 
-\item{NForam}{Number of foraminifera sampled per timepoint}
+\item{n_samples}{Number of e.g. foraminifera sampled per timepoint}
 }
 \value{
 A list. result=list(time, data)
@@ -22,7 +22,7 @@ data is a single value for each timepoint, indicating the offset in the proxy
 temperature record due to the seasonal abundance pattern of the organism,
 which preferentially samples those periods of the year when it is most
 abundant. There is a stochastic component to this due to measuring a finite
-number of individuals. If Nforam is set to \code{Inf}, then these biases will be
+number of individuals. If n_samples is set to \code{Inf}, then these biases will be
 constant for a given sst.clim and proxy.clim.
 }
 \description{
