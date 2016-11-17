@@ -4,7 +4,8 @@
 \alias{BioturbateTimeseries}
 \title{BioturbateTimeseries}
 \usage{
-BioturbateTimeseries(tss, timepoints, biowidth_timesteps, n_samples = Inf)
+BioturbateTimeseries(tss, timepoints, bio_depth = 0.1, acc_rate = 0.01,
+  biowidth_timesteps, n_samples = Inf)
 }
 \arguments{
 \item{tss}{a ts object containing an equidistant timeseries, (e.g. model
@@ -12,7 +13,10 @@ result or interpolated time series)}
 
 \item{timepoints}{the timepoints at which to sample the time series}
 
-\item{biowidth_timesteps}{width of the averaging window in no. of time points}
+\item{bio_depth}{depth of the bioturbated layer in metres, defaults to 0.1 m}
+
+\item{acc_rate}{rate of sediment accumulation (sedimentation rate) in metres
+per year. Defaults to 0.01 m (1 cm per year).}
 
 \item{n_samples}{Number of e.g. foraminifera sampled per timepoint}
 }

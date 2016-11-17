@@ -11,43 +11,50 @@ vignette: >
 
 ## function `BioturbateTimeseries`
 
-An event occurs at timestep 100, its signal is "mixed in" to older sediment up to 1 * the bioturbation depth, and into future sediments. 
+An event occurs at timestep 100, its signal is "mixed in" to older sediment up to 1 * the bioturbation depth, and into future sediments.
+
+### With 30 individuals sampled
 
 ```{r , fig.show='hold'}
 library(sedproxy)
 tss <- ts(c(rep(0, 100), 1, rep(0, 99)), 0:199)
 timepoints <- c(time(tss))
-biowidth_timesteps <- 10
-NForams <- 100
+bio_depth <- 0.10
+acc_rate <- 0.02
+NForams <- 30
 set.seed(1)
-result <- BioturbateTimeseries(tss, timepoints, biowidth_timesteps, n_samples = NForams)
+result <- BioturbateTimeseries(tss, timepoints, bio_depth = bio_depth, acc_rate = acc_rate, n_samples = NForams)
 plot(tss)
 abline(v = 100, col = "Red")
-plot(result$time, result$data, type = "l")
+tss2 <- ts(result$data, result$time)
+plot(tss2)
 abline(v = 100, col = "Red")
-abline(v = 100 + biowidth_timesteps, col = "Blue")
+abline(v = 100 + bio_depth / acc_rate, col = "Blue")
 ```
 
 
-With infinite samples.
+### With infinite samples.
 
 ```{r , fig.show='hold'}
 set.seed(1)
-result <- BioturbateTimeseries(tss, timepoints, biowidth_timesteps, n_samples = Inf)
+result <- BioturbateTimeseries(tss, timepoints, bio_depth = bio_depth, acc_rate = acc_rate, n_samples = Inf)
 plot(tss)
 abline(v = 100, col = "Red")
-plot(result$time, result$data, type = "l")
+tss2 <- ts(result$data, result$time)
+plot(tss2)
 abline(v = 100, col = "Red")
-abline(v = 100 + biowidth_timesteps, col = "Blue")
+abline(v = 100 + bio_depth / acc_rate, col = "Blue")
 ```
+
+
 A sin wave represents the true process, bioturbation reduces the amplitude and shifts the signal. Sampling of 30 forams adds noise.
 
  
 ```{r}
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 90, frequency = 1/100)
 timepoints<-c(time(tss)[1:1000])
-biowidth_timesteps=20
-result <- BioturbateTimeseries(tss,timepoints, biowidth_timesteps, n_samples = 30)
+
+result <- BioturbateTimeseries(tss,timepoints, bio_depth = 0.1, acc_rate = 0.1, n_samples = 30)
 
 plot(tss)
 lines(data~time, data = result, col = "Red")
@@ -58,8 +65,7 @@ Sampling 300 forams.
 ```{r}
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 0, frequency = 1/100)
 timepoints<-c(time(tss)[1:1000])
-biowidth_timesteps=100
-result<-BioturbateTimeseries(tss,timepoints,biowidth_timesteps, n_samples = 300)
+result<-BioturbateTimeseries(tss,timepoints, bio_depth = 0.1, acc_rate = 0.1, n_samples = 300)
 plot(tss)
 lines(data~time, data = result, col = "Red")
 ```
@@ -69,8 +75,7 @@ Infinite sample.
 ```{r}
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 0, frequency = 1/100)
 timepoints<-c(time(tss)[1:1000])
-biowidth_timesteps=100
-result<-BioturbateTimeseries(tss,timepoints,biowidth_timesteps, n_samples = Inf)
+result<-BioturbateTimeseries(tss,timepoints, bio_depth = 0.1, acc_rate = 0.1, n_samples = Inf)
 plot(tss)
 lines(data~time, data = result, col = "Red")
 ```
@@ -102,7 +107,7 @@ SeasonalityBias(sst.clim = 1:12 * 0.1,
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 90, frequency = 1/100)
 timepoints<-c(time(tss)[1:1000])
 biowidth_timesteps=50
-result <- BioturbateTimeseries(tss,timepoints, biowidth_timesteps, n_samples = 30)
+result <- BioturbateTimeseries(tss,timepoints, bio_depth = 0.1, acc_rate = 0.1, n_samples = 30)
 plot(tss)
 lines(data~time, data = result, col = "Red")
 
@@ -123,8 +128,7 @@ lines(data~time, data = result2, col = "Blue")
 ```{r}
 tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 90, frequency = 1/100)
 timepoints <- c(time(tss)[sort(runif(100, 1, length(tss)))])
-biowidth_timesteps=50
-result <- BioturbateTimeseries(tss,timepoints, biowidth_timesteps, n_samples = 30)
+result <- BioturbateTimeseries(tss, timepoints, bio_depth = 0.1, acc_rate = 0.1, n_samples = 30)
 plot(tss)
 lines(data~time, data = result, col = "Red")
 

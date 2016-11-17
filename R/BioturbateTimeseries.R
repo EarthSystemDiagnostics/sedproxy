@@ -3,7 +3,9 @@
 #' @param tss a ts object containing an equidistant timeseries, (e.g. model
 #'   result or interpolated time series)
 #' @param timepoints the timepoints at which to sample the time series
-#' @param biowidth_timesteps width of the averaging window in no. of time points
+#' @param bio_depth depth of the bioturbated layer in metres, defaults to 0.1 m
+#' @param acc_rate rate of sediment accumulation (sedimentation rate) in metres
+#'   per year. Defaults to 0.01 m (1 cm per year).
 #' @param n_samples Number of e.g. foraminifera sampled per timepoint
 #' @description Resamples an equidistant sampled timeseries (e.g. model result)
 #'   at the specified "timepoints" by simulating the foraminifera sampling
@@ -30,10 +32,13 @@
 
 BioturbateTimeseries <- function(tss,
                                  timepoints,
+                                 bio_depth = 0.1,
+                                 acc_rate = 0.01,
                                  biowidth_timesteps,
                                  n_samples = Inf)
 {
   time_step <- 1 / frequency(tss)
+  biowidth_timesteps <- bio_depth / acc_rate * time_step
   #width of the transfer function
   #(compromise 4x biowidth contains most of the area of the impulse response)
   z <- seq(
