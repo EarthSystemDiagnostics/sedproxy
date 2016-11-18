@@ -7,6 +7,7 @@
 #' @param acc_rate rate of sediment accumulation (sedimentation rate) in metres
 #'   per year. Defaults to 0.01 m (1 cm per year).
 #' @param n_samples Number of e.g. foraminifera sampled per timepoint
+#' @param return_type Should the function return a data.frame, list or time series. Defaults to list.
 #' @description Resamples an equidistant sampled timeseries (e.g. model result)
 #'   at the specified "timepoints" by simulating the foraminifera sampling
 #' @return a list containing the resampled data values and times
@@ -35,7 +36,8 @@ BioturbateTimeseries <- function(tss,
                                  bio_depth = 0.1,
                                  acc_rate = 0.01,
                                  biowidth_timesteps,
-                                 n_samples = Inf)
+                                 n_samples = Inf,
+                                 return_type = c("list", "data.frame", "ts"))
 {
   time_step <- 1 / frequency(tss)
   biowidth_timesteps <- bio_depth / acc_rate * time_step
@@ -107,7 +109,14 @@ BioturbateTimeseries <- function(tss,
     }
       result$time <- c(time(tss))[index.time]
 
-  }
+    }
+
+  stopifnot(length(result$data) == length(result$time))
+
+  result <- switch(match.arg(return_type),
+                   list = result,
+                   data.frame = data.frame(result),
+                   ts = ts(result$data, result$time))
 
   return(result)
 }

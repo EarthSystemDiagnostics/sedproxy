@@ -5,7 +5,8 @@
 \title{BioturbateTimeseries}
 \usage{
 BioturbateTimeseries(tss, timepoints, bio_depth = 0.1, acc_rate = 0.01,
-  biowidth_timesteps, n_samples = Inf)
+  biowidth_timesteps, n_samples = Inf, return_type = c("list", "data.frame",
+  "ts"))
 }
 \arguments{
 \item{tss}{a ts object containing an equidistant timeseries, (e.g. model
@@ -19,6 +20,8 @@ result or interpolated time series)}
 per year. Defaults to 0.01 m (1 cm per year).}
 
 \item{n_samples}{Number of e.g. foraminifera sampled per timepoint}
+
+\item{return_type}{Should the function return a data.frame, list or time series. Defaults to list.}
 }
 \value{
 a list containing the resampled data values and times
