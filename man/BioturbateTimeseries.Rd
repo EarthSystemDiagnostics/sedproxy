@@ -5,8 +5,7 @@
 \title{BioturbateTimeseries}
 \usage{
 BioturbateTimeseries(tss, timepoints, bio_depth = 0.1, acc_rate = 0.01,
-  biowidth_timesteps, n_samples = Inf, return_type = c("list", "data.frame",
-  "ts"))
+  n_samples = Inf, return_type = c("list", "data.frame", "ts"))
 }
 \arguments{
 \item{tss}{a ts object containing an equidistant timeseries, (e.g. model
@@ -31,21 +30,18 @@ Resamples an equidistant sampled timeseries (e.g. model result)
   at the specified "timepoints" by simulating the foraminifera sampling
 }
 \examples{
-tss <- ts(c(rep(0, 100), 1, rep(0, 99)), 0:199))
+tss <- ts(c(rep(0, 100), 1, rep(0, 99)), 0:199)
 timepoints <- c(time(tss))
 par(mfcol = c(1, 2))
 plot(tss)
-biowidth_timesteps = 10
-result <- BioturbateTimeseries(tss, timepoints, biowidth_timesteps, n_samples = 100)
+result <- BioturbateTimeseries(tss, timepoints, n_samples = 100)
 plot(result$time, result$data, type = "l")
 par(mfcol = c(1, 1))
-
-tss<-ts(sin(seq(-pi, 9*pi, length.out = 1000)), start = 0, frequency = 1/100)
-timepoints<-c(time(tss)[1:1000])
-biowidth_timesteps=100
-result<-BioturbateTimeseries(tss,timepoints,biowidth_timesteps, n_samples = 30)
-
+tss <-  ts(sin(seq(-pi, 9 * pi, length.out = 1000)),
+           start = 0, frequency = 1 / 100)
+timepoints <- c(time(tss)[1:1000])
+result <- BioturbateTimeseries(tss, timepoints, acc_rate = 0.5, n_samples = 30)
 plot(tss)
-lines(data~time, data = result, col = "Red")
+lines(data ~ time, data = result, col = "Red")
 }
 
