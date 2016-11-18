@@ -3,4 +3,3 @@
 export(BioturbateTimeseries)
 export(ImpulseResponse)
 export(SeasonalityBias)
-export(rWeights)
