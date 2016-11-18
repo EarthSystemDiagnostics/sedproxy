@@ -7,7 +7,7 @@ Authors@R:
 Description: Analysis and Simulation of Sediment Climate Proxy Data.
 Depends:
     R (>= 3.3.2)
-Imports: Runuran
+Imports: 
 License: ECUS private
 Encoding: UTF-8
 LazyData: true
