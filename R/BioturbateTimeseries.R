@@ -35,6 +35,17 @@ BioturbateTimeseries <- function(tss,
                                  n_samples = Inf,
                                  return_type = c("list", "data.frame", "ts"))
 {
+  ## Check user input
+
+  switch(match.arg(return_type),
+         ts = {
+           if (length(unique(diff(timepoints))) != 1)
+             stop(
+               "Error: Timepoints to return are not evenly spaced, use result_type = \"list\" or \"data.frame\""
+             )
+         })
+
+
   time_step <- 1 / frequency(tss)
   biowidth_timesteps <- bio_depth / acc_rate * time_step
   #width of the transfer function
@@ -112,7 +123,10 @@ BioturbateTimeseries <- function(tss,
   result <- switch(match.arg(return_type),
                    list = result,
                    data.frame = data.frame(result),
-                   ts = ts(result$data, result$time))
-
+                   ts = {
+                     ts(result$data,
+                        start = start(tss),
+                        frequency = frequency(tss))}
+                   )
   return(result)
 }
