@@ -6,7 +6,7 @@ Authors@R:
     person("Andrew", "Dolman", email = "andrew.dolman@awi.de", role = c("aut", "cre")))
 Description: Analysis and Simulation of Sediment Climate Proxy Data.
 Depends:
-    R (>= 3.3.2)
+    R (>= 3.2.1)
 Imports: 
 License: ECUS private
 Encoding: UTF-8
