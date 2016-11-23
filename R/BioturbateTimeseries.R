@@ -90,6 +90,8 @@ BioturbateTimeseries <- function(tss,
     {
       #impulse response in year units; use inverted z
       # 1*biowidth into existing sediment, 3*biowidth into "future" sediment
+
+      # check if it can be moved out of the loop
       weights <-  ImpulseResponse(-z, biowidth_timesteps, z0 = 0)
 
       shift <- index.time[i] - index.time0
