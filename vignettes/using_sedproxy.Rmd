@@ -44,7 +44,6 @@ abline(v = 100, col = "Red")
 abline(v = 100 + bio_depth / acc_rate, col = "Blue")
 ```
 
-
 A sin wave represents the true process, bioturbation reduces the amplitude and shifts the signal. Sampling of 30 forams adds noise.
 
  

@@ -41,7 +41,8 @@ BioturbateTimeseries <- function(tss,
          ts = {
            if (length(unique(diff(timepoints))) != 1)
              stop(
-               "Error: Timepoints to return are not evenly spaced, use result_type = \"list\" or \"data.frame\""
+               "Error: Timepoints to return are not evenly spaced,
+               use result_type = \"list\" or \"data.frame\""
              )
          })
 
@@ -74,7 +75,8 @@ BioturbateTimeseries <- function(tss,
     if (length(z) >= length(tss)) {
       z <- (-1.3 * biowidth_timesteps):(1.3 * biowidth_timesteps)
       warning(
-        "Bioturbation filter was approximated with a shorter filter as the timeseries is too low"
+        "Bioturbation filter was approximated with a shorter filter
+        as the timeseries is too low"
       )
     }
     # use inverted z, then reverse order of weights
@@ -86,14 +88,14 @@ BioturbateTimeseries <- function(tss,
     result$data <- bioturbated[index.time]
     result$time <- c(time(tss))[index.time]
     } else if (is.finite(n_samples)) {
-    for (i in 1:length(index.time))
-    {
       #impulse response in year units; use inverted z
       # 1*biowidth into existing sediment, 3*biowidth into "future" sediment
 
       # check if it can be moved out of the loop
       weights <-  ImpulseResponse(-z, biowidth_timesteps, z0 = 0)
 
+    for (i in 1:length(index.time))
+    {
       shift <- index.time[i] - index.time0
       #Shift of the weights that zero time overlaps with the sampling time
 
