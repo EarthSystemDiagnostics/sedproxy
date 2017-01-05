@@ -4,22 +4,26 @@
 \alias{ClimToProxyClim}
 \title{Title}
 \usage{
-ClimToProxyClim(clim.signal, timepoints, seas.prod, bio.depth = 0.1,
-  acc.rate = 0.012, n_samples = Inf)
+ClimToProxyClim(clim.signal, timepoints, seas.prod = rep(1, 12),
+  bio.depth = 0.1, acc.rate = 5e-04, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
-\item{clim.signal}{The "true" climate signal, i.e. model output or instrumental record. A years x 12 (months) matrix of temperatures.}
+\item{clim.signal}{The "true" climate signal, i.e. model output or
+instrumental record. A years x 12 (months) matrix of temperatures.}
 
-\item{timepoints}{The timepoints at which the proxy is to be sampled}
+\item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{seas.prod}{The seasonal pattern of productivity for the organism(s) archived in the proxy. Either a vector of 12 values or a matrix of the same dimensions as clim.signal}
+\item{seas.prod}{The seasonal pattern of productivity for the organism(s)
+archived in the proxy. Either a vector of 12 values or a matrix of the same
+dimensions as clim.signal. Defaults to uniform seasonal distribution.}
 
 \item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m}
 
-\item{acc.rate}{rate of sediment accumulation (sedimentation rate) in metres
-per year. Defaults to 0.01 m (1 cm per year).}
+\item{acc.rate}{Sediment accumulation rate in metres per year.
+Defaults to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector
+ of same length as "timepoints"}
 
-\item{n_samples}{Number of e.g. foraminifera sampled per timepoint}
+\item{n.samples}{Number of e.g. foraminifera sampled per timepoint}
 }
 \description{
 Title
