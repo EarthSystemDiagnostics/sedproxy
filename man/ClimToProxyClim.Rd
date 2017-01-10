@@ -5,7 +5,8 @@
 \title{Title}
 \usage{
 ClimToProxyClim(clim.signal, timepoints, seas.prod = rep(1, 12),
-  bio.depth = 0.1, acc.rate = 5e-04, n.samples = Inf, n.replicates = 1)
+  bio.depth = 0.1, acc.rate = 5e-04, meas.noise = 0, meas.bias = 0,
+  n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "true" climate signal, i.e. model output or
@@ -19,11 +20,21 @@ dimensions as clim.signal. Defaults to uniform seasonal distribution.}
 
 \item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m}
 
-\item{acc.rate}{Sediment accumulation rate in metres per year.
-Defaults to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector
- of same length as "timepoints"}
+\item{acc.rate}{Sediment accumulation rate in metres per year. Defaults to
+5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+length as "timepoints"}
+
+\item{meas.noise}{The amount of noise to add to each simulated proxy value.
+Defined as the standard deviation of a normal distribution with mean = 0}
+
+\item{meas.bias}{The amount of bias to add to each simulated proxy time-series.
+Each replicate proxy time-series has a constant bias added, drawn from a normal distribution with
+mean = 0, sd = meas.bias. Bias defaults to zero.}
 
 \item{n.samples}{Number of e.g. foraminifera sampled per timepoint}
+
+\item{n.replicates}{Number of replicate proxy time-series to simulate from
+the climate signal}
 }
 \description{
 Title

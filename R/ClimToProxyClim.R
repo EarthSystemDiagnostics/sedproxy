@@ -7,10 +7,17 @@
 #'   archived in the proxy. Either a vector of 12 values or a matrix of the same
 #'   dimensions as clim.signal. Defaults to uniform seasonal distribution.
 #' @param bio.depth Depth of the bioturbated layer in metres, defaults to 0.1 m
-#' @param acc.rate Sediment accumulation rate in metres per year.
-#'   Defaults to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector
-#'    of same length as "timepoints"
+#' @param acc.rate Sediment accumulation rate in metres per year. Defaults to
+#'   5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+#'   length as "timepoints"
+#' @param meas.noise The amount of noise to add to each simulated proxy value.
+#'   Defined as the standard deviation of a normal distribution with mean = 0
+#' @param meas.bias The amount of bias to add to each simulated proxy time-series.
+#'   Each replicate proxy time-series has a constant bias added, drawn from a normal distribution with
+#'   mean = 0, sd = meas.bias. Bias defaults to zero.
 #' @param n.samples Number of e.g. foraminifera sampled per timepoint
+#' @param n.replicates Number of replicate proxy time-series to simulate from
+#'   the climate signal
 #'
 #' @return
 #' @export
@@ -21,6 +28,8 @@ ClimToProxyClim <- function(clim.signal,
                             seas.prod = rep(1, 12),
                             bio.depth = 0.1,
                             acc.rate = 5e-04,
+                            meas.noise = 0,
+                            meas.bias = 0,
                             n.samples = Inf,
                             n.replicates = 1) {
   # Check inputs --------
@@ -42,16 +51,9 @@ ClimToProxyClim <- function(clim.signal,
 
   # For each timepoint ------
 
-  # # Prepare result objects
-  #
-  # proxy.sig.inf <- rep(NA, n.timepoints)
-  # proxy.sig.samp <-
-  #   matrix(rep(NA, n.timepoints * n.replicates), ncol = n.replicates)
-
-
-  proxy.sig <- sapply(1:length(timepoints), function(x) {
+  proxy.sig.tmp <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
-    bio.depth.timesteps <- round(bio.depth / acc.rate[x])
+    bio.depth.timesteps <- round(bio.depth / acc.rate[tp])
     bioturb.window <- GetBioturbWindow(bio.depth.timesteps)
 
     # Get bioturbation weights --------
@@ -64,17 +66,31 @@ ClimToProxyClim <- function(clim.signal,
 
     # get portion of clim.signal corresponding to bioturbation window -------
 
-    sig.window.i.1 <- bioturb.window + timepoints[x]
-    sig.window.i <- sig.window.i.1[sig.window.i.1 > 0]
-    clim.sig.window <- clim.signal[sig.window.i,]
+    sig.window.i.1 <- bioturb.window + timepoints[tp]
+
+    if (max(sig.window.i.1) > nrow(clim.signal)) {
+      warning("Bioturbation window extends below end of clim.signal")
+    }
+
+    sig.window.i <-
+      sig.window.i.1[sig.window.i.1 > 0 &
+                       sig.window.i.1 < nrow(clim.signal)]
+
+    stopifnot(sig.window.i > 0)
+    stopifnot(nrow(clim.signal) > max(sig.window.i))
+
+    clim.sig.window <- clim.signal[sig.window.i, ]
 
     # Get weights matrix ---------
     clim.sig.weights <- bioturb.weights %o% seas.prod
-    clim.sig.weights <- clim.sig.weights[sig.window.i.1 > 0,]
+    clim.sig.weights <-
+      clim.sig.weights[sig.window.i.1 > 0 &
+                         sig.window.i.1 < nrow(clim.signal),]
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
-    stopifnot(abs(sum(clim.sig.weights) - 1) < 1e-10)
+    weight.err <- abs(sum(clim.sig.weights) - 1)
+    if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
 
 
     # Calculate mean clim.signal -------
@@ -83,31 +99,52 @@ ClimToProxyClim <- function(clim.signal,
     if (is.infinite(n.samples)) {
       proxy.sig.samp <- NA
     } else if (is.finite(n.samples)) {
-      proxy.sig.samp <- replicate(n = n.replicates, expr = {
-        mean(sample(
-          clim.sig.window,
-          n.samples,
-          prob = clim.sig.weights,
-          replace = TRUE
-        ))
-      })
+      # call sample once for all replicates together, then take means of
+      # groups of n.samples
+      samp <-  sample(clim.sig.window,
+                   n.samples * n.replicates,
+                   prob = clim.sig.weights,
+                   replace = TRUE)
+
+      samp <- matrix(samp, nrow = n.samples)
+
+      proxy.sig.samp <- apply(samp, 2, mean)
+
+
     }
     list(
-      timepoints = timepoints[x],
+      window.size = length(clim.sig.weights),
+      proxy.sig.inf = as.numeric(proxy.sig.inf),
+      proxy.sig.samp = proxy.sig.samp)
+  }, simplify = TRUE)
+
+  window.size <- as.numeric(proxy.sig.tmp[1, ])
+  proxy.sig.inf <- as.numeric(proxy.sig.tmp[2, ])
+  proxy.sig.samp <- t(simplify2array(proxy.sig.tmp[3, ]))
+
+  # Add bias and noise to infinite sample
+
+  if (meas.bias != 0) {bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)}else{bias <- rep(0, n.replicates)}
+  if (meas.noise != 0) {noise <- rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)}
+
+  proxy.sig.inf <- outer(proxy.sig.inf, bias, FUN = "+")
+  if (meas.noise != 0) {proxy.sig.inf <- proxy.sig.inf + noise}
+
+  # Add bias and noise to finite sample
+  if (is.finite(n.samples)){
+  if (meas.bias != 0) proxy.sig.samp <- t(t(proxy.sig.samp) + bias)
+  if (meas.noise != 0) proxy.sig.samp <- proxy.sig.samp + noise
+  }
+
+  proxy.sig <-
+    list(
+      timepoints = timepoints,
+      window.size = window.size,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp
     )
-  }, simplify = FALSE)
 
-  # return.obj <-
-  #   list(
-  #     timepoints = timepoints,
-  #     proxy.sig.inf = proxy.sig.inf,
-  #     proxy.sig.samp = proxy.sig.samp
-  #   )
-
-#list(timepoints=timepoints, proxy.sig.inf=proxy.sig.inf, proxy.sig.samp=proxy.sig.samp)
-return(proxy.sig)
+  return(proxy.sig)
 }
 
 
