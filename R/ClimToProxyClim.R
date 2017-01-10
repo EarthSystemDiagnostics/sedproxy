@@ -139,6 +139,7 @@ ClimToProxyClim <- function(clim.signal,
   proxy.sig <-
     list(
       timepoints = timepoints,
+      clim.signal = rowSums(clim.signal[timepoints, ]) / 12,
       window.size = window.size,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp
