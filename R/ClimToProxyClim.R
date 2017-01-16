@@ -19,7 +19,7 @@
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
 #'
-#' @return
+#' @return a list
 #' @export
 #'
 #' @examples
@@ -54,7 +54,7 @@ ClimToProxyClim <- function(clim.signal,
   proxy.sig.tmp <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
     bio.depth.timesteps <- round(bio.depth / acc.rate[tp])
-    bioturb.window <- GetBioturbWindow(bio.depth.timesteps)
+    bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
 
     # Get bioturbation weights --------
     bioturb.weights <-
@@ -107,10 +107,7 @@ ClimToProxyClim <- function(clim.signal,
                    replace = TRUE)
 
       samp <- matrix(samp, nrow = n.samples)
-
       proxy.sig.samp <- apply(samp, 2, mean)
-
-
     }
     list(
       window.size = length(clim.sig.weights),
@@ -146,15 +143,4 @@ ClimToProxyClim <- function(clim.signal,
     )
 
   return(proxy.sig)
-}
-
-
-GetBioturbWindow <- function(bio.depth.timesteps) {
-  # width of the bioturbation window (transfer function)
-  # 4x biowidth contains most of the area of the impulse response
-  bioturb.window <- seq(
-    from = -1 * bio.depth.timesteps,
-    to = 3 * bio.depth.timesteps,
-    by = 1
-  )
 }

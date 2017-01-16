@@ -36,6 +36,9 @@ mean = 0, sd = meas.bias. Bias defaults to zero.}
 \item{n.replicates}{Number of replicate proxy time-series to simulate from
 the climate signal}
 }
+\value{
+a list
+}
 \description{
 Title
 }
