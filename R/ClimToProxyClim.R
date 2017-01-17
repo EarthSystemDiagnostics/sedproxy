@@ -65,7 +65,6 @@ ClimToProxyClim <- function(clim.signal,
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
 
     # get portion of clim.signal corresponding to bioturbation window -------
-
     sig.window.i.1 <- bioturb.window + timepoints[tp]
 
     if (max(sig.window.i.1) > nrow(clim.signal)) {
@@ -102,22 +101,43 @@ ClimToProxyClim <- function(clim.signal,
       # call sample once for all replicates together, then take means of
       # groups of n.samples
       samp <-  sample(clim.sig.window,
-                   n.samples * n.replicates,
-                   prob = clim.sig.weights,
-                   replace = TRUE)
+                      n.samples * n.replicates,
+                      prob = clim.sig.weights,
+                      replace = TRUE)
 
       samp <- matrix(samp, nrow = n.samples)
       proxy.sig.samp <- apply(samp, 2, mean)
     }
+
+    # get 100 year clim.average -------
+    avg.window.i.1 <- (-50:49) + timepoints[tp]
+
+    if (max(sig.window.i.1) > nrow(clim.signal)) {
+      warning("Climate average window extends below end of clim.signal")
+    }
+
+    avg.window.i <-
+      avg.window.i.1[avg.window.i.1 > 0 &
+                       avg.window.i.1 < nrow(clim.signal)]
+
+    stopifnot(avg.window.i > 0)
+    stopifnot(nrow(clim.signal) > max(avg.window.i))
+
+    clim.100.avg <- mean(clim.signal[avg.window.i, ])
+
+
+    # Gather output ----------
     list(
       window.size = length(clim.sig.weights),
+      clim.100.avg = as.numeric(clim.100.avg),
       proxy.sig.inf = as.numeric(proxy.sig.inf),
       proxy.sig.samp = proxy.sig.samp)
   }, simplify = TRUE)
 
   window.size <- as.numeric(proxy.sig.tmp[1, ])
-  proxy.sig.inf <- as.numeric(proxy.sig.tmp[2, ])
-  proxy.sig.samp <- t(simplify2array(proxy.sig.tmp[3, ]))
+  clim.100.avg <- as.numeric(proxy.sig.tmp[2, ])
+  proxy.sig.inf <- as.numeric(proxy.sig.tmp[3, ])
+  proxy.sig.samp <- t(simplify2array(proxy.sig.tmp[4, ]))
 
   # Add bias and noise to infinite sample
 
@@ -129,14 +149,15 @@ ClimToProxyClim <- function(clim.signal,
 
   # Add bias and noise to finite sample
   if (is.finite(n.samples)){
-  if (meas.bias != 0) proxy.sig.samp <- t(t(proxy.sig.samp) + bias)
-  if (meas.noise != 0) proxy.sig.samp <- proxy.sig.samp + noise
+    if (meas.bias != 0) proxy.sig.samp <- t(t(proxy.sig.samp) + bias)
+    if (meas.noise != 0) proxy.sig.samp <- proxy.sig.samp + noise
   }
 
   proxy.sig <-
     list(
       timepoints = timepoints,
-      clim.signal = rowSums(clim.signal[timepoints, ]) / 12,
+      clim.timepoints = rowSums(clim.signal[timepoints, ]) / 12,
+      clim.100.avg = clim.100.avg,
       window.size = window.size,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp
