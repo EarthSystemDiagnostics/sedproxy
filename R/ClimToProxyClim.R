@@ -45,12 +45,31 @@ ClimToProxyClim <- function(clim.signal,
 
   n.timepoints <- length(timepoints)
 
-  if (length(acc.rate) != n.timepoints) {
+  if (length(acc.rate) == 1) {
     acc.rate <- rep(acc.rate, n.timepoints)
   }
 
-  # For each timepoint ------
+  # At 100 yr intervals
+  timepoints.100 <- seq(1, nrow(clim.signal), by = 100)
+  clim.signal.100 <- sapply(timepoints.100, function(tp){
 
+    avg.window.i.1 <- (-50:49) + tp
+
+    if (max(avg.window.i.1) > nrow(clim.signal)) {
+      warning("Climate 100 yr average window extends below end of clim.signal")
+    }
+
+    avg.window.i <-
+      avg.window.i.1[avg.window.i.1 > 0 &
+                       avg.window.i.1 < nrow(clim.signal)]
+
+    stopifnot(avg.window.i > 0)
+    stopifnot(nrow(clim.signal) > max(avg.window.i))
+
+    clim.100.avg <- mean(clim.signal[avg.window.i, ])
+  })
+
+  # For each timepoint ------
   proxy.sig.tmp <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
     bio.depth.timesteps <- round(bio.depth / acc.rate[tp])
@@ -112,7 +131,7 @@ ClimToProxyClim <- function(clim.signal,
     # get 100 year clim.average -------
     avg.window.i.1 <- (-50:49) + timepoints[tp]
 
-    if (max(sig.window.i.1) > nrow(clim.signal)) {
+    if (max(avg.window.i.1) > nrow(clim.signal)) {
       warning("Climate average window extends below end of clim.signal")
     }
 
@@ -160,7 +179,9 @@ ClimToProxyClim <- function(clim.signal,
       clim.100.avg = clim.100.avg,
       window.size = window.size,
       proxy.sig.inf = proxy.sig.inf,
-      proxy.sig.samp = proxy.sig.samp
+      proxy.sig.samp = proxy.sig.samp,
+      timepoints.100 = timepoints.100,
+      clim.signal.100 = clim.signal.100
     )
 
   return(proxy.sig)
