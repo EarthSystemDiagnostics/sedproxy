@@ -99,7 +99,7 @@ ClimToProxyClim <- function(clim.signal,
 
     clim.sig.window <- clim.signal[sig.window.i, , drop = FALSE]
 
-    # Get weights matrix ---------
+    # Get bioturbation X seasonality weights matrix ---------
     clim.sig.weights <- bioturb.weights %o% seas.prod
     clim.sig.weights <-
       clim.sig.weights[sig.window.i.1 > 0 &
@@ -160,16 +160,28 @@ ClimToProxyClim <- function(clim.signal,
 
   # Add bias and noise to infinite sample
 
-  if (meas.bias != 0) {bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)}else{bias <- rep(0, n.replicates)}
-  if (meas.noise != 0) {noise <- rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)}
+  if (meas.bias != 0) {
+    bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)
+  } else{
+    bias <- rep(0, n.replicates)
+  }
+  if (meas.noise != 0) {
+    noise <- rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
+  }else{
+    noise <- rep(0, n.replicates)
+  }
 
-  proxy.sig.inf <- outer(proxy.sig.inf, bias, FUN = "+")
-  if (meas.noise != 0) {proxy.sig.inf <- proxy.sig.inf + noise}
+  proxy.sig.inf.b <- outer(proxy.sig.inf, bias, FUN = "+")
+  proxy.sig.inf.b.n <- proxy.sig.inf.b + noise
 
   # Add bias and noise to finite sample
   if (is.finite(n.samples)){
-    if (meas.bias != 0) proxy.sig.samp <- t(t(proxy.sig.samp) + bias)
-    if (meas.noise != 0) proxy.sig.samp <- proxy.sig.samp + noise
+    proxy.sig.samp.b <- t(t(proxy.sig.samp) + bias)
+    proxy.sig.samp.b.n <- proxy.sig.samp.b + noise
+  }
+
+  if(is.infinite(n.samples)){
+    proxy.sig.samp.b <- proxy.sig.samp.b.n <- NA
   }
 
   proxy.sig <-
@@ -178,8 +190,13 @@ ClimToProxyClim <- function(clim.signal,
       clim.timepoints = rowSums(clim.signal[timepoints,  , drop = FALSE]) / 12,
       clim.100.avg = clim.100.avg,
       window.size = window.size,
+      sed.acc.rate = acc.rate,
       proxy.sig.inf = proxy.sig.inf,
+      proxy.sig.inf.b = proxy.sig.inf.b,
+      proxy.sig.inf.b.n = proxy.sig.inf.b.n,
       proxy.sig.samp = proxy.sig.samp,
+      proxy.sig.samp.b = proxy.sig.samp.b,
+      proxy.sig.samp.b.n = proxy.sig.samp.b.n,
       timepoints.100 = timepoints.100,
       clim.signal.100 = clim.signal.100
     )
