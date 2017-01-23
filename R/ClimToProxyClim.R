@@ -66,7 +66,7 @@ ClimToProxyClim <- function(clim.signal,
     stopifnot(avg.window.i > 0)
     stopifnot(nrow(clim.signal) > max(avg.window.i))
 
-    clim.100.avg <- mean(clim.signal[avg.window.i, ])
+    clim.100.avg <- mean(clim.signal[avg.window.i, , drop = FALSE])
   })
 
   # For each timepoint ------
@@ -97,13 +97,13 @@ ClimToProxyClim <- function(clim.signal,
     stopifnot(sig.window.i > 0)
     stopifnot(nrow(clim.signal) > max(sig.window.i))
 
-    clim.sig.window <- clim.signal[sig.window.i, ]
+    clim.sig.window <- clim.signal[sig.window.i, , drop = FALSE]
 
     # Get weights matrix ---------
     clim.sig.weights <- bioturb.weights %o% seas.prod
     clim.sig.weights <-
       clim.sig.weights[sig.window.i.1 > 0 &
-                         sig.window.i.1 < nrow(clim.signal),]
+                         sig.window.i.1 < nrow(clim.signal), , drop = FALSE]
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
@@ -142,7 +142,7 @@ ClimToProxyClim <- function(clim.signal,
     stopifnot(avg.window.i > 0)
     stopifnot(nrow(clim.signal) > max(avg.window.i))
 
-    clim.100.avg <- mean(clim.signal[avg.window.i, ])
+    clim.100.avg <- mean(clim.signal[avg.window.i, , drop = FALSE])
 
 
     # Gather output ----------
@@ -175,7 +175,7 @@ ClimToProxyClim <- function(clim.signal,
   proxy.sig <-
     list(
       timepoints = timepoints,
-      clim.timepoints = rowSums(clim.signal[timepoints, ]) / 12,
+      clim.timepoints = rowSums(clim.signal[timepoints,  , drop = FALSE]) / 12,
       clim.100.avg = clim.100.avg,
       window.size = window.size,
       proxy.sig.inf = proxy.sig.inf,
