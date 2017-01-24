@@ -99,6 +99,15 @@ ClimToProxyClim <- function(clim.signal,
 
     clim.sig.window <- clim.signal[sig.window.i, , drop = FALSE]
 
+
+    # Get bioturbation X no-seasonality weights matrix ---------
+    biot.sig.weights <- bioturb.weights %o% rep(1, 12)
+    biot.sig.weights <-
+      biot.sig.weights[sig.window.i.1 > 0 &
+                         sig.window.i.1 < nrow(clim.signal), , drop = FALSE]
+    biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
+
+
     # Get bioturbation X seasonality weights matrix ---------
     clim.sig.weights <- bioturb.weights %o% seas.prod
     clim.sig.weights <-
@@ -112,6 +121,8 @@ ClimToProxyClim <- function(clim.signal,
 
 
     # Calculate mean clim.signal -------
+    biot.sig.inf <- sum(biot.sig.weights * clim.sig.window)
+
     proxy.sig.inf <- sum(clim.sig.weights * clim.sig.window)
 
     if (is.infinite(n.samples)) {
@@ -149,14 +160,16 @@ ClimToProxyClim <- function(clim.signal,
     list(
       window.size = length(clim.sig.weights),
       clim.100.avg = as.numeric(clim.100.avg),
+      biot.sig.inf = as.numeric(biot.sig.inf),
       proxy.sig.inf = as.numeric(proxy.sig.inf),
       proxy.sig.samp = proxy.sig.samp)
   }, simplify = TRUE)
 
   window.size <- as.numeric(proxy.sig.tmp[1, ])
   clim.100.avg <- as.numeric(proxy.sig.tmp[2, ])
-  proxy.sig.inf <- as.numeric(proxy.sig.tmp[3, ])
-  proxy.sig.samp <- t(simplify2array(proxy.sig.tmp[4, ]))
+  biot.sig.inf <- as.numeric(proxy.sig.tmp[3, ])
+  proxy.sig.inf <- as.numeric(proxy.sig.tmp[4, ])
+  proxy.sig.samp <- t(simplify2array(proxy.sig.tmp[5, ]))
 
   # Add bias and noise to infinite sample
 
@@ -191,6 +204,7 @@ ClimToProxyClim <- function(clim.signal,
       clim.100.avg = clim.100.avg,
       window.size = window.size,
       sed.acc.rate = acc.rate,
+      biot.sig.inf = biot.sig.inf,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.inf.b = proxy.sig.inf.b,
       proxy.sig.inf.b.n = proxy.sig.inf.b.n,
