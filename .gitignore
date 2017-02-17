@@ -11,4 +11,8 @@ vignettes/*.R
 
 *_files
 *_cache
+*.pdf
+*.html
+
+*Rprof.out
 
