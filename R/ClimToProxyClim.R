@@ -70,7 +70,7 @@ ClimToProxyClim <- function(clim.signal,
   })
 
   # For each timepoint ------
-  proxy.sig.tmp <- sapply(1:n.timepoints, function(tp) {
+  out <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
     bio.depth.timesteps <- round(bio.depth / acc.rate[tp])
     bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
@@ -127,7 +127,7 @@ ClimToProxyClim <- function(clim.signal,
     proxy.sig.inf <- sum(clim.sig.weights * clim.sig.window)
 
     if (is.infinite(n.samples)) {
-      proxy.sig.samp <- NA
+      proxy.sig.samp <- rep(NA, n.replicates)
     } else if (is.finite(n.samples)) {
       # call sample once for all replicates together, then take means of
       # groups of n.samples
@@ -160,20 +160,23 @@ ClimToProxyClim <- function(clim.signal,
     # Gather output ----------
     list(
       bioturb.window.width = bioturb.window.width,
-      clim.100.avg = as.numeric(clim.100.avg),
-      biot.sig.inf = as.numeric(biot.sig.inf),
-      proxy.sig.inf = as.numeric(proxy.sig.inf),
+      clim.100.avg = clim.100.avg,
+      biot.sig.inf = biot.sig.inf,
+      proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp)
-  }, simplify = TRUE)
+  })
 
-  bioturb.window.width <- as.numeric(proxy.sig.tmp[1, ])
-  clim.100.avg <- as.numeric(proxy.sig.tmp[2, ])
-  biot.sig.inf <- as.numeric(proxy.sig.tmp[3, ])
-  proxy.sig.inf <- as.numeric(proxy.sig.tmp[4, ])
-  proxy.sig.samp <- t(simplify2array(proxy.sig.tmp[5, ]))
+  #out <- apply(out, 1, function(x) simplify2array(x))
+  # use plyr::alply to always return a list
+  out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
 
-  # Add bias and noise to infinite sample
+  # remove extra attributes added by alply
+  attr(out, "split_type") <- NULL
+  attr(out, "split_labels") <- NULL
 
+  out$proxy.sig.samp <- t(out$proxy.sig.samp)
+
+  # Add bias and noise to infinite sample --------
   if (meas.bias != 0) {
     bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)
   } else{
@@ -185,36 +188,25 @@ ClimToProxyClim <- function(clim.signal,
     noise <- rep(0, n.replicates)
   }
 
-  proxy.sig.inf.b <- outer(proxy.sig.inf, bias, FUN = "+")
-  proxy.sig.inf.b.n <- proxy.sig.inf.b + noise
+  out$proxy.sig.inf.b <- outer(out$proxy.sig.inf, bias, FUN = "+")
+  out$proxy.sig.inf.b.n <- out$proxy.sig.inf.b + noise
 
-  # Add bias and noise to finite sample
+  # Add bias and noise to finite sample --------
   if (is.finite(n.samples)){
-    proxy.sig.samp.b <- t(t(proxy.sig.samp) + bias)
-    proxy.sig.samp.b.n <- proxy.sig.samp.b + noise
+    out$proxy.sig.samp.b <- t(t(out$proxy.sig.samp) + bias)
+    out$proxy.sig.samp.b.n <- out$proxy.sig.samp.b + noise
   }
 
   if(is.infinite(n.samples)){
-    proxy.sig.samp.b <- proxy.sig.samp.b.n <- NA
+    out$proxy.sig.samp.b <- out$proxy.sig.samp.b.n <- NA
   }
 
-  proxy.sig <-
-    list(
-      timepoints = timepoints,
-      clim.timepoints = rowSums(clim.signal[timepoints,  , drop = FALSE]) / 12,
-      clim.100.avg = clim.100.avg,
-      bioturb.window.width = bioturb.window.width,
-      sed.acc.rate = acc.rate,
-      biot.sig.inf = biot.sig.inf,
-      proxy.sig.inf = proxy.sig.inf,
-      proxy.sig.inf.b = proxy.sig.inf.b,
-      proxy.sig.inf.b.n = proxy.sig.inf.b.n,
-      proxy.sig.samp = proxy.sig.samp,
-      proxy.sig.samp.b = proxy.sig.samp.b,
-      proxy.sig.samp.b.n = proxy.sig.samp.b.n,
-      timepoints.100 = timepoints.100,
-      clim.signal.100 = clim.signal.100
-    )
+  # Add items to output list -----------
+  out$timepoints = timepoints
+  out$clim.timepoints = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
+  out$sed.acc.rate = acc.rate
+  out$timepoints.100 = timepoints.100
+  out$clim.signal.100 = clim.signal.100
 
-  return(proxy.sig)
+  return(out)
 }
