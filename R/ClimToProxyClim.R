@@ -80,6 +80,7 @@ ClimToProxyClim <- function(clim.signal,
       ImpulseResponse(-bioturb.window, bio.depth.timesteps, z0 = 0)
     bioturb.weights <- bioturb.weights / sum(bioturb.weights)
 
+    bioturb.window.width = sum(bioturb.weights*abs(bioturb.window))
     # Check depth and time order match
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
 
@@ -158,14 +159,14 @@ ClimToProxyClim <- function(clim.signal,
 
     # Gather output ----------
     list(
-      window.size = length(clim.sig.weights),
+      bioturb.window.width = bioturb.window.width,
       clim.100.avg = as.numeric(clim.100.avg),
       biot.sig.inf = as.numeric(biot.sig.inf),
       proxy.sig.inf = as.numeric(proxy.sig.inf),
       proxy.sig.samp = proxy.sig.samp)
   }, simplify = TRUE)
 
-  window.size <- as.numeric(proxy.sig.tmp[1, ])
+  bioturb.window.width <- as.numeric(proxy.sig.tmp[1, ])
   clim.100.avg <- as.numeric(proxy.sig.tmp[2, ])
   biot.sig.inf <- as.numeric(proxy.sig.tmp[3, ])
   proxy.sig.inf <- as.numeric(proxy.sig.tmp[4, ])
@@ -202,7 +203,7 @@ ClimToProxyClim <- function(clim.signal,
       timepoints = timepoints,
       clim.timepoints = rowSums(clim.signal[timepoints,  , drop = FALSE]) / 12,
       clim.100.avg = clim.100.avg,
-      window.size = window.size,
+      bioturb.window.width = bioturb.window.width,
       sed.acc.rate = acc.rate,
       biot.sig.inf = biot.sig.inf,
       proxy.sig.inf = proxy.sig.inf,
