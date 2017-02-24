@@ -5,31 +5,32 @@
 \title{Title}
 \usage{
 ClimToProxyClim(clim.signal, timepoints, seas.prod = rep(1, 12),
-  bio.depth = 0.1, acc.rate = 5e-04, meas.noise = 0, meas.bias = 0,
+  bio.depth = 0.1, sed.acc.rate = 5e-04, meas.noise = 0, meas.bias = 0,
   n.samples = Inf, n.replicates = 1)
 }
 \arguments{
-\item{clim.signal}{The "true" climate signal, i.e. model output or
+\item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or
 instrumental record. A years x 12 (months) matrix of temperatures.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
 \item{seas.prod}{The seasonal pattern of productivity for the organism(s)
 archived in the proxy. Either a vector of 12 values or a matrix of the same
-dimensions as clim.signal. Defaults to uniform seasonal distribution.}
+dimensions as clim.signal. Defaults to a uniform seasonal distribution.}
 
 \item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m}
 
-\item{acc.rate}{Sediment accumulation rate in metres per year. Defaults to
-5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+\item{sed.acc.rate}{Sediment accumulation rate in metres per year. Defaults
+to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
 length as "timepoints"}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
 Defined as the standard deviation of a normal distribution with mean = 0}
 
-\item{meas.bias}{The amount of bias to add to each simulated proxy time-series.
-Each replicate proxy time-series has a constant bias added, drawn from a normal distribution with
-mean = 0, sd = meas.bias. Bias defaults to zero.}
+\item{meas.bias}{The amount of bias to add to each simulated proxy
+time-series. Each replicate proxy time-series has a constant bias added,
+drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
+defaults to zero.}
 
 \item{n.samples}{Number of e.g. foraminifera sampled per timepoint}
 
@@ -37,7 +38,35 @@ mean = 0, sd = meas.bias. Bias defaults to zero.}
 the climate signal}
 }
 \value{
-a list
+a list with three elements: a dataframe \code{simulated.proxy}, a
+  dataframe \code{smoothed.signal}, and a list \code{everything}
+
+  The dataframe \code{simulated.proxy} contains a single realisation of the
+  final forward modelled proxy as well as the intermediate stages and the
+  original climate signal at the requested timepoints.
+
+\tabular{ll}{
+\bold{Variable} \tab \bold{Description} \cr
+timepoints                 \tab requested timepoints                                                                                                               \cr
+clim.signal.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
+biot.sig.inf               \tab proxy after bioturbation                                                                                                           \cr
+proxy.sig.inf              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
+sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
+smoothing.width            \tab weighted mean time span represented in a sample after bioturbation                                                                 \cr
+proxy.sig.samp             \tab proxy after bioturbation, seasonal bias and finite sampling                                                                        \cr
+proxy.sig.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
+proxy.sig.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
+proxy.sig.samp.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
+proxy.sig.samp.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
+simulated.proxy            \tab final simulated proxy, this will be same as proxy.sig.inf.b.n when n.samples = Inf, and proxy.sig.samp.b.n when n.samples is finite
+}
+
+  The dataframe \code{smoothed.signal} contains the original climate signal
+  at 100 year resolution.
+
+  The list \code{everything} contains all of the above, but if n.replicates >
+  1, stages of the forward model containing stochastic elements are returned
+  as matrices with \bold{n.timepoints} rows and \bold{n.replicates} columns.
 }
 \description{
 Title
