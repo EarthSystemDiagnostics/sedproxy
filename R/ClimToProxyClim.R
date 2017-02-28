@@ -244,15 +244,16 @@ ClimToProxyClim <- function(clim.signal,
       "smoothing.width"
     )])
 
-  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[, 1]
+  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[1, ]
   simulated.proxy$proxy.sig.inf.b <- out$proxy.sig.inf.b[, 1]
   simulated.proxy$proxy.sig.inf.b.n <- out$proxy.sig.inf.b.n[, 1]
-  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[, 1]
-  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[, 1]
+  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[1, ]
+  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[1, ]
 
-  simulated.proxy$simulated.proxy <- ifelse(is.finite(n.samples),
-                                            simulated.proxy$proxy.sig.samp.b.n,
-                                            simulated.proxy$proxy.sig.inf.b.n)
+  if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.samp.b.n}else{
+    simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.inf.b.n
+  }
+
 
   smoothed.signal <- dplyr::tbl_df(out[c(
     "timepoints.100",
@@ -262,4 +263,75 @@ ClimToProxyClim <- function(clim.signal,
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = out))
+}
+
+
+
+#' Convert "everything" part of output from ClimToProxyClim to dataframe
+#'
+#' @param PFM output from ClimToProxyClim
+#'
+#' @return
+#' @export
+#'
+#' @examples
+MakePFMDataframe <- function(PFM){
+  df <- data.frame(
+    proxy.sig.samp = as.vector(PFM$proxy.sig.samp),
+    proxy.sig.inf.b = as.vector(PFM$proxy.sig.inf.b),
+    proxy.sig.samp.b = as.vector(PFM$proxy.sig.samp.b),
+    proxy.sig.inf.b.n = as.vector(PFM$proxy.sig.inf.b.n),
+    proxy.sig.samp.b.n = as.vector(PFM$proxy.sig.samp.b.n),
+    stringsAsFactors = FALSE)
+
+  df$Age <- PFM$timepoints
+  df$replicate <- rep(1:ncol(PFM$proxy.sig.inf.b), each = length(PFM$timepoints))
+  df <- tbl_df(df) %>%
+    gather(Stage, value, -Age, -replicate)
+
+  #df$proxy.sig.inf = as.vector(PFM$proxy.sig.inf)
+
+  biot.inf <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints,
+    Stage = "biot.sig.inf",
+    value = PFM$biot.sig.inf,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+  sig.inf <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints,
+    Stage = "proxy.sig.inf",
+    value = PFM$proxy.sig.inf,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+  clim <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints,
+    Stage = "clim.signal.ann",
+    value = PFM$clim.signal.ann,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+  clim2 <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints,
+    Stage = "clim.signal.timepoints.100",
+    value = PFM$clim.signal.timepoints.100,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+  clim3 <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints.100,
+    Stage = "clim.signal.100",
+    value = PFM$clim.signal.100,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+  rtn <- bind_rows(df, biot.inf,  sig.inf, clim, clim2, clim3)
+
+  return(rtn)
 }
