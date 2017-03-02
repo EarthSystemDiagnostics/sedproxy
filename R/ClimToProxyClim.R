@@ -169,6 +169,7 @@ ClimToProxyClim <- function(clim.signal,
 
       samp <- matrix(samp, nrow = n.samples)
       proxy.sig.samp <- plyr::aaply(samp, 2, mean)
+
     }
 
     # get 100 year clim.average at timepoints -------
@@ -196,6 +197,7 @@ ClimToProxyClim <- function(clim.signal,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp)
   })
+
 
   #out <- apply(out, 1, function(x) simplify2array(x))
   # use plyr::alply to always return a list
@@ -244,11 +246,11 @@ ClimToProxyClim <- function(clim.signal,
       "smoothing.width"
     )])
 
-  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[1, ]
+  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[, 1]
   simulated.proxy$proxy.sig.inf.b <- out$proxy.sig.inf.b[, 1]
   simulated.proxy$proxy.sig.inf.b.n <- out$proxy.sig.inf.b.n[, 1]
-  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[1, ]
-  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[1, ]
+  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[, 1]
+  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[, 1]
 
   if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.samp.b.n}else{
     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.inf.b.n
