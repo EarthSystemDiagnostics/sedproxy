@@ -198,6 +198,7 @@ ClimToProxyClim <- function(clim.signal,
       proxy.sig.samp = proxy.sig.samp)
   })
 
+
   #out <- apply(out, 1, function(x) simplify2array(x))
   # use plyr::alply to always return a list
   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
