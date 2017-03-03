@@ -27,7 +27,7 @@ PlotPFMs <- function(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks, le
                                  nrow = 1,
                                  override.aes = list(alpha = 1))) +
     labs(title = unique(PFMs$Proxy),
-         x=expression(Age~"[kyr]"),
+         x=expression(Age~"[ka]"),
          y = expression(Temperature~"[°C]")) +
     scale_linetype(guide = FALSE) +
     scale_alpha_discrete(guide = FALSE)
