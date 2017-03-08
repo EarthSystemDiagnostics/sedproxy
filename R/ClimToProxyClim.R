@@ -31,6 +31,7 @@
 #' \bold{Variable} \tab \bold{Description} \cr
 #' timepoints                 \tab requested timepoints                                                                                                               \cr
 #' clim.signal.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
+#' clim.signal.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
 #' biot.sig.inf               \tab proxy after bioturbation                                                                                                           \cr
 #' proxy.sig.inf              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
 #' sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
@@ -188,11 +189,28 @@ ClimToProxyClim <- function(clim.signal,
 
     clim.signal.timepoints.100 <- mean(clim.signal[avg.window.i, , drop = FALSE])
 
+    # get 50 year clim.average at timepoints -------
+    avg.window.i.1 <- (-24:25) + timepoints[tp]
+
+    if (max(avg.window.i.1) > nrow(clim.signal)) {
+      warning("Climate average window extends below end of clim.signal")
+    }
+
+    avg.window.i <-
+      avg.window.i.1[avg.window.i.1 > 0 &
+                       avg.window.i.1 < nrow(clim.signal)]
+
+    stopifnot(avg.window.i > 0)
+    stopifnot(nrow(clim.signal) > max(avg.window.i))
+
+    clim.signal.timepoints.50 <- mean(clim.signal[avg.window.i, , drop = FALSE])
+
 
     # Gather output ----------
     list(
       smoothing.width = smoothing.width,
       clim.signal.timepoints.100 = clim.signal.timepoints.100,
+      clim.signal.timepoints.50 = clim.signal.timepoints.50,
       biot.sig.inf = biot.sig.inf,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp)
@@ -202,10 +220,10 @@ ClimToProxyClim <- function(clim.signal,
   #out <- apply(out, 1, function(x) simplify2array(x))
   # use plyr::alply to always return a list
   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
-  
+
   #print(is.matrix(out[[5]]))
-  
-  
+
+
   # remove extra attributes added by alply
   attr(out, "split_type") <- NULL
   attr(out, "split_labels") <- NULL
@@ -214,7 +232,7 @@ ClimToProxyClim <- function(clim.signal,
   if (n.replicates == 1) out$proxy.sig.samp <- matrix(out$proxy.sig.samp, nrow = 1)
   out$proxy.sig.samp <- t(out$proxy.sig.samp)
   #print(out$proxy.sig.samp)
-  
+
   # Add bias and noise to infinite sample --------
   if (meas.bias != 0) {
     bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)
@@ -246,17 +264,18 @@ ClimToProxyClim <- function(clim.signal,
     dplyr::tbl_df(out[c(
       "timepoints",
       "clim.signal.timepoints.100",
+      "clim.signal.timepoints.50",
       "biot.sig.inf",
       "proxy.sig.inf",
       "sed.acc.rate",
       "smoothing.width"
     )])
 
-  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[, 1, drop = FALSE]
-  simulated.proxy$proxy.sig.inf.b <- out$proxy.sig.inf.b[, 1, drop = FALSE]
-  simulated.proxy$proxy.sig.inf.b.n <- out$proxy.sig.inf.b.n[, 1, drop = FALSE]
-  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[, 1, drop = FALSE]
-  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[, 1, drop = FALSE]
+  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[, 1, drop = TRUE]
+  simulated.proxy$proxy.sig.inf.b <- out$proxy.sig.inf.b[, 1, drop = TRUE]
+  simulated.proxy$proxy.sig.inf.b.n <- out$proxy.sig.inf.b.n[, 1, drop = TRUE]
+  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[, 1, drop = TRUE]
+  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[, 1, drop = TRUE]
 
   if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.samp.b.n}else{
     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.inf.b.n
@@ -331,6 +350,14 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
+  clim2b <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints,
+    Stage = "clim.signal.timepoints.50",
+    value = PFM$clim.signal.timepoints.50,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+
   clim3 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints.100,
@@ -339,7 +366,7 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
-  rtn <- bind_rows(df, biot.inf,  sig.inf, clim, clim2, clim3)
+  rtn <- bind_rows(df, biot.inf,  sig.inf, clim, clim2, clim2b, clim3)
 
   return(rtn)
 }

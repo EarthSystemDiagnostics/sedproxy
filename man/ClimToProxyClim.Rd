@@ -49,6 +49,7 @@ a list with three elements: a dataframe \code{simulated.proxy}, a
 \bold{Variable} \tab \bold{Description} \cr
 timepoints                 \tab requested timepoints                                                                                                               \cr
 clim.signal.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
+clim.signal.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
 biot.sig.inf               \tab proxy after bioturbation                                                                                                           \cr
 proxy.sig.inf              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
 sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
