@@ -65,8 +65,10 @@ ClimToProxyClim <- function(clim.signal,
                             n.samples = Inf,
                             n.replicates = 1) {
   # Check inputs --------
+  n.timepoints <- length(timepoints)
+  
   stopifnot(is.matrix(clim.signal))
-  stopifnot(length(sed.acc.rate) == length(timepoints) |
+  stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
   if (is.matrix(seas.prod))
     stop("Matrix form of seasonality not yet supported")
@@ -75,31 +77,33 @@ ClimToProxyClim <- function(clim.signal,
   max.clim.signal.i <- nrow(clim.signal)
   sig.years.i <- 1:max.clim.signal.i
 
-  n.timepoints <- length(timepoints)
+  
 
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
   }
 
   # At 100 yr intervals
-  timepoints.100 <- seq(1, nrow(clim.signal), by = 100)
-  clim.signal.100 <- sapply(timepoints.100, function(tp){
-
-    avg.window.i.1 <- (-50:49) + tp
-
-    if (max(avg.window.i.1) > nrow(clim.signal)) {
-      warning("Climate 100 yr average window extends below end of clim.signal")
-    }
-
-    avg.window.i <-
-      avg.window.i.1[avg.window.i.1 > 0 &
-                       avg.window.i.1 < nrow(clim.signal)]
-
-    stopifnot(avg.window.i > 0)
-    stopifnot(nrow(clim.signal) > max(avg.window.i))
-
-    mean(clim.signal[avg.window.i, , drop = FALSE])
-  })
+  timepoints.100 <- seq(1, max.clim.signal.i, by = 100)
+  clim.signal.100 <- ChunkMatrix(timepoints.100, 100, clim.signal)
+  
+  # clim.signal.100 <- sapply(timepoints.100, function(tp){
+  # 
+  #   avg.window.i.1 <- (-50:49) + tp
+  # 
+  #   if (max(avg.window.i.1) > max.clim.signal.i) {
+  #     warning("Climate 100 yr average window extends below end of clim.signal")
+  #   }
+  # 
+  #   avg.window.i <-
+  #     avg.window.i.1[avg.window.i.1 > 0 &
+  #                      avg.window.i.1 < max.clim.signal.i]
+  # 
+  #   stopifnot(avg.window.i > 0)
+  #   stopifnot(max.clim.signal.i > max(avg.window.i))
+  # 
+  #   mean(clim.signal[avg.window.i, , drop = FALSE])
+  # })
 
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
@@ -119,16 +123,16 @@ ClimToProxyClim <- function(clim.signal,
     # get portion of clim.signal corresponding to bioturbation window -------
     sig.window.i.1 <- bioturb.window + timepoints[tp]
 
-    if (max(sig.window.i.1) > nrow(clim.signal)) {
+    if (max(sig.window.i.1) > max.clim.signal.i) {
       warning("Bioturbation window extends below end of clim.signal")
     }
 
     sig.window.i <-
       sig.window.i.1[sig.window.i.1 > 0 &
-                       sig.window.i.1 < nrow(clim.signal)]
+                       sig.window.i.1 < max.clim.signal.i]
 
     stopifnot(sig.window.i > 0)
-    stopifnot(nrow(clim.signal) > max(sig.window.i))
+    stopifnot(max.clim.signal.i > max(sig.window.i))
 
     clim.sig.window <- clim.signal[sig.window.i, , drop = FALSE]
 
@@ -137,7 +141,7 @@ ClimToProxyClim <- function(clim.signal,
     biot.sig.weights <- bioturb.weights %o% rep(1, 12)
     biot.sig.weights <-
       biot.sig.weights[sig.window.i.1 > 0 &
-                         sig.window.i.1 < nrow(clim.signal), , drop = FALSE]
+                         sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
 
@@ -145,7 +149,7 @@ ClimToProxyClim <- function(clim.signal,
     clim.sig.weights <- bioturb.weights %o% seas.prod
     clim.sig.weights <-
       clim.sig.weights[sig.window.i.1 > 0 &
-                         sig.window.i.1 < nrow(clim.signal), , drop = FALSE]
+                         sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
@@ -169,60 +173,23 @@ ClimToProxyClim <- function(clim.signal,
                       replace = TRUE)
 
       samp <- matrix(samp, nrow = n.samples)
-      proxy.sig.samp <- plyr::aaply(samp, 2, mean)
+      #proxy.sig.samp <- plyr::aaply(samp, 2, mean)
+      proxy.sig.samp <- apply(samp, 2, mean)
 
     }
 
-    # get 100 year clim.average at timepoints -------
-    avg.window.i.1 <- (-50:49) + timepoints[tp]
-
-    if (max(avg.window.i.1) > nrow(clim.signal)) {
-      warning("Climate average window extends below end of clim.signal")
-    }
-
-    avg.window.i <-
-      avg.window.i.1[avg.window.i.1 > 0 &
-                       avg.window.i.1 < nrow(clim.signal)]
-
-    stopifnot(avg.window.i > 0)
-    stopifnot(nrow(clim.signal) > max(avg.window.i))
-
-    clim.signal.timepoints.100 <- mean(clim.signal[avg.window.i, , drop = FALSE])
-
-    # get 50 year clim.average at timepoints -------
-    avg.window.i.1 <- (-24:25) + timepoints[tp]
-
-    if (max(avg.window.i.1) > nrow(clim.signal)) {
-      warning("Climate average window extends below end of clim.signal")
-    }
-
-    avg.window.i <-
-      avg.window.i.1[avg.window.i.1 > 0 &
-                       avg.window.i.1 < nrow(clim.signal)]
-
-    stopifnot(avg.window.i > 0)
-    stopifnot(nrow(clim.signal) > max(avg.window.i))
-
-    clim.signal.timepoints.50 <- mean(clim.signal[avg.window.i, , drop = FALSE])
-
-
+    
     # Gather output ----------
     list(
       smoothing.width = smoothing.width,
-      clim.signal.timepoints.100 = clim.signal.timepoints.100,
-      clim.signal.timepoints.50 = clim.signal.timepoints.50,
       biot.sig.inf = biot.sig.inf,
       proxy.sig.inf = proxy.sig.inf,
       proxy.sig.samp = proxy.sig.samp)
   })
-
-
+  
   #out <- apply(out, 1, function(x) simplify2array(x))
   # use plyr::alply to always return a list
   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
-
-  #print(is.matrix(out[[5]]))
-
 
   # remove extra attributes added by alply
   attr(out, "split_type") <- NULL
@@ -252,12 +219,22 @@ ClimToProxyClim <- function(clim.signal,
   out$proxy.sig.samp.b <- out$proxy.sig.samp + bias
   out$proxy.sig.samp.b.n <- out$proxy.sig.samp.b + noise
 
+  # Calculate chunked climate at timepoints
+  # get 100 year clim.average at timepoints -------
+  
+  out$clim.signal.timepoints.100 <- ChunkMatrix(timepoints, 100, clim.signal)
+  out$clim.signal.timepoints.50 <- ChunkMatrix(timepoints, 50, clim.signal)
+  
+  
+  
   # Add items to output list -----------
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
   out$sed.acc.rate = sed.acc.rate
   out$timepoints.100 = timepoints.100
   out$clim.signal.100 = clim.signal.100
+  
+  
 
   # Organise output -------
   simulated.proxy <-
@@ -291,6 +268,32 @@ ClimToProxyClim <- function(clim.signal,
               smoothed.signal=smoothed.signal,
               everything = out))
 }
+
+
+
+ChunkMatrix <- function(timepoints, width, climate.matrix){
+  max.clim.signal.i <- nrow(climate.matrix)
+  
+  rel.wind <- -width:width -round(width/2)
+  
+  sapply(timepoints, function(tp){
+    
+    avg.window.i.1 <- (rel.wind) + tp
+    
+    if (max(avg.window.i.1) > max.clim.signal.i) {
+      warning("Window extends below end of clim.signal")
+    }
+    
+    avg.window.i <- avg.window.i.1[avg.window.i.1 > 0 &
+                                     avg.window.i.1 < max.clim.signal.i]
+    
+    stopifnot(avg.window.i > 0)
+    stopifnot(max.clim.signal.i > max(avg.window.i))
+    
+    mean(climate.matrix[avg.window.i, , drop = FALSE])
+  })
+}
+
 
 
 
