@@ -257,7 +257,7 @@ ClimToProxyClim <- function(clim.signal,
 ChunkMatrix <- function(timepoints, width, climate.matrix){
   max.clim.signal.i <- nrow(climate.matrix)
   
-  rel.wind <- -width:width -round(width/2)
+  rel.wind <- 1:width -round(width/2)
   
   sapply(timepoints, function(tp){
     
