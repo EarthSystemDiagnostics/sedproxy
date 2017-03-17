@@ -48,18 +48,18 @@ a list with three elements: a dataframe \code{simulated.proxy}, a
 \tabular{ll}{
 \bold{Variable} \tab \bold{Description} \cr
 timepoints                 \tab requested timepoints                                                                                                               \cr
-clim.signal.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
-clim.signal.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
-biot.sig.inf               \tab proxy after bioturbation                                                                                                           \cr
-proxy.sig.inf              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
+clim.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
+clim.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
+proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
+proxy.bt.sb              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
 sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
 smoothing.width            \tab weighted mean time span represented in a sample after bioturbation                                                                 \cr
-proxy.sig.samp             \tab proxy after bioturbation, seasonal bias and finite sampling                                                                        \cr
-proxy.sig.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
-proxy.sig.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
-proxy.sig.samp.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
-proxy.sig.samp.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
-simulated.proxy            \tab final simulated proxy, this will be same as proxy.sig.inf.b.n when n.samples = Inf, and proxy.sig.samp.b.n when n.samples is finite
+proxy.bt.sb.samp             \tab proxy after bioturbation, seasonal bias and finite sampling                                                                        \cr
+proxy.bt.sb.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
+proxy.bt.sb.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
+proxy.bt.sb.samp.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
+proxy.bt.sb.samp.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
+simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.samp.b.n when n.samples is finite
 }
 
   The dataframe \code{smoothed.signal} contains the original climate signal

@@ -30,18 +30,18 @@
 #' \tabular{ll}{
 #' \bold{Variable} \tab \bold{Description} \cr
 #' timepoints                 \tab requested timepoints                                                                                                               \cr
-#' clim.signal.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
-#' clim.signal.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
-#' biot.sig.inf               \tab proxy after bioturbation                                                                                                           \cr
-#' proxy.sig.inf              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
+#' clim.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
+#' clim.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
+#' proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
+#' proxy.bt.sb              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
 #' sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
 #' smoothing.width            \tab weighted mean time span represented in a sample after bioturbation                                                                 \cr
-#' proxy.sig.samp             \tab proxy after bioturbation, seasonal bias and finite sampling                                                                        \cr
-#' proxy.sig.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
-#' proxy.sig.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
-#' proxy.sig.samp.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
-#' proxy.sig.samp.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
-#' simulated.proxy            \tab final simulated proxy, this will be same as proxy.sig.inf.b.n when n.samples = Inf, and proxy.sig.samp.b.n when n.samples is finite
+#' proxy.bt.sb.samp             \tab proxy after bioturbation, seasonal bias and finite sampling                                                                        \cr
+#' proxy.bt.sb.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
+#' proxy.bt.sb.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
+#' proxy.bt.sb.samp.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
+#' proxy.bt.sb.samp.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
+#' simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.samp.b.n when n.samples is finite
 #'}
 #'
 #'   The dataframe \code{smoothed.signal} contains the original climate signal
@@ -87,24 +87,6 @@ ClimToProxyClim <- function(clim.signal,
   timepoints.100 <- seq(1, max.clim.signal.i, by = 100)
   clim.signal.100 <- ChunkMatrix(timepoints.100, 100, clim.signal)
   
-  # clim.signal.100 <- sapply(timepoints.100, function(tp){
-  # 
-  #   avg.window.i.1 <- (-50:49) + tp
-  # 
-  #   if (max(avg.window.i.1) > max.clim.signal.i) {
-  #     warning("Climate 100 yr average window extends below end of clim.signal")
-  #   }
-  # 
-  #   avg.window.i <-
-  #     avg.window.i.1[avg.window.i.1 > 0 &
-  #                      avg.window.i.1 < max.clim.signal.i]
-  # 
-  #   stopifnot(avg.window.i > 0)
-  #   stopifnot(max.clim.signal.i > max(avg.window.i))
-  # 
-  #   mean(clim.signal[avg.window.i, , drop = FALSE])
-  # })
-
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
@@ -158,12 +140,12 @@ ClimToProxyClim <- function(clim.signal,
 
 
     # Calculate mean clim.signal -------
-    biot.sig.inf <- sum(biot.sig.weights * clim.sig.window)
+    proxy.bt <- sum(biot.sig.weights * clim.sig.window)
 
-    proxy.sig.inf <- sum(clim.sig.weights * clim.sig.window)
+    proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
 
     if (is.infinite(n.samples)) {
-      proxy.sig.samp <- rep(NA, n.replicates)
+      proxy.bt.sb.samp <- rep(NA, n.replicates)
     } else if (is.finite(n.samples)) {
       # call sample once for all replicates together, then take means of
       # groups of n.samples
@@ -172,19 +154,20 @@ ClimToProxyClim <- function(clim.signal,
                       prob = clim.sig.weights,
                       replace = TRUE)
 
+      # convert vector to matrix (cheap only attributes changed), then means
+      # can be taken across columns to get per replicate means
       samp <- matrix(samp, nrow = n.samples)
-      #proxy.sig.samp <- plyr::aaply(samp, 2, mean)
-      proxy.sig.samp <- apply(samp, 2, mean)
-
+      #proxy.bt.sb.samp <- apply(samp, 2, mean)
+      proxy.bt.sb.samp <- colMeans(samp)
     }
 
     
     # Gather output ----------
     list(
       smoothing.width = smoothing.width,
-      biot.sig.inf = biot.sig.inf,
-      proxy.sig.inf = proxy.sig.inf,
-      proxy.sig.samp = proxy.sig.samp)
+      proxy.bt = proxy.bt,
+      proxy.bt.sb = proxy.bt.sb,
+      proxy.bt.sb.samp = proxy.bt.sb.samp)
   })
   
   #out <- apply(out, 1, function(x) simplify2array(x))
@@ -195,10 +178,10 @@ ClimToProxyClim <- function(clim.signal,
   attr(out, "split_type") <- NULL
   attr(out, "split_labels") <- NULL
 
-  #print(out$proxy.sig.samp)
-  if (n.replicates == 1) out$proxy.sig.samp <- matrix(out$proxy.sig.samp, nrow = 1)
-  out$proxy.sig.samp <- t(out$proxy.sig.samp)
-  #print(out$proxy.sig.samp)
+  #print(out$proxy.bt.sb.samp)
+  if (n.replicates == 1) out$proxy.bt.sb.samp <- matrix(out$proxy.bt.sb.samp, nrow = 1)
+  out$proxy.bt.sb.samp <- t(out$proxy.bt.sb.samp)
+  #print(out$proxy.bt.sb.samp)
 
   # Add bias and noise to infinite sample --------
   if (meas.bias != 0) {
@@ -212,18 +195,18 @@ ClimToProxyClim <- function(clim.signal,
     noise <- rep(0, n.replicates)
   }
 
-  out$proxy.sig.inf.b <- outer(out$proxy.sig.inf, bias, FUN = "+")
-  out$proxy.sig.inf.b.n <- out$proxy.sig.inf.b + noise
+  out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
+  out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
 
   # Add bias and noise to finite sample --------
-  out$proxy.sig.samp.b <- out$proxy.sig.samp + bias
-  out$proxy.sig.samp.b.n <- out$proxy.sig.samp.b + noise
+  out$proxy.bt.sb.samp.b <- out$proxy.bt.sb.samp + bias
+  out$proxy.bt.sb.samp.b.n <- out$proxy.bt.sb.samp.b + noise
 
   # Calculate chunked climate at timepoints
   # get 100 year clim.average at timepoints -------
   
-  out$clim.signal.timepoints.100 <- ChunkMatrix(timepoints, 100, clim.signal)
-  out$clim.signal.timepoints.50 <- ChunkMatrix(timepoints, 50, clim.signal)
+  out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, clim.signal)
+  out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, clim.signal)
   
   
   
@@ -240,22 +223,22 @@ ClimToProxyClim <- function(clim.signal,
   simulated.proxy <-
     dplyr::tbl_df(out[c(
       "timepoints",
-      "clim.signal.timepoints.100",
-      "clim.signal.timepoints.50",
-      "biot.sig.inf",
-      "proxy.sig.inf",
+      "clim.timepoints.100",
+      "clim.timepoints.50",
+      "proxy.bt",
+      "proxy.bt.sb",
       "sed.acc.rate",
       "smoothing.width"
     )])
 
-  simulated.proxy$proxy.sig.samp <- out$proxy.sig.samp[, 1, drop = TRUE]
-  simulated.proxy$proxy.sig.inf.b <- out$proxy.sig.inf.b[, 1, drop = TRUE]
-  simulated.proxy$proxy.sig.inf.b.n <- out$proxy.sig.inf.b.n[, 1, drop = TRUE]
-  simulated.proxy$proxy.sig.samp.b <- out$proxy.sig.samp.b[, 1, drop = TRUE]
-  simulated.proxy$proxy.sig.samp.b.n <- out$proxy.sig.samp.b.n[, 1, drop = TRUE]
+  simulated.proxy$proxy.bt.sb.samp <- out$proxy.bt.sb.samp[, 1, drop = TRUE]
+  simulated.proxy$proxy.bt.sb.inf.b <- out$proxy.bt.sb.inf.b[, 1, drop = TRUE]
+  simulated.proxy$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b.n[, 1, drop = TRUE]
+  simulated.proxy$proxy.bt.sb.samp.b <- out$proxy.bt.sb.samp.b[, 1, drop = TRUE]
+  simulated.proxy$proxy.bt.sb.samp.b.n <- out$proxy.bt.sb.samp.b.n[, 1, drop = TRUE]
 
-  if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.samp.b.n}else{
-    simulated.proxy$simulated.proxy <- simulated.proxy$proxy.sig.inf.b.n
+  if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.samp.b.n}else{
+    simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.inf.b.n
   }
 
 
@@ -307,33 +290,33 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #' @examples
 MakePFMDataframe <- function(PFM){
   df <- data.frame(
-    proxy.sig.samp = as.vector(PFM$proxy.sig.samp),
-    proxy.sig.inf.b = as.vector(PFM$proxy.sig.inf.b),
-    proxy.sig.samp.b = as.vector(PFM$proxy.sig.samp.b),
-    proxy.sig.inf.b.n = as.vector(PFM$proxy.sig.inf.b.n),
-    proxy.sig.samp.b.n = as.vector(PFM$proxy.sig.samp.b.n),
+    proxy.bt.sb.samp = as.vector(PFM$proxy.bt.sb.samp),
+    proxy.bt.sb.inf.b = as.vector(PFM$proxy.bt.sb.inf.b),
+    proxy.bt.sb.samp.b = as.vector(PFM$proxy.bt.sb.samp.b),
+    proxy.bt.sb.inf.b.n = as.vector(PFM$proxy.bt.sb.inf.b.n),
+    proxy.bt.sb.samp.b.n = as.vector(PFM$proxy.bt.sb.samp.b.n),
     stringsAsFactors = FALSE)
 
   df$Age <- PFM$timepoints
-  df$replicate <- rep(1:ncol(PFM$proxy.sig.inf.b), each = length(PFM$timepoints))
+  df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- tbl_df(df) %>%
     gather(Stage, value, -Age, -replicate)
 
-  #df$proxy.sig.inf = as.vector(PFM$proxy.sig.inf)
+  #df$proxy.bt.sb = as.vector(PFM$proxy.bt.sb)
 
-  biot.inf <- data.frame(
+  bt.inf <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
-    Stage = "biot.sig.inf",
-    value = PFM$biot.sig.inf,
+    Stage = "proxy.bt",
+    value = PFM$proxy.bt,
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
   sig.inf <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
-    Stage = "proxy.sig.inf",
-    value = PFM$proxy.sig.inf,
+    Stage = "proxy.bt.sb",
+    value = PFM$proxy.bt.sb,
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
@@ -348,16 +331,16 @@ MakePFMDataframe <- function(PFM){
   clim2 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
-    Stage = "clim.signal.timepoints.100",
-    value = PFM$clim.signal.timepoints.100,
+    Stage = "clim.timepoints.100",
+    value = PFM$clim.timepoints.100,
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
   clim2b <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
-    Stage = "clim.signal.timepoints.50",
-    value = PFM$clim.signal.timepoints.50,
+    Stage = "clim.timepoints.50",
+    value = PFM$clim.timepoints.50,
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
@@ -369,7 +352,7 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
-  rtn <- bind_rows(df, biot.inf,  sig.inf, clim, clim2, clim2b, clim3)
+  rtn <- bind_rows(df, bt.inf,  sig.inf, clim, clim2, clim2b, clim3)
 
   return(rtn)
 }
