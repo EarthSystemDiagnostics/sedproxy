@@ -54,12 +54,13 @@ proxy.bt               \tab proxy after bioturbation                            
 proxy.bt.sb              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
 sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
 smoothing.width            \tab weighted mean time span represented in a sample after bioturbation                                                                 \cr
-proxy.bt.sb.samp             \tab proxy after bioturbation, seasonal bias and finite sampling                                                                        \cr
+proxy.bt.sb.sampY             \tab proxy after bioturbation, seasonal bias and finite sampling of years but not seasonality                                                                        \cr
+proxy.bt.sb.sampYM             \tab proxy after bioturbation, seasonal bias and finite sampling of years and months                                                                        \cr
 proxy.bt.sb.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
 proxy.bt.sb.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
-proxy.bt.sb.samp.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
-proxy.bt.sb.samp.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
-simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.samp.b.n when n.samples is finite
+proxy.bt.sb.sampYM.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
+proxy.bt.sb.sampYM.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
+simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite
 }
 
   The dataframe \code{smoothed.signal} contains the original climate signal
