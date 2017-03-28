@@ -12,7 +12,7 @@
 #' @examples
 PlotPFMs <- function(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks, levl.labels){
 
-  rug.dat <- filter(PFMs, Stage %in% c("proxy.sig.inf"),
+  rug.dat <- filter(PFMs, Stage %in% c("proxy.bt"),
                     replicate == 1)
 
   p <- ggplot(data = PFMs, aes(x = Age / 1000, y = Temperature,

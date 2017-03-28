@@ -1,0 +1,102 @@
+---
+title: "Using sedproxy"
+author: "Andrew M. Dolman"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using sedproxy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Example data
+
+`sedproxy` includes example data for a single sediment core and location: core number 41 (`r sedproxy::N41.proxy.details$Core`) in Shakun et al. (2012). The climate signal is taken from the [TraCE-21ka](http://www.cgd.ucar.edu/ccr/TraCE/) Simulation of Transient Climate Evolution over the last 21,000 years, using the grid cell closest to core `r sedproxy::N41.proxy.details$Core`. Seasonality of *G.ruber*, the Foraminifera for which test Mg/Ca ratios were measured, is taken from the model of Fraile et al (2008). Sediment accumulation rates were estimated from the depth and age data associated with core `r sedproxy::N41.proxy.details$Core`, with a minimum rate of 0.2 * the mean rate.
+
+
+**The `r sedproxy::N41.proxy.details$Core` core**
+
+```{r message = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+library(sedproxy)
+```
+
+
+```{r}
+knitr::kable(N41.proxy.details %>% tidyr::gather())
+```
+
+
+**Modelled climate signal**
+
+
+```{r}
+knitr::kable(N41.t21k.climate[1:5,])
+```
+
+**Actual proxy record**
+
+
+```{r}
+kable(head(N41.proxy))
+```
+
+## Function `ProxyToProxyClim`
+
+`ProxyToProxyClim` is the main function in package `sedproxy`. It simulates a sediment archived proxy from an assumed true climate signal, the sediment accumulation rate, seasonality of the encoding organism/process, and the number of samples per timepoint.
+
+
+```{r , fig.show='hold'}
+PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate, 
+                timepoints = N41.proxy$Published.age,
+                seas.prod = N41.G.ruber.seasonality,
+                sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
+                meas.noise = 0.46, n.samples = 30,
+                n.replicates = 10)
+```
+
+
+```{r}
+names(PFM)
+```
+
+```{r}
+head(PFM$simulated.proxy)
+```
+
+**Simple plotting**
+
+```{r fig.width=6}
+plot.df <- PFM$simulated.proxy %>% 
+  select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
+         proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
+  gather(Stage, Temperature, -timepoints) %>% 
+  mutate(Age = timepoints,
+         Temperature = Temperature - 273.15) 
+
+plot.df %>% 
+  ggplot(aes(x = Age, y = Temperature, colour = Stage)) +
+  geom_line()
+```
+
+
+
+
+
+
+**The 10 replicates of the final simulated proxy**
+
+```{r}
+head(PFM$everything$proxy.bt.sb.sampYM.b.n)
+```
+
+
+
+## Literature cited
+
+Fraile, I., M. Schulz, S. Mulitza, and M. Kucera. “Predicting the Global Distribution of Planktonic Foraminifera Using a Dynamic Ecosystem Model.” Biogeosciences 5, no. 3 (2008): 891–911.
+
+
+Shakun, Jeremy D., Peter U. Clark, Feng He, Shaun A. Marcott, Alan C. Mix, Zhengyu Liu, Bette Otto-Bliesner, Andreas Schmittner, and Edouard Bard. 2012. “Global Warming Preceded by Increasing Carbon Dioxide Concentrations during the Last Deglaciation.” Nature 484 (7392): 49–54. doi:10.1038/nature10915.
+

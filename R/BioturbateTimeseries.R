@@ -84,7 +84,7 @@ BioturbateTimeseries <- function(tss,
       ImpulseResponse(z, biowidth_timesteps, z0 = index.time0-1) #impulse response in year unit
     weights <- (weights / sum(weights))
 
-    bioturbated <- filter(tss, weights, circular = TRUE)
+    bioturbated <- stats::filter(tss, weights, circular = TRUE)
     result$data <- bioturbated[index.time]
     result$time <- c(time(tss))[index.time]
     } else if (is.finite(n_samples)) {
