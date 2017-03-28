@@ -1,9 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-vignettes/*.R
 
 ^.*\_cache
 ^.*\_files
-^.*\docs
-^inst
-^extdata
+^inst/extdata
+^docs$
