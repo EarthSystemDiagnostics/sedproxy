@@ -1,5 +1,47 @@
-#' Title
-#'
+#' Simulate sediment archived proxy records from an "assumed true" climate signal.
+#' 
+#' @md
+#' @description \code{ClimToProxyClim} simulates the creation of a proxy climate record
+#'   from a climate signal that is assumed to be true. 
+#'   
+#'   The following aspects of proxy creation are currently modelled.
+#'   
+#'   1. Seasonal bias in the encoding of a proxy due to the interaction between
+#'   climate seasonality and any seasonality in the life cycle of the organism
+#'   encoding the climate signal (e.g. Foraminifera for Mg/Ca ratios, or
+#'   phytoplankton for Alkenone unsaturation indices).
+#'   
+#'   2. Bioturbation of the sediment archived proxy. For each requested
+#'   timepoint, the simulated proxy consists of a weighted mean of the climate
+#'   signal over a time window that is determined by the sediment accumulation
+#'   rate \{sed.acc.rate} and the bioturbation depth \{bio.depth} which defaults
+#'   to 0.1 m. The weights are given by the depth solution to an impulse
+#'   response function (Berger and Heath, 1968).
+#'   
+#'   3. Aliasing of seasonal and inter-annual climate variation onto to
+#'   bioturbated (smoothed) signal.    
+#'   For proxies measured on a small number of discrete particles both seasonal
+#'   and inter-annual climate variation is aliased into the proxy record. For
+#'   example, Foraminifera have a life-cycle of approximately 1 month, so they
+#'   record something like the mean temperature from a single month. If Mg/Ca is
+#'   measured on e.g. \code{n.samples} = 30 individuals, the measured proxy
+#'   signal is a mean of 30 distinct monthly mean temperatures and will thus be
+#'   a stochastic sample of the true mean climate.
+#'   
+#'   4. Measurement noise/error is added as a pure Gaussian white noise
+#'   process with mean = 0, standard deviation = \code{meas.noise}.
+#'   
+#'   5. Additionally, a random *bias* can be added to each realisation of a
+#'   proxy record. Bias is simulated as a Gaussian random variable with mean =
+#'   0, standard deviation = \code{meas.bias}. The same randomly generated bias
+#'   value is applied to all timepoints in a simulated proxy record, when
+#'   multiple replicate proxies are generated (\{n.replicates} > 1) each
+#'   replicate has a different bias applied.
+#'   
+#'   \code{ClimToProxyClim} returns one or more replicates of the final simulated proxy
+#'   as well as several intermediate stages (see section **Value** below).
+#'   
+#'   
 #' @param clim.signal The "assumed true" climate signal, e.g. climate model output or
 #'   instrumental record. A years x 12 (months) matrix of temperatures.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
@@ -16,17 +58,29 @@
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 #'   defaults to zero.
-#' @param n.samples Number of e.g. foraminifera sampled per timepoint
+#' @param n.samples Number of e.g. Foraminifera sampled per timepoint
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
 #'
-#' @return a list with three elements: a dataframe \code{simulated.proxy}, a
-#'   dataframe \code{smoothed.signal}, and a list \code{everything}
-#'
-#'   The dataframe \code{simulated.proxy} contains a single realisation of the
-#'   final forward modelled proxy as well as the intermediate stages and the
-#'   original climate signal at the requested timepoints.
-#'
+#' @return \code{ClimToProxyClim} returns a list with three elements:
+#' 
+#'  1. a dataframe \code{simulated.proxy}
+#'  2. a dataframe \code{smoothed.signal}
+#'  3. a list \code{everything}
+#'  
+#'   
+#' The dataframe \code{simulated.proxy} contains a single realisation of the 
+#' final forward modelled proxy, as well as the intermediate stages and the 
+#' original climate signal at the requested timepoints.
+#' 
+#' The dataframe \code{smoothed.signal} contains 100 year means of the original climate signal. This 
+#' is useful for plotting.
+#' 
+#' The list \code{everything} contains all of the above, but where a stage contains stochastically 
+#' generated noise, rather than a vector, a \code{timepoints} **by** \code{n.replicates} matrix is returned.
+#' 
+#' **Named elements of the returned proxy record:**
+#' 
 #' \tabular{ll}{
 #' \bold{Variable} \tab \bold{Description} \cr
 #' timepoints                 \tab requested timepoints                                                                                                               \cr
@@ -44,13 +98,6 @@
 #' proxy.bt.sb.sampYM.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
 #' simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite
 #'}
-#'
-#'   The dataframe \code{smoothed.signal} contains the original climate signal
-#'   at 100 year resolution.
-#'
-#'   The list \code{everything} contains all of the above, but if n.replicates >
-#'   1, stages of the forward model containing stochastic elements are returned
-#'   as matrices with \bold{n.timepoints} rows and \bold{n.replicates} columns.
 #'
 #' @importFrom dplyr tbl_df
 #' @export
