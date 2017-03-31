@@ -13,6 +13,8 @@ vignettes/*.R
 *_cache
 *.pdf
 *.html
+*.bbl
+*.tex
 
 *Rprof.out
 
