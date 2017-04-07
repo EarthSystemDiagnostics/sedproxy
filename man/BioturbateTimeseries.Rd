@@ -44,4 +44,3 @@ result <- BioturbateTimeseries(tss, timepoints, acc_rate = 0.5, n_samples = 30)
 plot(tss)
 lines(data ~ time, data = result, col = "Red")
 }
-

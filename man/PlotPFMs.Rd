@@ -21,4 +21,3 @@ PlotPFMs(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks,
 \description{
 Plot forward modelled sedimentary proxies
 }
-

@@ -34,4 +34,3 @@ plot(z, ImpulseResponse(z, d), type = "l")
 abline(v = d)
 
 }
-

@@ -29,4 +29,3 @@ gg <- facet_wrap_paginate_auto(uk37.plots.2,
         nrow = 4, ncol = 3)
 gg
 }
-
