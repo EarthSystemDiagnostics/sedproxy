@@ -32,4 +32,3 @@ due to seasonality in the abundance of the sampled organism.
 \examples{
 
 }
-

@@ -12,4 +12,3 @@ MakePFMDataframe(PFM)
 \description{
 Convert "everything" part of output from ClimToProxyClim to dataframe
 }
-
