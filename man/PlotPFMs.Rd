@@ -4,17 +4,31 @@
 \alias{PlotPFMs}
 \title{Plot forward modelled sedimentary proxies}
 \usage{
-PlotPFMs(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks,
-  levl.labels)
+PlotPFMs(PFMs, breaks = c("clim.signal.100", "clim.timepoints.50", "proxy.bt",
+  "proxy.bt.sb", "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
+  "proxy.bt.sb.sampYM.b.n", "Actual proxy"),
+  colr.palette = structure(c("#018571", "#018571", "Green", "Gold", "#7570b3",
+  "#d95f02", "#7570b3", "Red"), .Names = c("clim.signal.100",
+  "clim.timepoints.50", "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
+  "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
+  alpha.palette = structure(c(1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5), .Names =
+  c("clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+  "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n",
+  "Actual proxy")), levl.labels = structure(c(" Modelled climate",
+  " Modelled climate", "+Bioturbation", "+Seasonality", "+Measurement error",
+  "+Finite sample", "+Measurement error", "Actual proxy"), .Names =
+  c("clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+  "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n",
+  "Actual proxy")))
 }
 \arguments{
 \item{PFMs}{A dataframe of forward modelled proxies}
 
+\item{breaks}{Proxy stages for legend, in order}
+
 \item{colr.palette}{Colours for the proxy stages}
 
 \item{alpha.palette}{Alpha levels for the proxy stages}
-
-\item{breaks}{Proxy stages for legend, in order}
 
 \item{levl.labels}{Labels for the proxy stages, in order}
 }

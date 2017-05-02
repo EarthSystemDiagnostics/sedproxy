@@ -1,19 +1,38 @@
 #' Plot forward modelled sedimentary proxies
 #'
 #' @param PFMs A dataframe of forward modelled proxies
+#' @param breaks Proxy stages for legend, in order
 #' @param colr.palette Colours for the proxy stages
 #' @param alpha.palette Alpha levels for the proxy stages
-#' @param breaks Proxy stages for legend, in order
 #' @param levl.labels Labels for the proxy stages, in order
 #'
 #' @return
 #' @export
 #'
 #' @examples
-PlotPFMs <- function(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks, levl.labels){
+PlotPFMs <- function(PFMs,
+                     breaks = c("clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+                                "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"),
+                     #dfc27d
+                     colr.palette = structure(c("#018571", "#018571", "Green", "Gold", "#7570b3", "#d95f02", "#7570b3", "Red"),
+                                               .Names = c("clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+                                                          "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
+                                                          "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
+                     alpha.palette = structure(c(1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5),
+                                                .Names = c("clim.signal.100", "clim.timepoints.50",
+                                                           "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
+                                                           "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
+                     levl.labels = structure(c(" Modelled climate", " Modelled climate", "+Bioturbation",
+                                                "+Seasonality", "+Measurement error",
+                                                "+Finite sample", "+Measurement error", "Actual proxy"),
+                                              .Names = c("clim.signal.100", "clim.timepoints.50",
+                                                         "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
+                                                         "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"))
+){
 
   rug.dat <- filter(PFMs, Stage %in% c("proxy.bt"),
                     replicate == 1)
+
 
   p <- ggplot(data = PFMs, aes(x = Age / 1000, y = Temperature,
                                colour = Stage, alpha = Stage)) +
@@ -21,6 +40,7 @@ PlotPFMs <- function(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks, le
     geom_line(aes(linetype = factor(replicate))) +
     facet_wrap(~ Location + ID.no, scales = "free_y",
                labeller = labeller(.multi_line = FALSE), ncol = 4) +
+    theme_bw() +
     theme(legend.position = "top") +
     guides(colour = guide_legend(label.position = "top",
                                  label.hjust = 1,
@@ -36,7 +56,7 @@ PlotPFMs <- function(PFMs, colr.palette = NULL, alpha.palette = NULL, breaks, le
     p <- p + scale_colour_manual("", values = colr.palette, breaks = breaks, labels = levl.labels)
 
   if (is.null(alpha.palette) == FALSE)
-    p <- p + scale_alpha_manual("", values = levl.alphas, breaks = levl.names,
+    p <- p + scale_alpha_manual("", values = alpha.palette, breaks = breaks,
                                 labels = levl.labels)
 
   return(p)
