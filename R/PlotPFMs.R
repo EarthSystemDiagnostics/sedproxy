@@ -41,7 +41,7 @@ PlotPFMs <- function(PFMs,
     facet_wrap(~ Location + ID.no, scales = "free_y",
                labeller = labeller(.multi_line = FALSE), ncol = 4) +
     theme_bw() +
-    theme(legend.position = "top") +
+    theme(legend.position = "top", panel.grid.minor = element_blank()) +
     guides(colour = guide_legend(label.position = "top",
                                  label.hjust = 1,
                                  nrow = 1,
@@ -84,7 +84,7 @@ PlotPFMs <- function(PFMs,
 #'         nrow = 4, ncol = 3)
 #' gg
 facet_wrap_paginate_auto <- function(ggplot.obj, facets, nrow, ncol){
-  n.pages <- ceiling(length(ggplot_build(ggplot.obj)$layout$panel_layout$PANEL) / (nrow * ncol))
+  n.pages <- ceiling(length(ggplot_build(ggplot.obj)$layout$panel_params) / (nrow * ncol))
   ggs <- lapply(1:n.pages, function(i) {
     ggplot.obj +
       ggforce::facet_wrap_paginate(facets,
