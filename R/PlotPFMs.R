@@ -83,14 +83,30 @@ PlotPFMs <- function(PFMs,
 #'         facets = formula(~Location + Proxy + ID.no),
 #'         nrow = 4, ncol = 3)
 #' gg
-facet_wrap_paginate_auto <- function(ggplot.obj, facets, nrow, ncol){
-  n.pages <- ceiling(length(ggplot_build(ggplot.obj)$layout$panel_params) / (nrow * ncol))
+facet_wrap_paginate_auto <- function(ggplot.obj, facets, nrow, ncol) {
+  built.plot <- ggplot_build(ggplot.obj)
+
+  # Make robust to changes in built ggplot object stucture in dev vs. CRAN version
+  if (is.null(built.plot$layout$panel_params) == FALSE) {
+    n.pages <-
+      ceiling(length(built.plot$layout$panel_params) / (nrow * ncol))
+  } else if (is.null(built.plot$layout$panel_ranges) == FALSE) {
+    n.pages <-
+      ceiling(length(built.plot$layout$panel_ranges) / (nrow * ncol))
+  } else{
+    stop("Structure of built ggplot object has changed")
+  }
+
   ggs <- lapply(1:n.pages, function(i) {
     ggplot.obj +
-      ggforce::facet_wrap_paginate(facets,
-                                   scales = "free_y",
-                                   labeller = labeller(.multi_line = FALSE),
-                                   ncol = ncol, nrow = nrow, page = i)}
-  )
+      ggforce::facet_wrap_paginate(
+        facets,
+        scales = "free_y",
+        labeller = labeller(.multi_line = FALSE),
+        ncol = ncol,
+        nrow = nrow,
+        page = i
+      )
+  })
   return(ggs)
 }
