@@ -35,7 +35,7 @@ library(sedproxy)
 
 
 ```{r}
-knitr::kable(N41.proxy.details %>% tidyr::gather())
+knitr::kable(N41.proxy.details %>% tidyr::gather(), format = "markdown")
 ```
 
 
@@ -43,14 +43,14 @@ knitr::kable(N41.proxy.details %>% tidyr::gather())
 
 
 ```{r}
-knitr::kable(N41.t21k.climate[1:5,])
+knitr::kable(N41.t21k.climate[1:5,], format = "markdown")
 ```
 
 **Actual proxy record**
 
 
 ```{r}
-kable(head(N41.proxy))
+kable(head(N41.proxy), format = "markdown")
 ```
 
 ## Function `ProxyToProxyClim`
