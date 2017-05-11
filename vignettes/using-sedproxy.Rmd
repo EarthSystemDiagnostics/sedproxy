@@ -67,7 +67,7 @@ head(PFM$simulated.proxy)
 
 **Simple plotting**
 
-```{r fig.width=6}
+```{r default_plot, fig.width=6}
 plot.df <- PFM$simulated.proxy %>% 
   select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
          proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
@@ -76,7 +76,7 @@ plot.df <- PFM$simulated.proxy %>%
          Temperature = Temperature - 273.15) 
 
 plot.df %>% 
-  ggplot(aes(x = Age, y = Temperature, colour = Stage)) +
+ggplot(aes(x = Age, y = Temperature, colour = Stage)) +
   geom_line()
 ```
 
