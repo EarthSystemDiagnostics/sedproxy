@@ -30,9 +30,14 @@ PlotPFMs <- function(PFMs,
                                                          "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"))
 ){
 
-  rug.dat <- filter(PFMs, Stage %in% c("proxy.bt"),
-                    replicate == 1)
-
+  if(exists("replicate", where = PFMs)){
+    rug.dat <- filter(PFMs, Stage %in% c("proxy.bt"),
+                      replicate == 1)
+  }else{
+    rug.dat <- filter(PFMs, Stage %in% c("proxy.bt"))
+    rug.dat$replicate <- 1
+    PFMs$replicate <- 1
+  }
 
   p <- ggplot(data = PFMs, aes(x = Age / 1000, y = Temperature,
                                colour = Stage, alpha = Stage)) +
