@@ -39,6 +39,14 @@ PlotPFMs <- function(PFMs,
     PFMs$replicate <- 1
   }
 
+  if(exists("Location", where = PFMs)==FALSE){
+    PFMs$Location <- ""
+    }
+
+  if(exists("ID.no", where = PFMs)==FALSE){
+    PFMs$ID.no <- ""
+  }
+
   p <- ggplot(data = PFMs, aes(x = Age / 1000, y = Temperature,
                                colour = Stage, alpha = Stage)) +
     geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +

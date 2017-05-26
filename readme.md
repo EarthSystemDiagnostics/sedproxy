@@ -169,7 +169,7 @@ plot.df <- PFM$simulated.proxy %>%
          Temperature = Temperature - 273.15) 
 
 plot.df %>% 
-  # Need to add Location and ID.no for plotting function 
+  # Add Location and ID.no for plotting function 
   mutate(Location = "Sulu Sea", 
          ID.no = "N41") %>% 
   PlotPFMs(.)
