@@ -67,6 +67,8 @@ kable(head(N41.proxy), format = "markdown")
 
 
 ```{r , fig.show='hold'}
+set.seed(26052017)
+
 PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate, 
                 timepoints = N41.proxy$Published.age,
                 seas.prod = N41.G.ruber.seasonality,
