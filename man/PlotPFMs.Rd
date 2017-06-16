@@ -4,22 +4,23 @@
 \alias{PlotPFMs}
 \title{Plot forward modelled sedimentary proxies}
 \usage{
-PlotPFMs(PFMs, breaks = c("clim.signal.100", "clim.timepoints.50", "proxy.bt",
-  "proxy.bt.sb", "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
-  "proxy.bt.sb.sampYM.b.n", "Actual proxy"),
-  colr.palette = structure(c("#018571", "#018571", "Green", "Gold", "#7570b3",
-  "#d95f02", "#7570b3", "Red"), .Names = c("clim.signal.100",
+PlotPFMs(PFMs, breaks = c("clim.signal.ann", "clim.signal.100",
   "clim.timepoints.50", "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
-  "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
-  alpha.palette = structure(c(1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5), .Names =
-  c("clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+  "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"),
+  colr.palette = structure(c("#018571", "#018571", "#018571", "Green", "Gold",
+  "#7570b3", "#d95f02", "#7570b3", "Red"), .Names = c("clim.signal.ann",
+  "clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
   "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n",
-  "Actual proxy")), levl.labels = structure(c(" Modelled climate",
+  "Actual proxy")), alpha.palette = structure(c(1, 1, 1, 1, 1, 0.5, 0.5, 0.5,
+  0.5), .Names = c("clim.signal.ann", "clim.signal.100", "clim.timepoints.50",
+  "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
+  "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
+  levl.labels = structure(c(" Modelled climate", " Modelled climate",
   " Modelled climate", "+Bioturbation", "+Seasonality", "+Measurement error",
   "+Finite sample", "+Measurement error", "Actual proxy"), .Names =
-  c("clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
-  "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n",
-  "Actual proxy")))
+  c("clim.signal.ann", "clim.signal.100", "clim.timepoints.50", "proxy.bt",
+  "proxy.bt.sb", "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
+  "proxy.bt.sb.sampYM.b.n", "Actual proxy")))
 }
 \arguments{
 \item{PFMs}{A dataframe of forward modelled proxies}
