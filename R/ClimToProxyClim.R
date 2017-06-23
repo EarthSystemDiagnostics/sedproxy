@@ -45,6 +45,8 @@
 #' @param clim.signal The "assumed true" climate signal, e.g. climate model output or
 #'   instrumental record. A years x 12 (months) matrix of temperatures.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
+#' @param smoothed.signal.res The resolution, in years, of the smoothed version of the input
+#'  climate signal returned for plotting. This does not affect the model. 
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
 #'   archived in the proxy. Either a vector of 12 values or a matrix of the same
 #'   dimensions as clim.signal. Defaults to a uniform seasonal distribution.
@@ -84,6 +86,7 @@
 #' \tabular{ll}{
 #' \bold{Variable} \tab \bold{Description} \cr
 #' timepoints                 \tab requested timepoints                                                                                                               \cr
+#' clim.timepoints.1000 \tab 1000 year means of climate signal evaluated at the requested timepoints                                                             \cr
 #' clim.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
 #' clim.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
 #' proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
@@ -105,6 +108,7 @@
 #' @examples
 ClimToProxyClim <- function(clim.signal,
                             timepoints,
+                            smoothed.signal.res = 100,
                             seas.prod = rep(1, 12),
                             bio.depth = 0.1,
                             sed.acc.rate = 5e-04,
@@ -134,9 +138,9 @@ ClimToProxyClim <- function(clim.signal,
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
   }
 
-  # At 100 yr intervals
-  timepoints.100 <- seq(1, max.clim.signal.i, by = 100)
-  clim.signal.100 <- ChunkMatrix(timepoints.100, 100, clim.signal)
+  # Create smoothed climate signal
+  timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
+  clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res, clim.signal)
 
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
@@ -270,6 +274,7 @@ ClimToProxyClim <- function(clim.signal,
   # Calculate chunked climate at timepoints
   # get 100 year clim.average at timepoints -------
 
+  out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, clim.signal)
   out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, clim.signal)
   out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, clim.signal)
 
@@ -279,8 +284,8 @@ ClimToProxyClim <- function(clim.signal,
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
   out$sed.acc.rate = sed.acc.rate
-  out$timepoints.100 = timepoints.100
-  out$clim.signal.100 = clim.signal.100
+  out$timepoints.smoothed = timepoints.smoothed
+  out$clim.signal.smoothed = clim.signal.smoothed
 
 
 
@@ -288,6 +293,7 @@ ClimToProxyClim <- function(clim.signal,
   simulated.proxy <-
     dplyr::tbl_df(out[c(
       "timepoints",
+      "clim.timepoints.1000",
       "clim.timepoints.100",
       "clim.timepoints.50",
       "proxy.bt",
@@ -309,9 +315,15 @@ ClimToProxyClim <- function(clim.signal,
 
 
   smoothed.signal <- dplyr::tbl_df(out[c(
-    "timepoints.100",
-    "clim.signal.100"
-    )])
+    "timepoints.smoothed",
+    "clim.signal.smoothed"
+    )]) 
+    
+  smoothed.signal <- rename(smoothed.signal,
+                            timepoints = timepoints.smoothed,
+                            value = clim.signal.smoothed)
+  
+  smoothed.signal$Stage <- "clim.signal.smoothed"
 
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
@@ -394,6 +406,14 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
+  clim2a <- data.frame(
+    replicate = 1,
+    Age = PFM$timepoints,
+    Stage = "clim.timepoints.1000",
+    value = PFM$clim.timepoints.1000,
+    stringsAsFactors = FALSE) %>%
+    tbl_df()
+  
   clim2 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -412,13 +432,13 @@ MakePFMDataframe <- function(PFM){
 
   clim3 <- data.frame(
     replicate = 1,
-    Age = PFM$timepoints.100,
-    Stage = "clim.signal.100",
-    value = PFM$clim.signal.100,
+    Age = PFM$timepoints.smoothed,
+    Stage = "clim.signal.smoothed",
+    value = PFM$clim.signal.smoothed,
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
-  rtn <- bind_rows(df, bt.inf,  sig.inf, clim, clim2, clim2b, clim3)
+  rtn <- bind_rows(df, bt.inf,  sig.inf, clim, clim2a, clim2, clim2b, clim3)
 
   return(rtn)
 }

@@ -11,21 +11,21 @@
 #'
 #' @examples
 PlotPFMs <- function(PFMs,
-                     breaks = c("clim.signal.ann", "clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+                     breaks = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
                                 "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"),
                      #dfc27d
-                     colr.palette = structure(c("#018571", "#018571", "#018571", "Green", "Gold", "#7570b3", "#d95f02", "#7570b3", "Red"),
-                                               .Names = c("clim.signal.ann", "clim.signal.100", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+                     colr.palette = structure(c("#018571", "#018571","#018571", "#018571", "Green", "Gold", "#7570b3", "#d95f02", "#7570b3", "Red"),
+                                               .Names = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
                                                           "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
                                                           "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
-                     alpha.palette = structure(c(1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5),
-                                                .Names = c("clim.signal.ann", "clim.signal.100", "clim.timepoints.50",
+                     alpha.palette = structure(c(1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5),
+                                                .Names = c("clim.signal.ann","clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50",
                                                            "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
                                                            "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy")),
-                     levl.labels = structure(c(" Modelled climate", " Modelled climate", " Modelled climate", "+Bioturbation",
+                     levl.labels = structure(c(" Modelled climate", " Modelled climate", " Modelled climate", " Modelled climate", "+Bioturbation",
                                                 "+Seasonality", "+Measurement error",
                                                 "+Finite sample", "+Measurement error", "Actual proxy"),
-                                              .Names = c("clim.signal.ann", "clim.signal.100", "clim.timepoints.50",
+                                              .Names = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50",
                                                          "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
                                                          "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"))
 ){

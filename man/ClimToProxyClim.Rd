@@ -4,15 +4,18 @@
 \alias{ClimToProxyClim}
 \title{Simulate sediment archived proxy records from an "assumed true" climate signal.}
 \usage{
-ClimToProxyClim(clim.signal, timepoints, seas.prod = rep(1, 12),
-  bio.depth = 0.1, sed.acc.rate = 5e-04, meas.noise = 0, meas.bias = 0,
-  n.samples = Inf, n.replicates = 1)
+ClimToProxyClim(clim.signal, timepoints, smoothed.signal.res = 100,
+  seas.prod = rep(1, 12), bio.depth = 0.1, sed.acc.rate = 5e-04,
+  meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or
 instrumental record. A years x 12 (months) matrix of temperatures.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
+
+\item{smoothed.signal.res}{The resolution, in years, of the smoothed version of the input
+climate signal returned for plotting. This does not affect the model.}
 
 \item{seas.prod}{The seasonal pattern of productivity for the organism(s)
 archived in the proxy. Either a vector of 12 values or a matrix of the same
@@ -60,6 +63,7 @@ generated noise, rather than a vector, a \code{timepoints} \strong{by} \code{n.r
 \tabular{ll}{
 \bold{Variable} \tab \bold{Description} \cr
 timepoints                 \tab requested timepoints                                                                                                               \cr
+clim.timepoints.1000 \tab 1000 year means of climate signal evaluated at the requested timepoints                                                             \cr
 clim.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
 clim.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
 proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
