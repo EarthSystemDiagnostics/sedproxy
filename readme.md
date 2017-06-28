@@ -17,7 +17,7 @@ if (!require("devtools")) {
   install.packages("devtools")
 }
 
-devtools::install_bitbucket("ecus/sedproxy", build_vignettes = TRUE)
+devtools::install_bitbucket("ecus/sedproxy")
 ```
 
 ## Example data
