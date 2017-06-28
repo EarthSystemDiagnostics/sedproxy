@@ -14,8 +14,9 @@ instrumental record. A years x 12 (months) matrix of temperatures.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{smoothed.signal.res}{The resolution, in years, of the smoothed version of the input
-climate signal returned for plotting. This does not affect the model.}
+\item{smoothed.signal.res}{The resolution, in years, of the smoothed
+(block averaged) version of the input climate signal returned for plotting.
+This does not affect what the proxy model uses as input.}
 
 \item{seas.prod}{The seasonal pattern of productivity for the organism(s)
 archived in the proxy. Either a vector of 12 values or a matrix of the same
@@ -52,8 +53,10 @@ The dataframe \code{simulated.proxy} contains a single realisation of the
 final forward modelled proxy, as well as the intermediate stages and the
 original climate signal at the requested timepoints.
 
-The dataframe \code{smoothed.signal} contains 100 year means of the original climate signal. This
-is useful for plotting.
+The dataframe \code{smoothed.signal} contains a block averaged version the
+input climate signal, defaults to 100 year means but this is set by the parameter
+smoothed.signal.res. This is useful for plotting against the resulting simulated
+proxy.
 
 The list \code{everything} contains all of the above, but where a stage contains stochastically
 generated noise, rather than a vector, a \code{timepoints} \strong{by} \code{n.replicates} matrix is returned.

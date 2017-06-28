@@ -45,8 +45,9 @@
 #' @param clim.signal The "assumed true" climate signal, e.g. climate model output or
 #'   instrumental record. A years x 12 (months) matrix of temperatures.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
-#' @param smoothed.signal.res The resolution, in years, of the smoothed version of the input
-#'  climate signal returned for plotting. This does not affect the model. 
+#' @param smoothed.signal.res The resolution, in years, of the smoothed
+#' (block averaged) version of the input climate signal returned for plotting.
+#' This does not affect what the proxy model uses as input.
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
 #'   archived in the proxy. Either a vector of 12 values or a matrix of the same
 #'   dimensions as clim.signal. Defaults to a uniform seasonal distribution.
@@ -75,8 +76,10 @@
 #' final forward modelled proxy, as well as the intermediate stages and the
 #' original climate signal at the requested timepoints.
 #'
-#' The dataframe \code{smoothed.signal} contains 100 year means of the original climate signal. This
-#' is useful for plotting.
+#' The dataframe \code{smoothed.signal} contains a block averaged version the
+#' input climate signal, defaults to 100 year means but this is set by the parameter
+#' smoothed.signal.res. This is useful for plotting against the resulting simulated
+#' proxy.
 #'
 #' The list \code{everything} contains all of the above, but where a stage contains stochastically
 #' generated noise, rather than a vector, a \code{timepoints} **by** \code{n.replicates} matrix is returned.
@@ -317,12 +320,12 @@ ClimToProxyClim <- function(clim.signal,
   smoothed.signal <- dplyr::tbl_df(out[c(
     "timepoints.smoothed",
     "clim.signal.smoothed"
-    )]) 
-    
+    )])
+
   smoothed.signal <- rename(smoothed.signal,
                             timepoints = timepoints.smoothed,
                             value = clim.signal.smoothed)
-  
+
   smoothed.signal$Stage <- "clim.signal.smoothed"
 
   return(list(simulated.proxy=simulated.proxy,
@@ -413,7 +416,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$clim.timepoints.1000,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-  
+
   clim2 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
