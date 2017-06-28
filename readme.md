@@ -17,7 +17,7 @@ if (!require("devtools")) {
   install.packages("devtools")
 }
 
-devtools::install_bitbucket("ecus/sedproxy")
+devtools::install_bitbucket("ecus/sedproxy", build_vignettes = TRUE)
 ```
 
 ## Example data
@@ -141,20 +141,20 @@ head(PFM$simulated.proxy)
 ```
 
 ```
-## # A tibble: 6 × 14
-##   timepoints clim.timepoints.100 clim.timepoints.50 proxy.bt proxy.bt.sb
-##        <dbl>               <dbl>              <dbl>    <dbl>       <dbl>
-## 1   4334.286            299.2912           299.2918 299.2828    299.0861
-## 2   4527.429            299.3389           299.3384 299.3079    299.1140
-## 3   4575.714            299.3670           299.3686 299.3143    299.1216
-## 4   4720.571            299.3536           299.3513 299.3339    299.1414
-## 5   4913.714            299.3090           299.3187 299.3384    299.1478
-## 6   4994.400            299.2964           299.2696 299.3334    299.1442
-## # ... with 9 more variables: sed.acc.rate <dbl>, smoothing.width <dbl>,
-## #   proxy.bt.sb.sampY <dbl>, proxy.bt.sb.sampYM <dbl>,
-## #   proxy.bt.sb.inf.b <dbl>, proxy.bt.sb.inf.b.n <dbl>,
-## #   proxy.bt.sb.sampYM.b <dbl>, proxy.bt.sb.sampYM.b.n <dbl>,
-## #   simulated.proxy <dbl>
+## # A tibble: 6 x 15
+##   timepoints clim.timepoints.1000 clim.timepoints.100 clim.timepoints.50
+##        <dbl>                <dbl>               <dbl>              <dbl>
+## 1   4334.286             299.2869            299.2912           299.2918
+## 2   4527.429             299.3024            299.3389           299.3384
+## 3   4575.714             299.3094            299.3670           299.3686
+## 4   4720.571             299.3206            299.3536           299.3513
+## 5   4913.714             299.3396            299.3090           299.3187
+## 6   4994.400             299.3475            299.2964           299.2696
+## # ... with 11 more variables: proxy.bt <dbl>, proxy.bt.sb <dbl>,
+## #   sed.acc.rate <dbl>, smoothing.width <dbl>, proxy.bt.sb.sampY <dbl>,
+## #   proxy.bt.sb.sampYM <dbl>, proxy.bt.sb.inf.b <dbl>,
+## #   proxy.bt.sb.inf.b.n <dbl>, proxy.bt.sb.sampYM.b <dbl>,
+## #   proxy.bt.sb.sampYM.b.n <dbl>, simulated.proxy <dbl>
 ```
 
 **Simple plotting**
