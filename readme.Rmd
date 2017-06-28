@@ -61,9 +61,9 @@ kable(head(N41.proxy), format = "markdown")
 
 *******
 
-## Function `ProxyToProxyClim`
+## Function `ClimToProxyClim`
 
-`ProxyToProxyClim` is the main function in package `sedproxy`. It simulates a sediment archived proxy from an assumed true climate signal, the sediment accumulation rate, seasonality of the encoding organism/process, and the number of samples per timepoint.
+`ClimToProxyClim` is the main function in package `sedproxy`. It simulates a sediment archived proxy from an assumed true climate signal, the sediment accumulation rate, seasonality of the encoding organism/process, and the number of samples per timepoint.
 
 
 ```{r , fig.show='hold'}
