@@ -21,7 +21,7 @@ if (!require("devtools")) {
   install.packages("devtools")
 }
 
-devtools::install_bitbucket("ecus/sedproxy")
+devtools::install_bitbucket("ecus/sedproxy", build_vignettes = TRUE)
 ```
 
 ## Example data
@@ -88,7 +88,7 @@ head(PFM$simulated.proxy)
 
 **Simple plotting**
 
-```{r default_plot, fig.width=6}
+```{r default_plot, fig.width=6, fig.height=5.5}
 plot.df <- PFM$simulated.proxy %>% 
   select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
          proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
