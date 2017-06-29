@@ -322,7 +322,7 @@ ClimToProxyClim <- function(clim.signal,
     "clim.signal.smoothed"
     )])
 
-  smoothed.signal <- rename(smoothed.signal,
+  smoothed.signal <- dplyr::rename(smoothed.signal,
                             timepoints = timepoints.smoothed,
                             value = clim.signal.smoothed)
 
@@ -381,7 +381,7 @@ MakePFMDataframe <- function(PFM){
   df$Age <- PFM$timepoints
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- tbl_df(df) %>%
-    gather(Stage, value, -Age, -replicate)
+    dplyr::gather(Stage, value, -Age, -replicate)
 
   #df$proxy.bt.sb = as.vector(PFM$proxy.bt.sb)
 
@@ -441,7 +441,7 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE) %>%
     tbl_df()
 
-  rtn <- bind_rows(df, bt.inf,  sig.inf, clim, clim2a, clim2, clim2b, clim3)
+  rtn <- dplyr::bind_rows(df, bt.inf,  sig.inf, clim, clim2a, clim2, clim2b, clim3)
 
   return(rtn)
 }
