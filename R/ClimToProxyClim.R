@@ -381,7 +381,7 @@ MakePFMDataframe <- function(PFM){
   df$Age <- PFM$timepoints
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- tbl_df(df) %>%
-    dplyr::gather(Stage, value, -Age, -replicate)
+    tidyr::gather(Stage, value, -Age, -replicate)
 
   #df$proxy.bt.sb = as.vector(PFM$proxy.bt.sb)
 
