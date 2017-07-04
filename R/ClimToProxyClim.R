@@ -161,7 +161,9 @@ ClimToProxyClim <- function(clim.signal,
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
 
     # get portion of clim.signal corresponding to bioturbation window -------
-    sig.window.i.1 <- bioturb.window + timepoints[tp]
+    # shift by bio.depth.timesteps (tau in Torben's notation)
+    # to remove timeshift due to bioturbation, which would effect dating in the same way
+    sig.window.i.1 <- bioturb.window + timepoints[tp] + bio.depth.timesteps
 
     if (max(sig.window.i.1) > max.clim.signal.i) {
       warning("Bioturbation window extends below end of clim.signal")
@@ -296,6 +298,7 @@ ClimToProxyClim <- function(clim.signal,
   simulated.proxy <-
     dplyr::tbl_df(out[c(
       "timepoints",
+      "clim.signal.ann",
       "clim.timepoints.1000",
       "clim.timepoints.100",
       "clim.timepoints.50",
