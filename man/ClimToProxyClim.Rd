@@ -5,8 +5,9 @@
 \title{Simulate sediment archived proxy records from an "assumed true" climate signal.}
 \usage{
 ClimToProxyClim(clim.signal, timepoints, smoothed.signal.res = 100,
-  seas.prod = rep(1, 12), bio.depth = 0.1, sed.acc.rate = 5e-04,
-  meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
+  proxy.calibration.type = c("identity", "UK37"), seas.prod = rep(1, 12),
+  bio.depth = 0.1, sed.acc.rate = 5e-04, meas.noise = 0, meas.bias = 0,
+  n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or

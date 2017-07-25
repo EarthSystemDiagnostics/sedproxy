@@ -112,6 +112,7 @@
 ClimToProxyClim <- function(clim.signal,
                             timepoints,
                             smoothed.signal.res = 100,
+                            proxy.calibration.type = c("identity", "UK37"),
                             seas.prod = rep(1, 12),
                             bio.depth = 0.1,
                             sed.acc.rate = 5e-04,
