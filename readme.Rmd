@@ -69,8 +69,9 @@ kable(head(N41.proxy), format = "markdown")
 ```{r , fig.show='hold'}
 set.seed(26052017)
 
-PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,], 
+PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
                        timepoints = N41.proxy$Published.age,
+                       proxy.calibration.type = "identity",
                 seas.prod = N41.G.ruber.seasonality,
                 sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
                 meas.noise = 0.46, n.samples = 30,
@@ -94,7 +95,7 @@ plot.df <- PFM$simulated.proxy %>%
          proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
   gather(Stage, Temperature, -timepoints) %>% 
   mutate(Age = timepoints,
-         Temperature = Temperature - 273.15) 
+         Temperature = Temperature) 
 
 plot.df %>% 
   # Add Location and ID.no for plotting function 

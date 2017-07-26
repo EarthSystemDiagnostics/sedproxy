@@ -136,15 +136,31 @@ ClimToProxyClim <- function(clim.signal,
   max.clim.signal.i <- nrow(clim.signal)
   sig.years.i <- 1:max.clim.signal.i
 
-
-
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
   }
 
+  proxy.calibration.type <- match.arg(proxy.calibration.type)
+
+  if (proxy.calibration.type == "UK37") {
+    proxy.clim.signal <-
+      matrix(
+        calib.uk37(
+          temperature = as.vector(clim.signal),
+          point.or.sample = "point",
+          n = 1
+        )[, 1],
+        ncol = ncol(clim.signal),
+        byrow = FALSE
+      )
+    meas.noise <- as.vector(calib.uk37(temperature = meas.noise))
+  } else{
+    proxy.clim.signal <- clim.signal
+  }
+
   # Create smoothed climate signal
   timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
-  clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res, clim.signal)
+  clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res, proxy.clim.signal)
 
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
@@ -161,7 +177,7 @@ ClimToProxyClim <- function(clim.signal,
     # Check depth and time order match
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
 
-    # get portion of clim.signal corresponding to bioturbation window -------
+    # Get portion of clim.signal corresponding to bioturbation window -------
     # shift by bio.depth.timesteps (tau in Torben's notation)
     # to remove timeshift due to bioturbation, which would effect dating in the same way
     sig.window.i.1 <- bioturb.window + timepoints[tp] + bio.depth.timesteps
@@ -177,7 +193,7 @@ ClimToProxyClim <- function(clim.signal,
     stopifnot(sig.window.i > 0)
     stopifnot(max.clim.signal.i > max(sig.window.i))
 
-    clim.sig.window <- clim.signal[sig.window.i, , drop = FALSE]
+    clim.sig.window <- proxy.clim.signal[sig.window.i, , drop = FALSE]
 
 
     # Get bioturbation X no-seasonality weights matrix ---------
@@ -201,10 +217,14 @@ ClimToProxyClim <- function(clim.signal,
 
 
     # Calculate mean clim.signal -------
+
+    # Just bioturbation
     proxy.bt <- sum(biot.sig.weights * clim.sig.window)
 
+    # Bioturbation + seasonal bias
     proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
 
+    # Bioturbation + seasonal bias + aliasing
     if (is.infinite(n.samples)) {
       proxy.bt.sb.sampY <- rep(NA, n.replicates)
       proxy.bt.sb.sampYM <- rep(NA, n.replicates)
@@ -280,15 +300,15 @@ ClimToProxyClim <- function(clim.signal,
   # Calculate chunked climate at timepoints
   # get 100 year clim.average at timepoints -------
 
-  out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, clim.signal)
-  out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, clim.signal)
-  out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, clim.signal)
+  out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, proxy.clim.signal)
+  out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, proxy.clim.signal)
+  out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, proxy.clim.signal)
 
 
 
   # Add items to output list -----------
   out$timepoints = timepoints
-  out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
+  out$clim.signal.ann = rowSums(proxy.clim.signal[timepoints,  , drop = FALSE]) / ncol(proxy.clim.signal)
   out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
