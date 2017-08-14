@@ -113,8 +113,9 @@ kable(head(N41.proxy), format = "markdown")
 ```r
 set.seed(26052017)
 
-PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate, 
-                timepoints = N41.proxy$Published.age,
+PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
+                       timepoints = N41.proxy$Published.age,
+                       proxy.calibration.type = "identity",
                 seas.prod = N41.G.ruber.seasonality,
                 sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
                 meas.noise = 0.46, n.samples = 30,
@@ -123,6 +124,14 @@ PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate,
 
 ```
 ## Warning in FUN(X[[i]], ...): Window extends below end of clim.signal
+```
+
+```
+## Warning in FUN(X[[i]], ...): Bioturbation window extends below end of
+## clim.signal
+
+## Warning in FUN(X[[i]], ...): Bioturbation window extends below end of
+## clim.signal
 ```
 
 
@@ -141,20 +150,21 @@ head(PFM$simulated.proxy)
 ```
 
 ```
-## # A tibble: 6 x 15
-##   timepoints clim.timepoints.1000 clim.timepoints.100 clim.timepoints.50
-##        <dbl>                <dbl>               <dbl>              <dbl>
-## 1   4334.286             299.2869            299.2912           299.2918
-## 2   4527.429             299.3024            299.3389           299.3384
-## 3   4575.714             299.3094            299.3670           299.3686
-## 4   4720.571             299.3206            299.3536           299.3513
-## 5   4913.714             299.3396            299.3090           299.3187
-## 6   4994.400             299.3475            299.2964           299.2696
-## # ... with 11 more variables: proxy.bt <dbl>, proxy.bt.sb <dbl>,
-## #   sed.acc.rate <dbl>, smoothing.width <dbl>, proxy.bt.sb.sampY <dbl>,
-## #   proxy.bt.sb.sampYM <dbl>, proxy.bt.sb.inf.b <dbl>,
-## #   proxy.bt.sb.inf.b.n <dbl>, proxy.bt.sb.sampYM.b <dbl>,
-## #   proxy.bt.sb.sampYM.b.n <dbl>, simulated.proxy <dbl>
+## # A tibble: 6 x 16
+##   timepoints clim.signal.ann clim.timepoints.1000 clim.timepoints.100
+##        <dbl>           <dbl>                <dbl>               <dbl>
+## 1   4334.286        28.02843             27.93745            27.91754
+## 2   4527.429        27.64365             27.92579            27.90224
+## 3   4575.714        27.85549             27.92432            27.89784
+## 4   4720.571        27.78637             27.91322            27.93882
+## 5   4913.714        28.10193             27.89451            27.90577
+## 6   4994.400        28.02830             27.89069            27.88720
+## # ... with 12 more variables: clim.timepoints.50 <dbl>, proxy.bt <dbl>,
+## #   proxy.bt.sb <dbl>, sed.acc.rate <dbl>, smoothing.width <dbl>,
+## #   proxy.bt.sb.sampY <dbl>, proxy.bt.sb.sampYM <dbl>,
+## #   proxy.bt.sb.inf.b <dbl>, proxy.bt.sb.inf.b.n <dbl>,
+## #   proxy.bt.sb.sampYM.b <dbl>, proxy.bt.sb.sampYM.b.n <dbl>,
+## #   simulated.proxy <dbl>
 ```
 
 **Simple plotting**
@@ -166,7 +176,7 @@ plot.df <- PFM$simulated.proxy %>%
          proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
   gather(Stage, Temperature, -timepoints) %>% 
   mutate(Age = timepoints,
-         Temperature = Temperature - 273.15) 
+         Temperature = Temperature) 
 
 plot.df %>% 
   # Add Location and ID.no for plotting function 
@@ -187,10 +197,6 @@ plot.df %>%
 ![](readme_files/figure-html/default_plot-1.png)<!-- -->
 
 
-
-
-
-
 **The 10 replicates of the final simulated proxy**
 
 
@@ -200,20 +206,80 @@ head(PFM$everything$proxy.bt.sb.sampYM.b.n)
 
 ```
 ##          [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]
-## [1,] 300.0871 298.6103 299.1696 298.9876 299.8530 299.0882 299.4827
-## [2,] 299.0626 298.8560 298.6734 298.9378 300.3340 298.4662 298.1561
-## [3,] 299.9172 299.3151 299.1424 299.0514 298.6784 299.3591 299.1864
-## [4,] 299.3669 298.6737 299.7953 298.4092 298.8188 298.6501 299.3907
-## [5,] 299.1469 299.2656 299.0186 300.5715 299.0877 299.8759 299.4601
-## [6,] 299.0738 299.4633 298.3876 298.4741 299.8531 298.5163 299.2688
+## [1,] 28.59077 27.24216 27.85101 27.82210 28.74879 27.67043 28.23568
+## [2,] 27.38899 27.74220 27.17901 27.67571 28.97121 27.13761 26.69763
+## [3,] 28.61761 28.02140 27.98333 27.54683 27.49677 27.94618 27.71461
+## [4,] 27.67856 27.10352 28.39432 26.83184 27.48668 27.38606 28.26002
+## [5,] 27.50167 27.73817 27.50510 29.26476 27.52106 28.31881 28.45814
+## [6,] 27.83441 27.93680 26.63038 27.21916 28.40145 27.23655 27.37571
 ##          [,8]     [,9]    [,10]
-## [1,] 298.6455 299.5984 298.6452
-## [2,] 298.9418 299.2811 299.3139
-## [3,] 299.8347 298.7437 299.4163
-## [4,] 299.2372 299.2915 298.8032
-## [5,] 300.2362 299.7379 299.9058
-## [6,] 299.5232 299.5505 299.1878
+## [1,] 27.60570 28.44858 27.47944
+## [2,] 27.63600 28.05558 28.13290
+## [3,] 28.48741 27.18754 27.96795
+## [4,] 27.79744 27.76411 27.48290
+## [5,] 28.66557 28.20030 28.47205
+## [6,] 28.06648 28.03758 27.63359
 ```
+
+
+### Proxy types
+
+The initial input climate signal is converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+
+
+
+```r
+PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
+                         timepoints = N41.proxy$Published.age,
+                         proxy.calibration.type = "MgCa",
+                         seas.prod = N41.G.ruber.seasonality,
+                         sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
+                         meas.noise = 0.46, n.samples = 30,
+                         n.replicates = 10)
+```
+
+```
+## Warning in FUN(X[[i]], ...): Window extends below end of clim.signal
+```
+
+```
+## Warning in FUN(X[[i]], ...): Bioturbation window extends below end of
+## clim.signal
+
+## Warning in FUN(X[[i]], ...): Bioturbation window extends below end of
+## clim.signal
+```
+
+
+**Simple plotting**
+
+
+```r
+plot.df <- PFM_2$simulated.proxy %>% 
+  select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
+         proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
+  gather(Stage, Temperature, -timepoints) %>% 
+  mutate(Age = timepoints,
+         Temperature = Temperature) 
+
+plot.df %>% 
+  # Add Location and ID.no for plotting function 
+  mutate(Location = "Sulu Sea", 
+         ID.no = "N41") %>% 
+  PlotPFMs(.) +
+  labs(y = "MgCa")
+```
+
+```
+## Warning: Unknown or uninitialised column: 'Proxy'.
+```
+
+```
+## Scale for 'alpha' is already present. Adding another scale for 'alpha',
+## which will replace the existing scale.
+```
+
+![](readme_files/figure-html/MgCa_plot-1.png)<!-- -->
 
 
 

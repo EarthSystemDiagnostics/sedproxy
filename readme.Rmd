@@ -105,14 +105,45 @@ plot.df %>%
 ```
 
 
-
-
-
-
 **The 10 replicates of the final simulated proxy**
 
 ```{r}
 head(PFM$everything$proxy.bt.sb.sampYM.b.n)
+```
+
+
+### Proxy types
+
+The initial input climate signal is converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+
+
+```{r MgCa, fig.show='hold'}
+PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
+                         timepoints = N41.proxy$Published.age,
+                         proxy.calibration.type = "MgCa",
+                         seas.prod = N41.G.ruber.seasonality,
+                         sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
+                         meas.noise = 0.46, n.samples = 30,
+                         n.replicates = 10)
+```
+
+
+**Simple plotting**
+
+```{r MgCa_plot, fig.width=6, fig.height=5.5}
+plot.df <- PFM_2$simulated.proxy %>% 
+  select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
+         proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
+  gather(Stage, Temperature, -timepoints) %>% 
+  mutate(Age = timepoints,
+         Temperature = Temperature) 
+
+plot.df %>% 
+  # Add Location and ID.no for plotting function 
+  mutate(Location = "Sulu Sea", 
+         ID.no = "N41") %>% 
+  PlotPFMs(.) +
+  labs(y = "MgCa")
 ```
 
 

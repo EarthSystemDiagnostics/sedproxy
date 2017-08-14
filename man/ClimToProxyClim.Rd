@@ -4,16 +4,20 @@
 \alias{ClimToProxyClim}
 \title{Simulate sediment archived proxy records from an "assumed true" climate signal.}
 \usage{
-ClimToProxyClim(clim.signal, timepoints, smoothed.signal.res = 100,
-  proxy.calibration.type = c("identity", "UK37"), seas.prod = rep(1, 12),
-  bio.depth = 0.1, sed.acc.rate = 5e-04, meas.noise = 0, meas.bias = 0,
-  n.samples = Inf, n.replicates = 1)
+ClimToProxyClim(clim.signal, timepoints,
+  proxy.calibration.type = c("identity", "UK37", "MgCa"),
+  smoothed.signal.res = 100, seas.prod = rep(1, 12), bio.depth = 0.1,
+  sed.acc.rate = 5e-04, meas.noise = 0, meas.bias = 0, n.samples = Inf,
+  n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or
 instrumental record. A years x 12 (months) matrix of temperatures.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
+
+\item{proxy.calibration.type}{Type of proxy, e.g. UK37 or MgCa, to which the clim.signal is
+converted before the archiving and measurement of the proxy is simulated}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed
 (block averaged) version of the input climate signal returned for plotting.

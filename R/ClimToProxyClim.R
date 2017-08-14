@@ -45,6 +45,8 @@
 #' @param clim.signal The "assumed true" climate signal, e.g. climate model output or
 #'   instrumental record. A years x 12 (months) matrix of temperatures.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
+#' @param proxy.calibration.type Type of proxy, e.g. UK37 or MgCa, to which the clim.signal is
+#' converted before the archiving and measurement of the proxy is simulated
 #' @param smoothed.signal.res The resolution, in years, of the smoothed
 #' (block averaged) version of the input climate signal returned for plotting.
 #' This does not affect what the proxy model uses as input.
@@ -111,8 +113,8 @@
 #' @examples
 ClimToProxyClim <- function(clim.signal,
                             timepoints,
+                            proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             smoothed.signal.res = 100,
-                            proxy.calibration.type = c("identity", "UK37"),
                             seas.prod = rep(1, 12),
                             bio.depth = 0.1,
                             sed.acc.rate = 5e-04,
@@ -142,18 +144,23 @@ ClimToProxyClim <- function(clim.signal,
 
   proxy.calibration.type <- match.arg(proxy.calibration.type)
 
-  if (proxy.calibration.type == "UK37") {
+  if (proxy.calibration.type != "identity") {
+    mean.temperature <-  mean(as.vector(clim.signal))
     proxy.clim.signal <-
       matrix(
-        calib.uk37(
+        ProxyConversion(
           temperature = as.vector(clim.signal),
+          proxy.calibration.type = proxy.calibration.type,
           point.or.sample = "point",
           n = 1
         )[, 1],
         ncol = ncol(clim.signal),
         byrow = FALSE
       )
-    meas.noise <- as.vector(calib.uk37(temperature = meas.noise))
+    meas.noise <- as.vector(ProxyConversion(temperature = mean.temperature + meas.noise,
+                                            proxy.calibration.type = proxy.calibration.type) -
+                              ProxyConversion(temperature = mean.temperature,
+                                              proxy.calibration.type = proxy.calibration.type))
   } else{
     proxy.clim.signal <- clim.signal
   }
@@ -357,8 +364,6 @@ ClimToProxyClim <- function(clim.signal,
               everything = out))
 }
 
-
-
 ChunkMatrix <- function(timepoints, width, climate.matrix){
   max.clim.signal.i <- nrow(climate.matrix)
 
@@ -381,8 +386,6 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
     mean(climate.matrix[avg.window.i, , drop = FALSE])
   })
 }
-
-
 
 
 #' Convert "everything" part of output from ClimToProxyClim to dataframe
