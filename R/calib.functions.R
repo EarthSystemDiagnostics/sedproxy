@@ -1,4 +1,4 @@
-#' Convert between Proxy Units and Temperature in Degrees C
+#' Convert between Temperature in Degrees C and Proxy Units
 #'
 #' @description A wrapper function for accessing proxy - temperature conversion functions
 #'
@@ -52,12 +52,6 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
   return(out)
 }
 
-# UK'37 calibration
-
-# uk37.dat <- ecusdata::mueller.uk37.sst
-#
-# lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
-# summary(lm.uk37, correlation = TRUE)
 
 #' Convert between UK'37 and Temperature in degrees C
 #'
@@ -86,6 +80,14 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #'
 #' ## Incompatible arguments
 #' CalibUK37(temperature = 1, proxy.value = 1)
+#' @details To get the UK'37 calibration parameters
+#' \preformatted{
+#' uk37.dat <- ecusdata::mueller.uk37.sst
+#'
+#' lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
+#'
+#' summary(lm.uk37, correlation = TRUE)
+#' }
 CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
                       point.or.sample = c("point", "sample"), n = 1){
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/calib.functions.R
 \name{ProxyConversion}
 \alias{ProxyConversion}
-\title{Convert between Proxy Units and Temperature in Degrees C}
+\title{Convert between Temperature in Degrees C and Proxy Units}
 \usage{
 ProxyConversion(temperature = NULL, proxy.value = NULL,
   proxy.calibration.type = c("MgCa", "UK37"), point.or.sample = c("point",

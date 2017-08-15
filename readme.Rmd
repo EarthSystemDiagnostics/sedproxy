@@ -114,21 +114,20 @@ head(PFM$everything$proxy.bt.sb.sampYM.b.n)
 
 ### Proxy types
 
-The initial input climate signal is converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+The initial input climate signal can be converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
 
 
 ```{r MgCa, fig.show='hold'}
+set.seed(26052017)
 PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
                          timepoints = N41.proxy$Published.age,
                          proxy.calibration.type = "MgCa",
                          seas.prod = N41.G.ruber.seasonality,
                          sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
                          meas.noise = 0.46, n.samples = 30,
-                         n.replicates = 10)
+                         n.replicates = 1)
 ```
 
-
-**Simple plotting**
 
 ```{r MgCa_plot, fig.width=6, fig.height=5.5}
 plot.df <- PFM_2$simulated.proxy %>% 
@@ -145,6 +144,36 @@ plot.df %>%
   PlotPFMs(.) +
   labs(y = "MgCa")
 ```
+
+```{r, echo=FALSE}
+# If the simulated MgCa values are back-transformed into °C, they are not identical to the values obtained without initial transformation to MgCa ratios. This is because the relationship between MgCa and temperature is non-linear, so that the back-transformed mean of multiple MgCa ratios is not the same as the mean of the original temperatures that were encoded as MgCa. 
+
+
+# a <- PFM$simulated.proxy$clim.signal.ann
+# b <- PFM_2$simulated.proxy$clim.signal.ann
+# d <- ProxyConversion(proxy.value = b, proxy.calibration.type = "MgCa")
+# df <- (a-d)
+# 
+# wts <- N41.G.ruber.seasonality / sum(N41.G.ruber.seasonality)
+# tmps <- (N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15)[PFM$simulated.proxy$timepoints,]
+# 
+# var1 <- (apply(tmps, 1, function(x) var(x)))
+# var2 <- (apply(tmps, 1, function(x) sum(((x - mean(x))^2 * wts))))
+# 
+# plot(var1, df, xlim = c(0, 5), ylim = c(0, -0.2))
+# x <- 0:4
+# 
+# ## Approximation of the difference between the mean of temperature and the back-transformed mean of MgCa
+# ## var * 1/2 * A * log(B)
+# ## where MgCa = B * exp(A * T)
+# 
+# lines(x, x * 0.5 * 0.09 * log(0.38))
+# abline(h = 0)
+```
+
+
+
+
 
 
 

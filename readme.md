@@ -224,18 +224,19 @@ head(PFM$everything$proxy.bt.sb.sampYM.b.n)
 
 ### Proxy types
 
-The initial input climate signal is converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+The initial input climate signal can be converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
 
 
 
 ```r
+set.seed(26052017)
 PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
                          timepoints = N41.proxy$Published.age,
                          proxy.calibration.type = "MgCa",
                          seas.prod = N41.G.ruber.seasonality,
                          sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
                          meas.noise = 0.46, n.samples = 30,
-                         n.replicates = 10)
+                         n.replicates = 1)
 ```
 
 ```
@@ -250,8 +251,6 @@ PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1
 ## clim.signal
 ```
 
-
-**Simple plotting**
 
 
 ```r
@@ -280,6 +279,12 @@ plot.df %>%
 ```
 
 ![](readme_files/figure-html/MgCa_plot-1.png)<!-- -->
+
+
+
+
+
+
 
 
 

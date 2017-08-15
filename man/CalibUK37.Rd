@@ -20,6 +20,16 @@ or parameters sampled from the fitted calibration model}
 \description{
 Convert between UK'37 and Temperature in degrees C
 }
+\details{
+To get the UK'37 calibration parameters
+\preformatted{
+uk37.dat <- ecusdata::mueller.uk37.sst
+
+lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
+
+summary(lm.uk37, correlation = TRUE)
+}
+}
 \examples{
 # From temperature to UK'37
 ## With fixed calibration
