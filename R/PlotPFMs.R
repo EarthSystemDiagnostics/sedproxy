@@ -38,27 +38,27 @@ PlotPFMs <- function(PFMs,
   if (breaks == "default.breaks") breaks <-
       c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed",
         "clim.timepoints.50", "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
-        "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy")
+        "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Observed proxy")
 
   if (colr.palette == "default.colr.palette") colr.palette  <-
       structure(c("#018571", "#018571","#018571", "#018571", "Green", "Gold", "#7570b3", "#d95f02", "#7570b3", "Red"),
                .Names = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
                           "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
-                          "proxy.bt.sb.sampYM.b.n", "Actual proxy"))
+                          "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
 
   if (alpha.palette == "default.alpha.palette") alpha.palette  <-
       structure(c(1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5),
                 .Names = c("clim.signal.ann","clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50",
                            "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
-                           "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"))
+                           "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
 
   if (levl.labels == "default.levl.labels") levl.labels  <-
-      structure(c(" Modelled climate", " Modelled climate", " Modelled climate", " Modelled climate", "+Bioturbation",
+      structure(c(" Input climate", " Input climate", " Input climate", " Input climate", "+Bioturbation",
                   "+Seasonality", "+Measurement error",
-                  "+Finite sample", "+Measurement error", "Actual proxy"),
+                  "+Finite sample", "+Measurement error", "Observed proxy"),
                 .Names = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50",
                            "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
-                           "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Actual proxy"))
+                           "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
 
 
   p <- ggplot(data = PFMs, aes(x = Age / 1000, y = Temperature,
