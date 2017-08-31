@@ -124,26 +124,26 @@ ClimToProxyClim <- function(clim.signal,
                             n.replicates = 1) {
   # Check inputs --------
   n.timepoints <- length(timepoints)
-
+  
   stopifnot(is.matrix(clim.signal))
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
   if (is.matrix(seas.prod))
     stop("Matrix form of seasonality not yet supported")
-
+  
   # Ensure seasonal productivities are weights
   seas.prod <- seas.prod / sum(seas.prod)
-
+  
   # Calculate timepoint invariant values ------
   max.clim.signal.i <- nrow(clim.signal)
   sig.years.i <- 1:max.clim.signal.i
-
+  
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
   }
-
+  
   proxy.calibration.type <- match.arg(proxy.calibration.type)
-
+  
   if (proxy.calibration.type != "identity") {
     mean.temperature <-  mean(as.vector(clim.signal))
     proxy.clim.signal <-
@@ -164,73 +164,73 @@ ClimToProxyClim <- function(clim.signal,
   } else{
     proxy.clim.signal <- clim.signal
   }
-
+  
   # Create smoothed climate signal
   timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
   clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res, proxy.clim.signal)
-
+  
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
     bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
     bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
-
+    
     # Get bioturbation weights --------
     bioturb.weights <-
       ImpulseResponse(-bioturb.window, bio.depth.timesteps, z0 = 0)
     bioturb.weights <- bioturb.weights / sum(bioturb.weights)
-
+    
     smoothing.width = sum(bioturb.weights*abs(bioturb.window))
     # Check depth and time order match
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
-
+    
     # Get portion of clim.signal corresponding to bioturbation window -------
     # shift by bio.depth.timesteps (tau in Torben's notation)
     # to remove timeshift due to bioturbation, which would effect dating in the same way
     sig.window.i.1 <- bioturb.window + timepoints[tp] + bio.depth.timesteps
-
+    
     if (max(sig.window.i.1) > max.clim.signal.i) {
       warning("Bioturbation window extends below end of clim.signal")
     }
-
+    
     sig.window.i <-
       sig.window.i.1[sig.window.i.1 > 0 &
                        sig.window.i.1 < max.clim.signal.i]
-
+    
     stopifnot(sig.window.i > 0)
     stopifnot(max.clim.signal.i > max(sig.window.i))
-
+    
     clim.sig.window <- proxy.clim.signal[sig.window.i, , drop = FALSE]
-
-
+    
+    
     # Get bioturbation X no-seasonality weights matrix ---------
     biot.sig.weights <- bioturb.weights %o% rep(1, 12)
     biot.sig.weights <-
       biot.sig.weights[sig.window.i.1 > 0 &
                          sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
-
-
+    
+    
     # Get bioturbation X seasonality weights matrix ---------
     clim.sig.weights <- bioturb.weights %o% seas.prod
     clim.sig.weights <-
       clim.sig.weights[sig.window.i.1 > 0 &
                          sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
-
+    
     # Check weights sum to 1, within tolerance
     weight.err <- abs(sum(clim.sig.weights) - 1)
     if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
-
-
+    
+    
     # Calculate mean clim.signal -------
-
+    
     # Just bioturbation
     proxy.bt <- sum(biot.sig.weights * clim.sig.window)
-
+    
     # Bioturbation + seasonal bias
     proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
-
+    
     # Bioturbation + seasonal bias + aliasing
     if (is.infinite(n.samples)) {
       proxy.bt.sb.sampY <- rep(NA, n.replicates)
@@ -243,23 +243,23 @@ ClimToProxyClim <- function(clim.signal,
                               n.samples * n.replicates,
                               prob = clim.sig.weights,
                               replace = TRUE)
-
+      
       # convert vector to matrix (cheap only attributes changed), then means
       # can be taken across columns to get per replicate means
       samp <- matrix(clim.sig.window[samp.indices], nrow = n.samples)
       #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
       proxy.bt.sb.sampYM <- colMeans(samp)
-
+      
       # Get without seasonal aliasing (bioturbation aliasing only)
       clim.sig.window.ann <- rowSums(clim.sig.window %*% diag(seas.prod))
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
-
+      
       samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples)
       proxy.bt.sb.sampY <- colMeans(samp.bt)
-
+      
     }
-
-
+    
+    
     # Gather output ----------
     list(
       smoothing.width = smoothing.width,
@@ -268,23 +268,23 @@ ClimToProxyClim <- function(clim.signal,
       proxy.bt.sb.sampY = proxy.bt.sb.sampY,
       proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
   })
-
+  
   #out <- apply(out, 1, function(x) simplify2array(x))
   # use plyr::alply to always return a list
   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
-
+  
   # remove extra attributes added by alply
   attr(out, "split_type") <- NULL
   attr(out, "split_labels") <- NULL
-
+  
   #print(out$proxy.bt.sb.sampYM)
   if (n.replicates == 1) out$proxy.bt.sb.sampYM <- matrix(out$proxy.bt.sb.sampYM, nrow = 1)
   out$proxy.bt.sb.sampYM <- t(out$proxy.bt.sb.sampYM)
-
+  
   if (n.replicates == 1) out$proxy.bt.sb.sampY <- matrix(out$proxy.bt.sb.sampY, nrow = 1)
   out$proxy.bt.sb.sampY <- t(out$proxy.bt.sb.sampY)
   #print(out$proxy.bt.sb.sampYM)
-
+  
   # Add bias and noise to infinite sample --------
   if (meas.bias != 0) {
     bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)
@@ -296,32 +296,32 @@ ClimToProxyClim <- function(clim.signal,
   }else{
     noise <- rep(0, n.replicates)
   }
-
+  
   out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
   out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
-
+  
   # Add bias and noise to finite sample --------
   out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
   out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
-
+  
   # Calculate chunked climate at timepoints
   # get 100 year clim.average at timepoints -------
-
+  
   out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, proxy.clim.signal)
   out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, proxy.clim.signal)
   out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, proxy.clim.signal)
-
-
-
+  
+  
+  
   # Add items to output list -----------
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(proxy.clim.signal[timepoints,  , drop = FALSE]) / ncol(proxy.clim.signal)
   out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
-
-
-
+  
+  
+  
   # Organise output -------
   simulated.proxy <-
     dplyr::tbl_df(out[c(
@@ -335,30 +335,30 @@ ClimToProxyClim <- function(clim.signal,
       "sed.acc.rate",
       "smoothing.width"
     )])
-
+  
   simulated.proxy$proxy.bt.sb.sampY <- out$proxy.bt.sb.sampY[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.sampYM <- out$proxy.bt.sb.sampYM[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.inf.b <- out$proxy.bt.sb.inf.b[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b.n[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM.b[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b.n[, 1, drop = TRUE]
-
+  
   if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.sampYM.b.n}else{
     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.inf.b.n
   }
-
-
+  
+  
   smoothed.signal <- dplyr::tbl_df(out[c(
     "timepoints.smoothed",
     "clim.signal.smoothed"
-    )])
-
+  )])
+  
   smoothed.signal <- dplyr::rename(smoothed.signal,
-                            timepoints = timepoints.smoothed,
-                            value = clim.signal.smoothed)
-
+                                   timepoints = timepoints.smoothed,
+                                   value = clim.signal.smoothed)
+  
   smoothed.signal$Stage <- "clim.signal.smoothed"
-
+  
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = out))
@@ -366,23 +366,23 @@ ClimToProxyClim <- function(clim.signal,
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
   max.clim.signal.i <- nrow(climate.matrix)
-
+  
   rel.wind <- 1:width -round(width/2)
-
+  
   sapply(timepoints, function(tp){
-
+    
     avg.window.i.1 <- (rel.wind) + tp
-
+    
     if (max(avg.window.i.1) > max.clim.signal.i) {
       warning("Window extends below end of clim.signal")
     }
-
+    
     avg.window.i <- avg.window.i.1[avg.window.i.1 > 0 &
                                      avg.window.i.1 < max.clim.signal.i]
-
+    
     stopifnot(avg.window.i > 0)
     stopifnot(max.clim.signal.i > max(avg.window.i))
-
+    
     mean(climate.matrix[avg.window.i, , drop = FALSE])
   })
 }
@@ -404,14 +404,14 @@ MakePFMDataframe <- function(PFM){
     proxy.bt.sb.inf.b.n = as.vector(PFM$proxy.bt.sb.inf.b.n),
     proxy.bt.sb.sampYM.b.n = as.vector(PFM$proxy.bt.sb.sampYM.b.n),
     stringsAsFactors = FALSE)
-
+  
   df$Age <- PFM$timepoints
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- tbl_df(df) %>%
     tidyr::gather(Stage, value, -Age, -replicate)
-
+  
   #df$proxy.bt.sb = as.vector(PFM$proxy.bt.sb)
-
+  
   bt.inf <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -419,7 +419,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$proxy.bt,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   sig.inf <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -427,7 +427,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$proxy.bt.sb,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   clim <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -435,7 +435,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$clim.signal.ann,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   clim2a <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -443,7 +443,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$clim.timepoints.1000,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   clim2 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -451,7 +451,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$clim.timepoints.100,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   clim2b <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
@@ -459,7 +459,7 @@ MakePFMDataframe <- function(PFM){
     value = PFM$clim.timepoints.50,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   clim3 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints.smoothed,
@@ -467,8 +467,8 @@ MakePFMDataframe <- function(PFM){
     value = PFM$clim.signal.smoothed,
     stringsAsFactors = FALSE) %>%
     tbl_df()
-
+  
   rtn <- dplyr::bind_rows(df, bt.inf,  sig.inf, clim, clim2a, clim2, clim2b, clim3)
-
+  
   return(rtn)
 }
