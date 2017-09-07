@@ -270,7 +270,6 @@ ClimToProxyClim <- function(clim.signal,
   })
 
   #out <- apply(out, 1, function(x) simplify2array(x))
-  # use plyr::alply to always return a list
   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
 
   # remove extra attributes added by alply
@@ -312,16 +311,12 @@ ClimToProxyClim <- function(clim.signal,
   out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, proxy.clim.signal)
   out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, proxy.clim.signal)
 
-
-
   # Add items to output list -----------
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(proxy.clim.signal[timepoints,  , drop = FALSE]) / ncol(proxy.clim.signal)
   out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
-
-
 
   # Organise output -------
   simulated.proxy <-
@@ -409,76 +404,35 @@ MakePFMDataframe <- function(PFM){
 
   df$Age <- PFM$timepoints
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
-  df <- tbl_df(df) %>%
-    tidyr::gather(Stage, value, -Age, -replicate)
+  df <- tbl_df(df)
+  df <- tidyr::gather(df, Stage, value, -Age, -replicate)
 
-  #df$proxy.bt.sb = as.vector(PFM$proxy.bt.sb)
-
-  bt.inf <- data.frame(
+  df2 <- data.frame(
     replicate = 1,
     Age = PFM$timepoints,
-    Stage = "proxy.bt",
-    value = PFM$proxy.bt,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
+    proxy.bt = PFM$proxy.bt,
+    proxy.bt.sb = PFM$proxy.bt.sb,
+    clim.signal.ann = PFM$clim.signal.ann,
+    clim.timepoints.1000 = PFM$clim.timepoints.1000,
+    clim.timepoints.100 = PFM$clim.timepoints.100,
+    clim.timepoints.50 = PFM$clim.timepoints.50,
+    clim.timepoints.ssr = PFM$clim.timepoints.ssr,
+    stringsAsFactors = FALSE)
+  df2 <- tidyr::gather(df2, Stage, value, -Age, -replicate)
 
-  sig.inf <- data.frame(
-    replicate = 1,
-    Age = PFM$timepoints,
-    Stage = "proxy.bt.sb",
-    value = PFM$proxy.bt.sb,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-  clim <- data.frame(
-    replicate = 1,
-    Age = PFM$timepoints,
-    Stage = "clim.signal.ann",
-    value = PFM$clim.signal.ann,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-  clim2a <- data.frame(
-    replicate = 1,
-    Age = PFM$timepoints,
-    Stage = "clim.timepoints.1000",
-    value = PFM$clim.timepoints.1000,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-  clim2 <- data.frame(
-    replicate = 1,
-    Age = PFM$timepoints,
-    Stage = "clim.timepoints.100",
-    value = PFM$clim.timepoints.100,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-  clim2b <- data.frame(
-    replicate = 1,
-    Age = PFM$timepoints,
-    Stage = "clim.timepoints.50",
-    value = PFM$clim.timepoints.50,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-  clim2c <- data.frame(
-    replicate = 1,
-    Age = PFM$timepoints,
-    Stage = "clim.timepoints.ssr",
-    value = PFM$clim.timepoints.ssr,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-  clim3 <- data.frame(
+  df.smoothed <- data.frame(
     replicate = 1,
     Age = PFM$timepoints.smoothed,
     Stage = "clim.signal.smoothed",
     value = PFM$clim.signal.smoothed,
-    stringsAsFactors = FALSE) %>%
-    tbl_df()
+    stringsAsFactors = FALSE)
 
-  rtn <- dplyr::bind_rows(df, bt.inf,  sig.inf, clim, clim2a, clim2, clim2b, clim2c, clim3)
+  rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
   return(rtn)
 }
+
+# a <- MakePFMDataframe(PFM$everything)
+# b <- MakePFMDataframe_2(PFM$everything)
+# all_equal(a, b)
+
