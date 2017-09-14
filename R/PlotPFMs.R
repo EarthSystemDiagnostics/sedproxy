@@ -17,23 +17,44 @@ PlotPFMs <- function(PFMs,
                      alpha.palette = "default.alpha.palette",
                      levl.labels = "default.levl.labels"){
 
+  # set factor level ordering for Stage
+  PFMs$Stage <- factor(PFMs$Stage, levels = rev(c(
+    "Observed proxy",
+    "proxy.bt.sb.sampYM.b.n",
+    "proxy.bt.sb.inf.b.n",
+    "proxy.bt.sb.sampYM.b",
+    "proxy.bt.sb.inf.b",
+    "proxy.bt.sb.sampYM",
+    "proxy.bt.sb",
+    "proxy.bt",
+    "clim.signal.ann",
+    "clim.timepoints.1000",
+    "clim.timepoints.100",
+    "clim.timepoints.50",
+    "clim.timepoints.ssr",
+    "clim.signal.smoothed"
+  )), ordered = TRUE)
+
+
   if(exists("replicate", where = PFMs)){
-    rug.dat <- dplyr::filter(PFMs, Stage %in% c("proxy.bt"),
-                      replicate == 1)
+    rug.dat <- dplyr::filter(PFMs, Stage %in% c("proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM.b.n", "Observed proxy"),
+                             replicate == 1)
   }else{
-    rug.dat <- dplyr::filter(PFMs, Stage %in% c("proxy.bt"))
+    rug.dat <- dplyr::filter(PFMs, Stage %in% c("proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
     rug.dat$replicate <- 1
     PFMs$replicate <- 1
   }
 
   if(exists("Location", where = PFMs)==FALSE){
     PFMs$Location <- ""
-    }
+  }
 
   if(exists("ID.no", where = PFMs)==FALSE){
     PFMs$ID.no <- ""
   }
-
+  if(exists("Proxy", where = PFMs)==FALSE){
+    PFMs$Proxy <- ""
+  }
   # assign default asthetic mappings
   if (breaks == "default.breaks") breaks <-
       c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed",
@@ -42,9 +63,9 @@ PlotPFMs <- function(PFMs,
 
   if (colr.palette == "default.colr.palette") colr.palette  <-
       structure(c("#018571", "#018571","#018571", "#018571", "Green", "Gold", "#7570b3", "#d95f02", "#7570b3", "Red"),
-               .Names = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
-                          "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
-                          "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
+                .Names = c("clim.signal.ann", "clim.timepoints.1000", "clim.signal.smoothed", "clim.timepoints.50", "proxy.bt", "proxy.bt.sb",
+                           "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampYM",
+                           "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
 
   if (alpha.palette == "default.alpha.palette") alpha.palette  <-
       structure(c(1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5),
@@ -60,11 +81,11 @@ PlotPFMs <- function(PFMs,
                            "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b.n",
                            "proxy.bt.sb.sampYM", "proxy.bt.sb.sampYM.b.n", "Observed proxy"))
 
-
   p <- ggplot(data = PFMs, aes(x = Age / 1000, y = Temperature,
                                colour = Stage, alpha = Stage)) +
     geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
-    geom_line(aes(linetype = factor(replicate))) +
+    geom_line(aes(group = paste0(Stage, replicate))) +
+    #geom_line() +
     facet_wrap(~ Location + ID.no, scales = "free_y",
                labeller = labeller(.multi_line = FALSE), ncol = 4) +
     theme_bw() +
@@ -74,7 +95,7 @@ PlotPFMs <- function(PFMs,
                                  nrow = 1,
                                  override.aes = list(alpha = 1))) +
     labs(title = unique(PFMs$Proxy),
-         x=expression(Age~"[ka]"),
+         x = expression(Age~"[ka]"),
          y = expression(Temperature~"[°C]")) +
     scale_linetype(guide = FALSE) +
     scale_alpha_discrete(guide = FALSE)

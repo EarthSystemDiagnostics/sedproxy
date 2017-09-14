@@ -429,6 +429,26 @@ MakePFMDataframe <- function(PFM){
 
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
+  # rtn$Stage <-
+  #   factor(
+  #     rtn$Stage,
+  #     levels = rev(c(
+  #       "proxy.bt.sb.sampYM.b.n",
+  #       "proxy.bt.sb.inf.b.n",
+  #       "proxy.bt.sb.sampYM.b",
+  #       "proxy.bt.sb.inf.b",
+  #       "proxy.bt.sb.sampYM",
+  #       "proxy.bt.sb",
+  #       "proxy.bt",
+  #       "clim.signal.ann",
+  #       "clim.timepoints.1000",
+  #       "clim.timepoints.100",
+  #       "clim.timepoints.50",
+  #       "clim.timepoints.ssr",
+  #       "clim.signal.smoothed"
+  #     )),
+  #     ordered = T
+  #   )
   return(rtn)
 }
 
