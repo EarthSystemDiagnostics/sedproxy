@@ -49,7 +49,8 @@
 #' converted before the archiving and measurement of the proxy is simulated
 #' @param smoothed.signal.res The resolution, in years, of the smoothed
 #' (block averaged) version of the input climate signal returned for plotting.
-#' This does not affect what the proxy model uses as input.
+#' This does not affect what the proxy model uses as input. If set to NA, no smoothed
+#' climate output is generated, this can speed up some simulations.
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
 #'   archived in the proxy. Either a vector of 12 values or a matrix of the same
 #'   dimensions as clim.signal. Defaults to a uniform seasonal distribution.
@@ -165,9 +166,15 @@ ClimToProxyClim <- function(clim.signal,
     proxy.clim.signal <- clim.signal
   }
 
-  # Create smoothed climate signal
-  timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
-  clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res, proxy.clim.signal)
+# Create smoothed climate signal
+  if (is.na(smoothed.signal.res)) {
+    timepoints.smoothed <- NA
+    clim.signal.smoothed <- NA
+  } else{
+    timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
+    clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res,
+                                        proxy.clim.signal)
+  }
 
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
@@ -306,10 +313,19 @@ ClimToProxyClim <- function(clim.signal,
   # Calculate chunked climate at timepoints
   # get 100 year clim.average at timepoints -------
 
-  out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, proxy.clim.signal)
-  out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, proxy.clim.signal)
-  out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, proxy.clim.signal)
-  out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, proxy.clim.signal)
+  # Create smoothed climate signal
+  if (is.na(smoothed.signal.res)) {
+    out$clim.timepoints.1000 <- NA
+    out$clim.timepoints.100 <- NA
+    out$clim.timepoints.50 <- NA
+    out$clim.timepoints.ssr <- NA
+
+  } else{
+    out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, proxy.clim.signal)
+    out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, proxy.clim.signal)
+    out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, proxy.clim.signal)
+    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, proxy.clim.signal)
+  }
 
   # Add items to output list -----------
   out$timepoints = timepoints
