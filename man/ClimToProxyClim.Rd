@@ -21,13 +21,16 @@ converted before the archiving and measurement of the proxy is simulated}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed
 (block averaged) version of the input climate signal returned for plotting.
-This does not affect what the proxy model uses as input.}
+This does not affect what the proxy model uses as input. If set to NA, no smoothed
+climate output is generated, this can speed up some simulations.}
 
 \item{seas.prod}{The seasonal pattern of productivity for the organism(s)
 archived in the proxy. Either a vector of 12 values or a matrix of the same
 dimensions as clim.signal. Defaults to a uniform seasonal distribution.}
 
-\item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m}
+\item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m. If
+bio.depth == 0, each timepoint samples from a single year of the clim.signal,
+equivalent to sampling a laminated sediment core.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in metres per year. Defaults
 to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same

@@ -1,7 +1,7 @@
 #' @title ImpulseResponse
 #'
 #' @param z depth relative to focus horizon
-#' @param d mixing depth
+#' @param d mixing depth. If d == 0, a single weight of 1 is returned
 #' @param z0 depth of the pulse without bioturbation
 #'
 #' @description Depth solution for Berger and Heath; e.g. page 65 in Officer and
@@ -24,9 +24,13 @@
 #' abline(v = d)
 #'
 ImpulseResponse <- function(z, d, z0 = 0) {
-  x <- z0 + d - z
-  epsilon <- x / d
-  result <- 1 / d * exp(-epsilon)
-  result[z > (z0 + d)] <- 0
+  if (d == 0){
+    result <- 1
+  }else{
+    x <- z0 + d - z
+    epsilon <- x / d
+    result <- 1 / d * exp(-epsilon)
+    result[z > (z0 + d)] <- 0
+  }
   return(result)
 }

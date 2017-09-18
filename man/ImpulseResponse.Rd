@@ -9,7 +9,7 @@ ImpulseResponse(z, d, z0 = 0)
 \arguments{
 \item{z}{depth relative to focus horizon}
 
-\item{d}{mixing depth}
+\item{d}{mixing depth. If d == 0, a single weight of 1 is returned}
 
 \item{z0}{depth of the pulse without bioturbation}
 }
