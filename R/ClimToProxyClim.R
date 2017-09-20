@@ -363,8 +363,12 @@ ClimToProxyClim <- function(clim.signal,
   simulated.proxy$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM.b[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b.n[, 1, drop = TRUE]
 
-  if (is.finite(n.samples)) {simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.sampYM.b.n}else{
+  if (is.finite(n.samples)) {
+    simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.sampYM.b.n
+    out$simulated.proxy <- out$proxy.bt.sb.sampYM.b.n
+  } else{
     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.inf.b.n
+    out$simulated.proxy <- out$proxy.bt.sb.inf.b.n
   }
 
 
@@ -423,6 +427,7 @@ MakePFMDataframe <- function(PFM){
     proxy.bt.sb.sampYM.b = as.vector(PFM$proxy.bt.sb.sampYM.b),
     proxy.bt.sb.inf.b.n = as.vector(PFM$proxy.bt.sb.inf.b.n),
     proxy.bt.sb.sampYM.b.n = as.vector(PFM$proxy.bt.sb.sampYM.b.n),
+    simulated.proxy = as.vector(PFM$simulated.proxy),
     stringsAsFactors = FALSE)
 
   df$Age <- PFM$timepoints
