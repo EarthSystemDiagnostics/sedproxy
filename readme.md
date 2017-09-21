@@ -150,7 +150,7 @@ head(PFM$simulated.proxy)
 ```
 
 ```
-## # A tibble: 6 x 16
+## # A tibble: 6 x 17
 ##   timepoints clim.signal.ann clim.timepoints.1000 clim.timepoints.100
 ##        <dbl>           <dbl>                <dbl>               <dbl>
 ## 1   4334.286        28.02843             27.93745            27.91754
@@ -159,12 +159,12 @@ head(PFM$simulated.proxy)
 ## 4   4720.571        27.78637             27.91322            27.93882
 ## 5   4913.714        28.10193             27.89451            27.90577
 ## 6   4994.400        28.02830             27.89069            27.88720
-## # ... with 12 more variables: clim.timepoints.50 <dbl>, proxy.bt <dbl>,
-## #   proxy.bt.sb <dbl>, sed.acc.rate <dbl>, smoothing.width <dbl>,
-## #   proxy.bt.sb.sampY <dbl>, proxy.bt.sb.sampYM <dbl>,
-## #   proxy.bt.sb.inf.b <dbl>, proxy.bt.sb.inf.b.n <dbl>,
-## #   proxy.bt.sb.sampYM.b <dbl>, proxy.bt.sb.sampYM.b.n <dbl>,
-## #   simulated.proxy <dbl>
+## # ... with 13 more variables: clim.timepoints.50 <dbl>,
+## #   clim.timepoints.ssr <dbl>, proxy.bt <dbl>, proxy.bt.sb <dbl>,
+## #   sed.acc.rate <dbl>, smoothing.width <dbl>, proxy.bt.sb.sampY <dbl>,
+## #   proxy.bt.sb.sampYM <dbl>, proxy.bt.sb.inf.b <dbl>,
+## #   proxy.bt.sb.inf.b.n <dbl>, proxy.bt.sb.sampYM.b <dbl>,
+## #   proxy.bt.sb.sampYM.b.n <dbl>, simulated.proxy <dbl>
 ```
 
 **Simple plotting**
@@ -183,10 +183,6 @@ plot.df %>%
   mutate(Location = "Sulu Sea", 
          ID.no = "N41") %>% 
   PlotPFMs(.)
-```
-
-```
-## Warning: Unknown or uninitialised column: 'Proxy'.
 ```
 
 ```
@@ -267,10 +263,6 @@ plot.df %>%
          ID.no = "N41") %>% 
   PlotPFMs(.) +
   labs(y = "MgCa")
-```
-
-```
-## Warning: Unknown or uninitialised column: 'Proxy'.
 ```
 
 ```

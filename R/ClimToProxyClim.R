@@ -181,11 +181,11 @@ ClimToProxyClim <- function(clim.signal,
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
-    if (bio.depth == 0){
+    bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
+    if (bio.depth.timesteps == 0){
       bio.depth.timesteps <- 0
       bioturb.window <- 1
-    }else{
-      bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
+      }else{
       bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
       }
 
