@@ -94,8 +94,7 @@ plot.df <- PFM$simulated.proxy %>%
   select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
          proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
   gather(Stage, Temperature, -timepoints) %>% 
-  mutate(Age = timepoints,
-         Temperature = Temperature) 
+  mutate(Age = timepoints) 
 
 plot.df %>% 
   # Add Location and ID.no for plotting function 

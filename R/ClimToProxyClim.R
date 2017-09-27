@@ -316,6 +316,11 @@ ClimToProxyClim <- function(clim.signal,
   out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
   out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
 
+  if (is.finite(n.samples)){
+    out$proxy.bt.sb.inf.b[,] <- NA
+    out$proxy.bt.sb.inf.b.n[,] <- NA
+  }
+
   # Add bias and noise to finite sample --------
   out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
   out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
@@ -386,9 +391,11 @@ ClimToProxyClim <- function(clim.signal,
 
   smoothed.signal$Stage <- "clim.signal.smoothed"
 
+  everything <- MakePFMDataframe(out)
+
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
-              everything = out))
+              everything = everything))
 }
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
@@ -433,14 +440,14 @@ MakePFMDataframe <- function(PFM){
     simulated.proxy = as.vector(PFM$simulated.proxy),
     stringsAsFactors = FALSE)
 
-  df$Age <- PFM$timepoints
+  df$timepoints <- PFM$timepoints
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- tbl_df(df)
-  df <- tidyr::gather(df, Stage, value, -Age, -replicate)
+  df <- tidyr::gather(df, stage, value, -timepoints, -replicate)
 
   df2 <- data.frame(
     replicate = 1,
-    Age = PFM$timepoints,
+    timepoints = PFM$timepoints,
     proxy.bt = PFM$proxy.bt,
     proxy.bt.sb = PFM$proxy.bt.sb,
     clim.signal.ann = PFM$clim.signal.ann,
@@ -449,37 +456,17 @@ MakePFMDataframe <- function(PFM){
     clim.timepoints.50 = PFM$clim.timepoints.50,
     clim.timepoints.ssr = PFM$clim.timepoints.ssr,
     stringsAsFactors = FALSE)
-  df2 <- tidyr::gather(df2, Stage, value, -Age, -replicate)
+  df2 <- tidyr::gather(df2, stage, value, -timepoints, -replicate)
 
   df.smoothed <- data.frame(
     replicate = 1,
-    Age = PFM$timepoints.smoothed,
-    Stage = "clim.signal.smoothed",
+    timepoints = PFM$timepoints.smoothed,
+    stage = "clim.signal.smoothed",
     value = PFM$clim.signal.smoothed,
     stringsAsFactors = FALSE)
 
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
-  # rtn$Stage <-
-  #   factor(
-  #     rtn$Stage,
-  #     levels = rev(c(
-  #       "proxy.bt.sb.sampYM.b.n",
-  #       "proxy.bt.sb.inf.b.n",
-  #       "proxy.bt.sb.sampYM.b",
-  #       "proxy.bt.sb.inf.b",
-  #       "proxy.bt.sb.sampYM",
-  #       "proxy.bt.sb",
-  #       "proxy.bt",
-  #       "clim.signal.ann",
-  #       "clim.timepoints.1000",
-  #       "clim.timepoints.100",
-  #       "clim.timepoints.50",
-  #       "clim.timepoints.ssr",
-  #       "clim.signal.smoothed"
-  #     )),
-  #     ordered = T
-  #   )
   return(rtn)
 }
 
