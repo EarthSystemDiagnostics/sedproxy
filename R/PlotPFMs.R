@@ -87,7 +87,7 @@ PlotPFMs <- function(PFMs,
 
   plotting.levels <- c("clim.signal.smoothed", "proxy.bt",
                        "proxy.bt.sb", "proxy.bt.sb.sampYM",
-                       "simulated.proxy")
+                       "simulated.proxy", "Observed proxy")
 
   PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
                         replicate <= max.replicates)

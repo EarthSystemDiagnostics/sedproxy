@@ -39,16 +39,19 @@ library(sedproxy)
 
 
 ```{r}
-knitr::kable(N41.proxy.details %>% tidyr::gather(), format = "markdown")
+N41.proxy.details %>% 
+  gather() %>% 
+  kable(., format = "markdown")
 ```
 
 
-**Modelled climate signal**
+**Input climate signal**
 
 The first 5 rows:
 
 ```{r}
-knitr::kable(N41.t21k.climate[1:5,], format = "markdown", digits = 2)
+(N41.t21k.climate[1:5,]-273.15) %>% 
+  kable(., format = "markdown", digits = 2)
 ```
 
 **Actual proxy record**
@@ -80,18 +83,14 @@ PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,]
 
 
 ```{r}
-names(PFM)
-```
-
-```{r}
-head(PFM$simulated.proxy)
+PFM$everything
 ```
 
 **Simple plotting**
 
 ```{r default_plot, fig.width=6, fig.height=5.5}
 PFM$everything %>% 
-  PlotPFMs()
+  PlotPFMs(max.replicates = 1)
 ```
 
 

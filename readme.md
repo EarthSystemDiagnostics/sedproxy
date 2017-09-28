@@ -37,7 +37,9 @@ library(sedproxy)
 
 
 ```r
-knitr::kable(N41.proxy.details %>% tidyr::gather(), format = "markdown")
+N41.proxy.details %>% 
+  gather() %>% 
+  kable(., format = "markdown")
 ```
 
 
@@ -63,24 +65,25 @@ knitr::kable(N41.proxy.details %>% tidyr::gather(), format = "markdown")
 |Archive.type    |Marine sediment                                  |
 
 
-**Modelled climate signal**
+**Input climate signal**
 
 The first 5 rows:
 
 
 ```r
-knitr::kable(N41.t21k.climate[1:5,], format = "markdown", digits = 2)
+(N41.t21k.climate[1:5,]-273.15) %>% 
+  kable(., format = "markdown", digits = 2)
 ```
 
 
 
-|      1|      2|      3|      4|      5|      6|      7|      8|      9|     10|     11|     12|
-|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|
-| 297.86| 297.39| 298.06| 299.22| 299.68| 300.22| 300.55| 299.92| 299.64| 299.64| 299.93| 299.34|
-| 297.99| 297.53| 297.83| 299.01| 299.72| 299.67| 300.16| 300.67| 299.78| 299.85| 299.78| 298.97|
-| 297.84| 297.75| 298.36| 299.15| 299.61| 300.09| 300.15| 300.14| 299.54| 299.60| 299.81| 298.92|
-| 297.70| 297.67| 298.49| 299.51| 300.02| 299.90| 300.44| 299.98| 299.70| 300.06| 299.74| 298.99|
-| 297.77| 297.34| 297.95| 299.17| 299.99| 299.82| 300.14| 300.40| 299.95| 300.16| 299.82| 298.96|
+|     1|     2|     3|     4|     5|     6|     7|     8|     9|    10|    11|    12|
+|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
+| 24.71| 24.24| 24.91| 26.07| 26.53| 27.07| 27.40| 26.77| 26.49| 26.49| 26.78| 26.19|
+| 24.84| 24.38| 24.68| 25.86| 26.57| 26.52| 27.01| 27.52| 26.63| 26.70| 26.63| 25.82|
+| 24.69| 24.60| 25.21| 26.00| 26.46| 26.94| 27.00| 26.99| 26.39| 26.45| 26.66| 25.77|
+| 24.55| 24.52| 25.34| 26.36| 26.87| 26.75| 27.29| 26.83| 26.55| 26.91| 26.59| 25.84|
+| 24.62| 24.19| 24.80| 26.02| 26.84| 26.67| 26.99| 27.25| 26.80| 27.01| 26.67| 25.81|
 
 **Actual proxy record**
 
@@ -125,34 +128,24 @@ PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,]
 
 
 ```r
-names(PFM)
+PFM$everything
 ```
 
 ```
-## [1] "simulated.proxy" "smoothed.signal" "everything"
-```
-
-
-```r
-head(PFM$simulated.proxy)
-```
-
-```
-## # A tibble: 6 x 17
-##   timepoints clim.signal.ann clim.timepoints.1000 clim.timepoints.100
-##        <dbl>           <dbl>                <dbl>               <dbl>
-## 1       4334        28.02843             27.93745            27.91754
-## 2       4527        27.64365             27.92579            27.90224
-## 3       4576        28.27605             27.92421            27.89731
-## 4       4721        28.18325             27.91341            27.94076
-## 5       4914        27.91505             27.89494            27.90284
-## 6       4994        28.02830             27.89069            27.88720
-## # ... with 13 more variables: clim.timepoints.50 <dbl>,
-## #   clim.timepoints.ssr <dbl>, proxy.bt <dbl>, proxy.bt.sb <dbl>,
-## #   sed.acc.rate <dbl>, smoothing.width <dbl>, proxy.bt.sb.sampY <dbl>,
-## #   proxy.bt.sb.sampYM <dbl>, proxy.bt.sb.inf.b <dbl>,
-## #   proxy.bt.sb.inf.b.n <dbl>, proxy.bt.sb.sampYM.b <dbl>,
-## #   proxy.bt.sb.sampYM.b.n <dbl>, simulated.proxy <dbl>
+## # A tibble: 8,213 x 4
+##    timepoints replicate              stage    value
+##         <dbl>     <dbl>              <chr>    <dbl>
+##  1       4334         1 proxy.bt.sb.sampYM 28.34462
+##  2       4527         1 proxy.bt.sb.sampYM 27.32945
+##  3       4576         1 proxy.bt.sb.sampYM 28.01622
+##  4       4721         1 proxy.bt.sb.sampYM 27.22198
+##  5       4914         1 proxy.bt.sb.sampYM 27.34826
+##  6       4994         1 proxy.bt.sb.sampYM 27.90423
+##  7       5092         1 proxy.bt.sb.sampYM 27.86784
+##  8       5156         1 proxy.bt.sb.sampYM 27.75665
+##  9       5254         1 proxy.bt.sb.sampYM 27.46941
+## 10       5318         1 proxy.bt.sb.sampYM 27.29800
+## # ... with 8,203 more rows
 ```
 
 **Simple plotting**
@@ -160,12 +153,7 @@ head(PFM$simulated.proxy)
 
 ```r
 PFM$everything %>% 
-  PlotPFMs()
-```
-
-```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha',
-## which will replace the existing scale.
+  PlotPFMs(max.replicates = 1)
 ```
 
 ![](readme_files/figure-html/default_plot-1.png)<!-- -->
@@ -217,11 +205,6 @@ PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1
 PFM_2$everything %>% 
   PlotPFMs(.) +
   labs(y = "Mg/Ca")
-```
-
-```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha',
-## which will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/MgCa_plot-1.png)<!-- -->

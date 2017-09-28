@@ -402,6 +402,7 @@ ClimToProxyClim <- function(clim.signal,
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = everything))
+  #return(everything)
 }
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
