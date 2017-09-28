@@ -325,6 +325,12 @@ ClimToProxyClim <- function(clim.signal,
   out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
   out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
 
+  # set intermediate bias stages to NA if no bias modelled
+  if (meas.bias == 0) {
+    out$proxy.bt.sb.inf.b[,] <- NA
+    out$proxy.bt.sb.sampYM.b[,] <- NA
+  }
+
   # Calculate chunked climate at timepoints
   # get 100 year clim.average at timepoints -------
 
@@ -466,6 +472,8 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE)
 
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
+
+  rtn <- droplevels(filter(rtn, complete.cases(value)))
 
   return(rtn)
 }

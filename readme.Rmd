@@ -48,7 +48,7 @@ knitr::kable(N41.proxy.details %>% tidyr::gather(), format = "markdown")
 The first 5 rows:
 
 ```{r}
-knitr::kable(N41.t21k.climate[1:5,], format = "markdown")
+knitr::kable(N41.t21k.climate[1:5,], format = "markdown", digits = 2)
 ```
 
 **Actual proxy record**
@@ -66,11 +66,11 @@ kable(head(N41.proxy), format = "markdown")
 `ClimToProxyClim` is the main function in package `sedproxy`. It simulates a sediment archived proxy from an assumed true climate signal, the sediment accumulation rate, seasonality of the encoding organism/process, and the number of samples per timepoint.
 
 
-```{r , fig.show='hold'}
+```{r , fig.show='hold', warning=FALSE}
 set.seed(26052017)
 
 PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
-                       timepoints = N41.proxy$Published.age,
+                       timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                 seas.prod = N41.G.ruber.seasonality,
                 sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
@@ -90,24 +90,19 @@ head(PFM$simulated.proxy)
 **Simple plotting**
 
 ```{r default_plot, fig.width=6, fig.height=5.5}
-plot.df <- PFM$simulated.proxy %>% 
-  select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
-         proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
-  gather(Stage, Temperature, -timepoints) %>% 
-  mutate(Age = timepoints) 
-
-plot.df %>% 
-  # Add Location and ID.no for plotting function 
-  mutate(Location = "Sulu Sea", 
-         ID.no = "N41") %>% 
-  PlotPFMs(.)
+PFM$everything %>% 
+  PlotPFMs()
 ```
 
 
 **The 10 replicates of the final simulated proxy**
 
 ```{r}
-head(PFM$everything$proxy.bt.sb.sampYM.b.n)
+PFM$everything %>% 
+  filter(stage == "simulated.proxy") %>% 
+  spread(replicate, value) %>% 
+  slice(1:5) %>% 
+  kable(., digits = 2, format = "markdown")
 ```
 
 
@@ -116,10 +111,10 @@ head(PFM$everything$proxy.bt.sb.sampYM.b.n)
 The initial input climate signal can be converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
 
 
-```{r MgCa, fig.show='hold'}
+```{r MgCa, fig.show='hold', warning=FALSE}
 set.seed(26052017)
 PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
-                         timepoints = N41.proxy$Published.age,
+                         timepoints = round(N41.proxy$Published.age),
                          proxy.calibration.type = "MgCa",
                          seas.prod = N41.G.ruber.seasonality,
                          sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
@@ -127,21 +122,12 @@ PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1
                          n.replicates = 1)
 ```
 
+`PlotPFM` returns a ggplot2 object so it is easy to customize figures with new axes labels an such
 
 ```{r MgCa_plot, fig.width=6, fig.height=5.5}
-plot.df <- PFM_2$simulated.proxy %>% 
-  select(timepoints, clim.timepoints.50, proxy.bt, proxy.bt.sb,
-         proxy.bt.sb.sampYM, proxy.bt.sb.sampYM.b.n) %>% 
-  gather(Stage, Temperature, -timepoints) %>% 
-  mutate(Age = timepoints,
-         Temperature = Temperature) 
-
-plot.df %>% 
-  # Add Location and ID.no for plotting function 
-  mutate(Location = "Sulu Sea", 
-         ID.no = "N41") %>% 
+PFM_2$everything %>% 
   PlotPFMs(.) +
-  labs(y = "MgCa")
+  labs(y = "Mg/Ca")
 ```
 
 ```{r, echo=FALSE}
