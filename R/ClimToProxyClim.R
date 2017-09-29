@@ -202,9 +202,18 @@ ClimToProxyClim <- function(clim.signal,
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
 
     # Get portion of clim.signal corresponding to bioturbation window -------
-    # shift by bio.depth.timesteps (tau in Torben's notation)
-    # to remove timeshift due to bioturbation, which would effect dating in the same way
-    sig.window.i.1 <- bioturb.window + timepoints[tp] + bio.depth.timesteps
+
+    # Correction 2017.09.29
+    # Do not shift by Tau: bioturbation does not cause a time shift (assuming constant
+    # sedimentation rate) once out of the bioturbated layer!
+
+    # [my speculative reasoning AMD]
+    # This will be generally true for any signal with a constant first derivative,
+    # like time if sedimentation rate is constant, or on average for stationary white noise.
+
+    ## shift by bio.depth.timesteps (tau in Torben's notation)
+    ## to remove timeshift due to bioturbation, which would effect dating in the same way
+    sig.window.i.1 <- bioturb.window + timepoints[tp] #+ bio.depth.timesteps
 
     if (max(sig.window.i.1) > max.clim.signal.i) {
       warning("Bioturbation window extends below end of clim.signal")
