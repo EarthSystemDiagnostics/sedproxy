@@ -204,7 +204,7 @@ ClimToProxyClim <- function(clim.signal,
     # Get portion of clim.signal corresponding to bioturbation window -------
     # shift by bio.depth.timesteps (tau in Torben's notation)
     # to remove timeshift due to bioturbation, which would effect dating in the same way
-    sig.window.i.1 <- bioturb.window + timepoints[tp] + bio.depth.timesteps
+    sig.window.i.1 <- bioturb.window + timepoints[tp] # + bio.depth.timesteps
 
     if (max(sig.window.i.1) > max.clim.signal.i) {
       warning("Bioturbation window extends below end of clim.signal")
