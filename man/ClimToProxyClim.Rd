@@ -44,7 +44,8 @@ time-series. Each replicate proxy time-series has a constant bias added,
 drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 defaults to zero.}
 
-\item{n.samples}{Number of e.g. Foraminifera sampled per timepoint}
+\item{n.samples}{Number of e.g. Foraminifera sampled per timepoint, this can
+be either a single number, or a vector of length = timepoints}
 
 \item{n.replicates}{Number of replicate proxy time-series to simulate from
 the climate signal}

@@ -66,7 +66,8 @@
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 #'   defaults to zero.
-#' @param n.samples Number of e.g. Foraminifera sampled per timepoint
+#' @param n.samples Number of e.g. Foraminifera sampled per timepoint, this can
+#' be either a single number, or a vector of length = timepoints
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
 #'
@@ -128,6 +129,13 @@ ClimToProxyClim <- function(clim.signal,
   # Check inputs --------
   n.timepoints <- length(timepoints)
 
+  if((length(n.samples) == 1 | length(n.samples)==n.timepoints)==FALSE)
+    stop("n.sample must be either a single value, or a vector the same
+         length as timepoints")
+
+   if (all(is.finite(n.samples))==FALSE & all(is.infinite(n.samples))==FALSE)
+    stop("n.samples cannot be a mix of finite and infinite")
+
   stopifnot(is.matrix(clim.signal))
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
@@ -147,6 +155,12 @@ ClimToProxyClim <- function(clim.signal,
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
   }
+
+  # Replicate n.samples if not vector
+  if (length(n.samples) == 1) {
+    n.samples <- rep(n.samples, n.timepoints)
+  }
+
 
   proxy.calibration.type <- match.arg(proxy.calibration.type)
 
@@ -259,21 +273,21 @@ ClimToProxyClim <- function(clim.signal,
     proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
 
     # Bioturbation + seasonal bias + aliasing
-    if (is.infinite(n.samples)) {
+    if (is.infinite(n.samples[tp])) {
       proxy.bt.sb.sampY <- rep(NA, n.replicates)
       proxy.bt.sb.sampYM <- rep(NA, n.replicates)
-    } else if (is.finite(n.samples)) {
+    } else if (is.finite(n.samples[tp])) {
       # call sample once for all replicates together, then take means of
       # groups of n.samples
       # Get indices not values
       samp.indices <-  sample(length(clim.sig.window),
-                              n.samples * n.replicates,
+                              n.samples[tp] * n.replicates,
                               prob = clim.sig.weights,
                               replace = TRUE)
 
       # convert vector to matrix (cheap only attributes changed), then means
       # can be taken across columns to get per replicate means
-      samp <- matrix(clim.sig.window[samp.indices], nrow = n.samples)
+      samp <- matrix(clim.sig.window[samp.indices], nrow = n.samples[tp])
       #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
       proxy.bt.sb.sampYM <- colMeans(samp)
 
@@ -281,7 +295,7 @@ ClimToProxyClim <- function(clim.signal,
       clim.sig.window.ann <- rowSums(clim.sig.window %*% diag(seas.prod))
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
-      samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples)
+      samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
       proxy.bt.sb.sampY <- colMeans(samp.bt)
 
     }
@@ -326,7 +340,7 @@ ClimToProxyClim <- function(clim.signal,
   out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
   out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
 
-  if (is.finite(n.samples)){
+  if (all(is.finite(n.samples))){
     out$proxy.bt.sb.inf.b[,] <- NA
     out$proxy.bt.sb.inf.b.n[,] <- NA
   }
@@ -387,7 +401,7 @@ ClimToProxyClim <- function(clim.signal,
   simulated.proxy$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM.b[, 1, drop = TRUE]
   simulated.proxy$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b.n[, 1, drop = TRUE]
 
-  if (is.finite(n.samples)) {
+  if (all(is.finite(n.samples))) {
     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.sampYM.b.n
     out$simulated.proxy <- out$proxy.bt.sb.sampYM.b.n
   } else{
