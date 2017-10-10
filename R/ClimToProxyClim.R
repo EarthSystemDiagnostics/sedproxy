@@ -203,6 +203,7 @@ ClimToProxyClim <- function(clim.signal,
 
     # Get portion of clim.signal corresponding to bioturbation window -------
 
+
     # Correction 2017.09.29
     # Do not shift by Tau: bioturbation does not cause a time shift (assuming constant
     # sedimentation rate) once out of the bioturbated layer!
