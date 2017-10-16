@@ -52,8 +52,8 @@
 #' This does not affect what the proxy model uses as input. If set to NA, no smoothed
 #' climate output is generated, this can speed up some simulations.
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
-#'   archived in the proxy. Either a vector of 12 values or a matrix of the same
-#'   dimensions as clim.signal. Defaults to a uniform seasonal distribution.
+#'   archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
+#'   distribution.
 #' @param bio.depth Depth of the bioturbated layer in metres, defaults to 0.1 m. If
 #' bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 #' equivalent to sampling a laminated sediment core.
@@ -139,6 +139,7 @@ ClimToProxyClim <- function(clim.signal,
   stopifnot(is.matrix(clim.signal))
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
+
   if (is.matrix(seas.prod))
     stop("Matrix form of seasonality not yet supported")
 
