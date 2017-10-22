@@ -11,6 +11,7 @@
 #'
 #' @return
 #' @export
+#' @importFrom mvtnorm rmvnorm
 #' @family calib
 #'
 #' @examples

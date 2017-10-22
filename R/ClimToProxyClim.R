@@ -111,7 +111,8 @@
 #' simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite
 #'}
 #'
-#' @importFrom dplyr tbl_df
+#' @importFrom dplyr tbl_df rename
+#' @importFrom plyr alply
 #' @export
 #'
 #' @examples
@@ -460,6 +461,8 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #'
 #' @return
 #' @export
+#' @importFrom dplyr bind_rows
+#' @importFrom tidyr gather
 #'
 #' @examples
 MakePFMDataframe <- function(PFM){

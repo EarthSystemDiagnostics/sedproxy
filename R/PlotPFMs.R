@@ -8,6 +8,7 @@
 #' @param max.replicates Maximum number of replicates to plot at once
 #'
 #' @import ggplot2
+#' @importFrom dplyr filter
 #' @export PlotPFMs
 #'
 #' @examples
@@ -97,7 +98,7 @@ PlotPFMs <- function(PFMs,
 
 
 
-  p <- ggplot(data = PFMs, aes(x = timepoints, y = value,
+  p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
                                colour = stage, alpha = stage,
                                linetype = as.factor(replicate))) +
     # geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
