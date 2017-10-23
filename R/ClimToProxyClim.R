@@ -441,7 +441,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
     avg.window.i.1 <- (rel.wind) + tp
 
     if (max(avg.window.i.1) > max.clim.signal.i) {
-      warning("Window extends below end of clim.signal")
+      warning("In ChunkMatrix: window extends below end of clim.signal")
     }
 
     avg.window.i <- avg.window.i.1[avg.window.i.1 > 0 &
