@@ -115,14 +115,15 @@ kable(head(N41.proxy), format = "markdown")
 
 ```r
 set.seed(26052017)
+clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 
-PFM <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
+PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                seas.prod = N41.G.ruber.seasonality,
-                sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
-                meas.noise = 0.46, n.samples = 30,
-                n.replicates = 10)
+                       seas.prod = N41.G.ruber.seasonality,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
+                       meas.noise = 0.46, n.samples = 30,
+                       n.replicates = 10)
 ```
 
 
@@ -159,55 +160,22 @@ PFM$everything %>%
 ![](readme_files/figure-html/default_plot-1.png)<!-- -->
 
 
-**The 10 replicates of the final simulated proxy**
+**Plot 5 replicates of the final simulated proxy**
 
 
 ```r
 PFM$everything %>% 
   filter(stage == "simulated.proxy") %>% 
-  spread(replicate, value) %>% 
-  slice(1:5) %>% 
-  kable(., digits = 2, format = "markdown")
+  PlotPFMs(., max.replicates = 5)
 ```
 
-
-
-| timepoints|stage           |     1|     2|     3|     4|     5|     6|     7|     8|     9|    10|
-|----------:|:---------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-|       4334|simulated.proxy | 28.77| 27.28| 27.85| 27.80| 28.83| 27.90| 28.39| 27.63| 28.57| 27.52|
-|       4527|simulated.proxy | 27.55| 27.73| 27.18| 27.61| 29.14| 27.14| 26.83| 27.58| 27.88| 28.17|
-|       4576|simulated.proxy | 28.53| 28.09| 27.86| 27.57| 27.48| 27.93| 27.80| 28.38| 27.12| 27.95|
-|       4721|simulated.proxy | 27.69| 27.16| 28.22| 26.93| 27.51| 27.33| 28.14| 27.70| 27.86| 27.49|
-|       4914|simulated.proxy | 27.47| 27.92| 27.46| 29.08| 27.44| 28.40| 28.46| 28.65| 28.04| 28.39|
-
-
-### Proxy types
-
-The initial input climate signal can be converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+![](readme_files/figure-html/plot_reps-1.png)<!-- -->
 
 
 
-```r
-set.seed(26052017)
-PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
-                         timepoints = round(N41.proxy$Published.age),
-                         proxy.calibration.type = "MgCa",
-                         seas.prod = N41.G.ruber.seasonality,
-                         sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
-                         meas.noise = 0.46, n.samples = 30,
-                         n.replicates = 1)
-```
-
-`PlotPFM` returns a ggplot2 object so it is easy to customize figures with new axes labels an such
 
 
-```r
-PFM_2$everything %>% 
-  PlotPFMs(.) +
-  labs(y = "Mg/Ca")
-```
 
-![](readme_files/figure-html/MgCa_plot-1.png)<!-- -->
 
 
 
