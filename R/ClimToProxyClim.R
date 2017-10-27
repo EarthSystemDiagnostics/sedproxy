@@ -213,7 +213,11 @@ ClimToProxyClim <- function(clim.signal,
       ImpulseResponse(-bioturb.window, bio.depth.timesteps, z0 = 0)
     bioturb.weights <- bioturb.weights / sum(bioturb.weights)
 
+    # this is estimating mean deviation MD, (not MAD or SD)
+    # no need to estimate this from the psuedo data
+    # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
     smoothing.width = sum(bioturb.weights*abs(bioturb.window))
+
     # Check depth and time order match
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
 
