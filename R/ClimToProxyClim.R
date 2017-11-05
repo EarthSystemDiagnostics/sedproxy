@@ -299,6 +299,9 @@ ClimToProxyClim <- function(clim.signal,
 
       # Get without seasonal aliasing (bioturbation aliasing only)
       clim.sig.window.ann <- rowSums(clim.sig.window %*% diag(seas.prod))
+
+      # weights passed as a matrix are applied columnwise, so
+      # modulo on nrows is need here
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
       samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
