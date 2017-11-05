@@ -1,7 +1,6 @@
 #' Simulate sediment archived proxy records from an "assumed true" climate signal.
 #'
 #' @md
-#' @describeIn ClimToProxyClim
 #' @inheritParams ClimToProxyClim
 #' @param seas.prod Either the seasonal pattern of productivity for the organism(s)
 #'   recording / producing the proxy as a vector of 12 values, or a function that
@@ -9,6 +8,7 @@
 #'   Defaults to a uniform seasonal distribution.
 #' @param seas.prod.args A named list of parameters to be passed to a function named in seas.prod
 #' @inherit ClimToProxyClim return
+#' @inherit ClimToProxyClim description
 #' @importFrom dplyr tbl_df
 #' @export
 #'
@@ -73,9 +73,9 @@ ClimToProxyClim.dev <- function(clim.signal,
 
   #print(max.min.windows)
 
-  if (any(max.min.windows[,"max"] > max.clim.signal.i))
+  if (any(max.min.windows[,"max"] >= max.clim.signal.i))
     stop(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
-                timepoints[max.min.windows[, "max"] > max.clim.signal.i],
+                timepoints[max.min.windows[, "max"] >= max.clim.signal.i],
                 " extend(s) beyond end of input climate signal"))
 
   if (any(max.min.windows[,"min"] < 1))
@@ -192,9 +192,9 @@ ClimToProxyClim.dev <- function(clim.signal,
                          sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
-
+  
     # Get bioturbation X seasonality weights matrix ---------
-    seas.prod.weights <- seas.prod.weights[sig.window.i, , drop = FALSE]
+    seas.prod.weights <- seas.prod.weights[sig.window.i.1, , drop = FALSE]
     seas.prod.weights <- seas.prod.weights / sum(seas.prod.weights)
     clim.sig.weights <- bioturb.weights * seas.prod.weights
     clim.sig.weights <-
@@ -235,6 +235,7 @@ ClimToProxyClim.dev <- function(clim.signal,
       proxy.bt.sb.sampYM <- colMeans(samp)
 
       # Get without seasonal aliasing (bioturbation aliasing only)
+      
       clim.sig.window.ann <- rowSums(clim.sig.window * seas.prod.weights)
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 

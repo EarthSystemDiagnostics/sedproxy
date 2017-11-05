@@ -1,6 +1,5 @@
-#' Simulate sediment archived proxy records from an "assumed true" climate signal.
-#'
 #' @md
+#' @title Simulate sediment archived proxy records from an "assumed true" climate signal.
 #' @description \code{ClimToProxyClim} simulates the creation of a proxy climate record
 #'   from a climate signal that is assumed to be true.
 #'
