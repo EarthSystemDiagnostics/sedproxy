@@ -72,16 +72,26 @@ ClimToProxyClim.dev <- function(clim.signal,
   }))
 
   #print(max.min.windows)
-
-  if (any(max.min.windows[,"max"] >= max.clim.signal.i))
-    stop(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
-                timepoints[max.min.windows[, "max"] >= max.clim.signal.i],
-                " extend(s) beyond end of input climate signal"))
+  max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
+  if (any(max.ind))
+    warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
+                paste(timepoints[max.ind], collapse = ", "),
+                " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
 
   if (any(max.min.windows[,"min"] < 1))
     stop(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
                 timepoints[max.min.windows[, "min"] < 1],
-                " extend(s) above start of input climate signal"))
+                " extend(s) above start of input climate signal."))
+  
+
+  timepoints <- timepoints[max.ind == FALSE]
+  n.timepoints <- length(timepoints)
+  
+  # Trim timepoint invariant values ------
+  sed.acc.rate <- sed.acc.rate[max.ind == FALSE]
+  n.samples <- n.samples[max.ind == FALSE]
+  
+  
 
   # Generate productivity weights from function if supplied
   if (is.function(seas.prod)){
