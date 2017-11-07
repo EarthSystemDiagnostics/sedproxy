@@ -175,31 +175,33 @@ ClimToProxyClim.dev <- function(clim.signal,
     ## to remove timeshift due to bioturbation, which would effect dating in the same way
     sig.window.i.1 <- bioturb.window + timepoints[tp] #+ bio.depth.timesteps
 
-    bioturb.weights <- bioturb.weights[sig.window.i.1 <= max.clim.signal.i]
-    bioturb.weights <- bioturb.weights / sum(bioturb.weights)
-
-    smoothing.width = sum(bioturb.weights*abs(bioturb.window))
-
-    if (max(sig.window.i.1) > max.clim.signal.i) {
-      #warning(paste0(timepoints[tp], " Bioturbation window extends below end of clim.signal"))
+   
+    if (max(sig.window.i.1) >= max.clim.signal.i) {
+      # this should never happen
       warning("Test warmn")
     }
 
+    valid.window.logical <- sig.window.i.1 > 0 &
+      sig.window.i.1 <= max.clim.signal.i
+    
+    bioturb.weights <- bioturb.weights[valid.window.logical]
+    
     sig.window.i <-
-      sig.window.i.1[sig.window.i.1 > 0 &
-                       sig.window.i.1 < max.clim.signal.i]
-
+      sig.window.i.1[valid.window.logical]
+    
+    
     stopifnot(sig.window.i > 0)
-    stopifnot(max.clim.signal.i > max(sig.window.i))
+    stopifnot(max.clim.signal.i >= max(sig.window.i))
 
     clim.sig.window <- proxy.clim.signal[sig.window.i, , drop = FALSE]
 
-
+    # this is estimating mean deviation MD, (not MAD or SD)
+    # no need to estimate this from the psuedo data
+    # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
+    smoothing.width = sum(bioturb.weights*abs(bioturb.window))
+    
     # Get bioturbation X no-seasonality weights matrix ---------
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
-    biot.sig.weights <-
-      biot.sig.weights[sig.window.i.1 > 0 &
-                         sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
   
@@ -207,9 +209,6 @@ ClimToProxyClim.dev <- function(clim.signal,
     seas.prod.weights <- seas.prod.weights[sig.window.i.1, , drop = FALSE]
     seas.prod.weights <- seas.prod.weights / sum(seas.prod.weights)
     clim.sig.weights <- bioturb.weights * seas.prod.weights
-    clim.sig.weights <-
-      clim.sig.weights[sig.window.i.1 > 0 &
-                         sig.window.i.1 < max.clim.signal.i, , drop = FALSE]
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
@@ -314,15 +313,9 @@ ClimToProxyClim.dev <- function(clim.signal,
 
   # Create smoothed climate signal
   if (is.na(smoothed.signal.res)) {
-    out$clim.timepoints.1000 <- NA
-    out$clim.timepoints.100 <- NA
-    out$clim.timepoints.50 <- NA
     out$clim.timepoints.ssr <- NA
 
   } else{
-    out$clim.timepoints.1000 <- ChunkMatrix(timepoints, 1000, proxy.clim.signal)
-    out$clim.timepoints.100 <- ChunkMatrix(timepoints, 100, proxy.clim.signal)
-    out$clim.timepoints.50 <- ChunkMatrix(timepoints, 50, proxy.clim.signal)
     out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, proxy.clim.signal)
   }
 
@@ -338,9 +331,6 @@ ClimToProxyClim.dev <- function(clim.signal,
     dplyr::tbl_df(out[c(
       "timepoints",
       "clim.signal.ann",
-      "clim.timepoints.1000",
-      "clim.timepoints.100",
-      "clim.timepoints.50",
       "clim.timepoints.ssr",
       "proxy.bt",
       "proxy.bt.sb",

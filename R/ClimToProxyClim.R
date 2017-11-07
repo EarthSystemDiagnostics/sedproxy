@@ -362,8 +362,7 @@ ClimToProxyClim <- function(clim.signal,
   }
   
   # Calculate chunked climate at timepoints
-  # get 100 year clim.average at timepoints -------
-  
+
   # Create smoothed climate signal
   if (is.na(smoothed.signal.res)) {
     out$clim.timepoints.ssr <- NA
