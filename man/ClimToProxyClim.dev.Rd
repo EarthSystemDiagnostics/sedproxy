@@ -78,9 +78,7 @@ generated noise, rather than a vector, a \code{timepoints} \strong{by} \code{n.r
 \tabular{ll}{
 \bold{Variable} \tab \bold{Description} \cr
 timepoints                 \tab requested timepoints                                                                                                               \cr
-clim.timepoints.1000 \tab 1000 year means of climate signal evaluated at the requested timepoints                                                             \cr
-clim.timepoints.100 \tab 100 year means of climate signal evaluated at the requested timepoints                                                             \cr
-clim.timepoints.50 \tab 50 year means of climate signal evaluated at the requested timepoints                                                             \cr
+clim.timepoints.ssr \tab means of climate signal at resolution = smoothed.signal.res evaluated at the requested timepoints                                                             \cr
 proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
 proxy.bt.sb              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
 sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr

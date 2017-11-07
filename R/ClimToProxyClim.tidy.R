@@ -1,119 +1,14 @@
+#' Simulate sediment archived proxy records from an "assumed true" climate signal.
+#'
 #' @md
-#' @title Simulate sediment archived proxy records from an "assumed true" climate signal.
-#' @description \code{ClimToProxyClim} simulates the creation of a proxy climate record
-#'   from a climate signal that is assumed to be true.
-#'
-#'   The following aspects of proxy creation are currently modelled.
-#'
-#'   1. Seasonal bias in the encoding of a proxy due to the interaction between
-#'   climate seasonality and any seasonality in the life cycle of the organism
-#'   encoding the climate signal (e.g. Foraminifera for Mg/Ca ratios, or
-#'   phytoplankton for Alkenone unsaturation indices).
-#'
-#'   2. Bioturbation of the sediment archived proxy. For each requested
-#'   timepoint, the simulated proxy consists of a weighted mean of the climate
-#'   signal over a time window that is determined by the sediment accumulation
-#'   rate \{sed.acc.rate} and the bioturbation depth \{bio.depth} which defaults
-#'   to 0.1 m. The weights are given by the depth solution to an impulse
-#'   response function (Berger and Heath, 1968).
-#'
-#'   3. Aliasing of seasonal and inter-annual climate variation onto to
-#'   bioturbated (smoothed) signal.
-#'   For proxies measured on a small number of discrete particles both seasonal
-#'   and inter-annual climate variation is aliased into the proxy record. For
-#'   example, Foraminifera have a life-cycle of approximately 1 month, so they
-#'   record something like the mean temperature from a single month. If Mg/Ca is
-#'   measured on e.g. \code{n.samples} = 30 individuals, the measured proxy
-#'   signal is a mean of 30 distinct monthly mean temperatures and will thus be
-#'   a stochastic sample of the true mean climate.
-#'
-#'   4. Measurement noise/error is added as a pure Gaussian white noise
-#'   process with mean = 0, standard deviation = \code{meas.noise}.
-#'
-#'   5. Additionally, a random *bias* can be added to each realisation of a
-#'   proxy record. Bias is simulated as a Gaussian random variable with mean =
-#'   0, standard deviation = \code{meas.bias}. The same randomly generated bias
-#'   value is applied to all timepoints in a simulated proxy record, when
-#'   multiple replicate proxies are generated (\{n.replicates} > 1) each
-#'   replicate has a different bias applied.
-#'
-#'   \code{ClimToProxyClim} returns one or more replicates of the final simulated proxy
-#'   as well as several intermediate stages (see section **Value** below).
-#'
-#'
-#' @param clim.signal The "assumed true" climate signal, e.g. climate model output or
-#'   instrumental record. A years x 12 (months) matrix of temperatures.
-#' @param timepoints The timepoints for which the proxy record is to be modelled
-#' @param proxy.calibration.type Type of proxy, e.g. UK37 or MgCa, to which the clim.signal is
-#' converted before the archiving and measurement of the proxy is simulated
-#' @param smoothed.signal.res The resolution, in years, of the smoothed
-#' (block averaged) version of the input climate signal returned for plotting.
-#' This does not affect what the proxy model uses as input. If set to NA, no smoothed
-#' climate output is generated, this can speed up some simulations.
-#' @param seas.prod The seasonal pattern of productivity for the organism(s)
-#'   archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
-#'   distribution.
-#' @param bio.depth Depth of the bioturbated layer in metres, defaults to 0.1 m. If
-#' bio.depth == 0, each timepoint samples from a single year of the clim.signal,
-#' equivalent to sampling a laminated sediment core.
-#' @param sed.acc.rate Sediment accumulation rate in metres per year. Defaults
-#'   to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
-#'   length as "timepoints"
-#' @param meas.noise The amount of noise to add to each simulated proxy value.
-#'   Defined as the standard deviation of a normal distribution with mean = 0
-#' @param meas.bias The amount of bias to add to each simulated proxy
-#'   time-series. Each replicate proxy time-series has a constant bias added,
-#'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
-#'   defaults to zero.
-#' @param n.samples Number of e.g. Foraminifera sampled per timepoint, this can
-#' be either a single number, or a vector of length = timepoints
-#' @param n.replicates Number of replicate proxy time-series to simulate from
-#'   the climate signal
-#'
-#' @return \code{ClimToProxyClim} returns a list with three elements:
-#'
-#'  1. a dataframe \code{simulated.proxy}
-#'  2. a dataframe \code{smoothed.signal}
-#'  3. a list \code{everything}
-#'
-#'
-#' The dataframe \code{simulated.proxy} contains a single realisation of the
-#' final forward modelled proxy, as well as the intermediate stages and the
-#' original climate signal at the requested timepoints.
-#'
-#' The dataframe \code{smoothed.signal} contains a block averaged version the
-#' input climate signal, defaults to 100 year means but this is set by the parameter
-#' smoothed.signal.res. This is useful for plotting against the resulting simulated
-#' proxy.
-#'
-#' The list \code{everything} contains all of the above, but where a stage contains stochastically
-#' generated noise, rather than a vector, a \code{timepoints} **by** \code{n.replicates} matrix is returned.
-#'
-#' **Named elements of the returned proxy record:**
-#'
-#' \tabular{ll}{
-#' \bold{Variable} \tab \bold{Description} \cr
-#' timepoints                 \tab requested timepoints                                                                                                               \cr
-#' clim.timepoints.ssr \tab means of climate signal at resolution = smoothed.signal.res evaluated at the requested timepoints                                                             \cr
-#' proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
-#' proxy.bt.sb              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
-#' sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
-#' smoothing.width            \tab weighted mean time span represented in a sample after bioturbation                                                                 \cr
-#' proxy.bt.sb.sampY             \tab proxy after bioturbation, seasonal bias and finite sampling of years but not seasonality                                                                        \cr
-#' proxy.bt.sb.sampYM             \tab proxy after bioturbation, seasonal bias and finite sampling of years and months                                                                        \cr
-#' proxy.bt.sb.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
-#' proxy.bt.sb.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
-#' proxy.bt.sb.sampYM.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
-#' proxy.bt.sb.sampYM.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
-#' simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite
-#'}
-#'
-#' @importFrom dplyr tbl_df rename
-#' @importFrom plyr alply
+#' @inheritParams ClimToProxyClim
+#' @inherit ClimToProxyClim return
+#' @inherit ClimToProxyClim description
+#' @importFrom dplyr tbl_df
 #' @export
 #'
 #' @examples
-ClimToProxyClim <- function(clim.signal,
+ClimToProxyClim.tidy <- function(clim.signal,
                             timepoints,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             smoothed.signal.res = 100,
@@ -161,7 +56,42 @@ ClimToProxyClim <- function(clim.signal,
   }
   
   
-  # Convert to proxy units if requested --------
+  # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
+  
+  max.min.windows <- t(sapply(1:length(timepoints), function(tp){
+    bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
+    if (bio.depth.timesteps == 0){
+      bio.depth.timesteps <- 0
+      bioturb.window <- 1
+    }else{
+      bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
+    }
+    #print(range(bioturb.window))
+    return(c(max = max(bioturb.window + timepoints[tp]),
+             min = min(bioturb.window + timepoints[tp])))
+  }))
+  
+  #print(max.min.windows)
+  max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
+  if (any(max.ind))
+    warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
+                   paste(timepoints[max.ind], collapse = ", "),
+                   " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
+  
+  if (any(max.min.windows[,"min"] < 1))
+    stop(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
+                timepoints[max.min.windows[, "min"] < 1],
+                " extend(s) above start of input climate signal."))
+  
+  
+  timepoints <- timepoints[max.ind == FALSE]
+  n.timepoints <- length(timepoints)
+  
+  # Trim timepoint invariant values ------
+  sed.acc.rate <- sed.acc.rate[max.ind == FALSE]
+  n.samples <- n.samples[max.ind == FALSE]
+  
+  
   
   proxy.calibration.type <- match.arg(proxy.calibration.type)
   
@@ -186,7 +116,7 @@ ClimToProxyClim <- function(clim.signal,
     proxy.clim.signal <- clim.signal
   }
   
-  # Create smoothed climate signal --------
+  # Create smoothed climate signal
   if (is.na(smoothed.signal.res)) {
     timepoints.smoothed <- NA
     clim.signal.smoothed <- NA
@@ -235,9 +165,9 @@ ClimToProxyClim <- function(clim.signal,
     
     valid.window.logical <- sig.window.i.1 > 0 &
       sig.window.i.1 <= max.clim.signal.i
-    
+      
     bioturb.weights <- bioturb.weights[valid.window.logical]
-    
+
     sig.window.i <-
       sig.window.i.1[valid.window.logical]
     
@@ -362,8 +292,7 @@ ClimToProxyClim <- function(clim.signal,
   }
   
   # Calculate chunked climate at timepoints
-  # get 100 year clim.average at timepoints -------
-  
+ 
   # Create smoothed climate signal
   if (is.na(smoothed.signal.res)) {
     out$clim.timepoints.ssr <- NA
@@ -418,7 +347,7 @@ ClimToProxyClim <- function(clim.signal,
   
   smoothed.signal$Stage <- "clim.signal.smoothed"
   
-  everything <- MakePFMDataframe(out)
+  everything <- MakePFMDataframe.tidy(out)
   
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
@@ -426,41 +355,8 @@ ClimToProxyClim <- function(clim.signal,
   #return(everything)
 }
 
-ChunkMatrix <- function(timepoints, width, climate.matrix){
-  max.clim.signal.i <- nrow(climate.matrix)
 
-  rel.wind <- 1:width -round(width/2)
-
-  sapply(timepoints, function(tp){
-
-    avg.window.i.1 <- (rel.wind) + tp
-
-    if (max(avg.window.i.1) > max.clim.signal.i) {
-      warning("In ChunkMatrix: window extends below end of clim.signal")
-    }
-
-    avg.window.i <- avg.window.i.1[avg.window.i.1 > 0 &
-                                     avg.window.i.1 < max.clim.signal.i]
-
-    stopifnot(avg.window.i > 0)
-    stopifnot(max.clim.signal.i > max(avg.window.i))
-
-    mean(climate.matrix[avg.window.i, , drop = FALSE])
-  })
-}
-
-
-#' Convert "everything" part of output from ClimToProxyClim to dataframe
-#'
-#' @param PFM output from ClimToProxyClim
-#'
-#' @return
-#' @export
-#' @importFrom dplyr bind_rows
-#' @importFrom tidyr gather
-#'
-#' @examples
-MakePFMDataframe <- function(PFM){
+MakePFMDataframe.tidy <- function(PFM){
   df <- data.frame(
     proxy.bt.sb.sampYM = as.vector(PFM$proxy.bt.sb.sampYM),
     proxy.bt.sb.inf.b = as.vector(PFM$proxy.bt.sb.inf.b),
@@ -469,12 +365,12 @@ MakePFMDataframe <- function(PFM){
     proxy.bt.sb.sampYM.b.n = as.vector(PFM$proxy.bt.sb.sampYM.b.n),
     simulated.proxy = as.vector(PFM$simulated.proxy),
     stringsAsFactors = FALSE)
-
+  
   df$timepoints <- PFM$timepoints
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- tbl_df(df)
   df <- tidyr::gather(df, stage, value, -timepoints, -replicate)
-
+  
   df2 <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints,
@@ -484,22 +380,17 @@ MakePFMDataframe <- function(PFM){
     clim.timepoints.ssr = PFM$clim.timepoints.ssr,
     stringsAsFactors = FALSE)
   df2 <- tidyr::gather(df2, stage, value, -timepoints, -replicate)
-
+  
   df.smoothed <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints.smoothed,
     stage = "clim.signal.smoothed",
     value = PFM$clim.signal.smoothed,
     stringsAsFactors = FALSE)
-
+  
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
-
+  
   rtn <- droplevels(filter(rtn, complete.cases(value)))
-
+  
   return(rtn)
 }
-
-# a <- MakePFMDataframe(PFM$everything)
-# b <- MakePFMDataframe_2(PFM$everything)
-# all_equal(a, b)
-
