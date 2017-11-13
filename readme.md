@@ -20,6 +20,20 @@ if (!require("devtools")) {
 devtools::install_bitbucket("ecus/sedproxy")
 ```
 
+## Shiny app
+
+A Shiny app provides a graphical user interface to the main `sedproxy` function `ClimToProxyClim`. Currently this app forward models a proxy from a randomly generated input climate and serves only to illustrate the functionality of `sedproxy`. The user can alter the parameters of the forward model and observe the results graphically. In future versions it may be possible to load input climates and other input parameters from a file and to save the output.
+
+To run the Shiny app enter the following in the R terminal:
+
+
+```r
+library(shiny)
+runApp("inst/ShinySedproxy")
+```
+
+Below are some brief examples of how to run `sedproxy` from a script or the command line.
+
 ## Example data
 
 `sedproxy` includes example data for a single sediment core and location: core number 41 in the Shakun et al. (2012) compilation (MD97-2141, Rosenthal et al. 2003). The climate signal is taken from the [TraCE-21ka](http://www.cgd.ucar.edu/ccr/TraCE/) Simulation of Transient Climate Evolution over the last 21,000 years, using the grid cell closest to core MD97-2141. Seasonality of *G.ruber*, the Foraminifera for which test Mg/Ca ratios were measured, is taken from the model of Fraile et al (2008). Sediment accumulation rates were estimated from the depth and age data associated with core MD97-2141, with a minimum rate of 0.2 * the mean rate.
@@ -133,7 +147,7 @@ PFM$everything
 ```
 
 ```
-## # A tibble: 8,213 x 4
+## # A tibble: 7,565 x 4
 ##    timepoints replicate              stage    value
 ##         <dbl>     <dbl>              <chr>    <dbl>
 ##  1       4334         1 proxy.bt.sb.sampYM 28.52609
@@ -146,7 +160,7 @@ PFM$everything
 ##  8       5156         1 proxy.bt.sb.sampYM 27.83270
 ##  9       5254         1 proxy.bt.sb.sampYM 27.46396
 ## 10       5318         1 proxy.bt.sb.sampYM 27.36841
-## # ... with 8,203 more rows
+## # ... with 7,555 more rows
 ```
 
 **Simple plotting**
