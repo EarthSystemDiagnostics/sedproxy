@@ -6,9 +6,9 @@
 \usage{
 ClimToProxyClim.dev(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, seas.prod = dnorm, seas.prod.args = list(mean
-  = 26, sd = 3), bio.depth = 0.1, sed.acc.rate = 5e-04, meas.noise = 0,
-  meas.bias = 0, n.samples = Inf, n.replicates = 1)
+  smoothed.signal.res = 100, seas.prod = rep(1/12, 12),
+  seas.prod.args = NULL, bio.depth = 0.1, sed.acc.rate = 5e-04,
+  meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or

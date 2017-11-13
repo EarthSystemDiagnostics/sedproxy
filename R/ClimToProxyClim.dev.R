@@ -17,8 +17,8 @@ ClimToProxyClim.dev <- function(clim.signal,
                             timepoints,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             smoothed.signal.res = 100,
-                            seas.prod = dnorm,
-                            seas.prod.args = list(mean = 26, sd = 3),
+                            seas.prod = rep(1, 12),
+                            seas.prod.args = NULL,
                             bio.depth = 0.1,
                             sed.acc.rate = 5e-04,
                             meas.noise = 0,
@@ -82,16 +82,16 @@ ClimToProxyClim.dev <- function(clim.signal,
     stop(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
                 timepoints[max.min.windows[, "min"] < 1],
                 " extend(s) above start of input climate signal."))
-  
+
 
   timepoints <- timepoints[max.ind == FALSE]
   n.timepoints <- length(timepoints)
-  
+
   # Trim timepoint invariant values ------
   sed.acc.rate <- sed.acc.rate[max.ind == FALSE]
   n.samples <- n.samples[max.ind == FALSE]
-  
-  
+
+
 
   # Generate productivity weights from function if supplied
   if (is.function(seas.prod)){
@@ -175,7 +175,7 @@ ClimToProxyClim.dev <- function(clim.signal,
     ## to remove timeshift due to bioturbation, which would effect dating in the same way
     sig.window.i.1 <- bioturb.window + timepoints[tp] #+ bio.depth.timesteps
 
-   
+
     if (max(sig.window.i.1) >= max.clim.signal.i) {
       # this should never happen
       warning("Test warmn")
@@ -183,13 +183,13 @@ ClimToProxyClim.dev <- function(clim.signal,
 
     valid.window.logical <- sig.window.i.1 > 0 &
       sig.window.i.1 <= max.clim.signal.i
-    
+
     bioturb.weights <- bioturb.weights[valid.window.logical]
-    
+
     sig.window.i <-
       sig.window.i.1[valid.window.logical]
-    
-    
+
+
     stopifnot(sig.window.i > 0)
     stopifnot(max.clim.signal.i >= max(sig.window.i))
 
@@ -199,12 +199,12 @@ ClimToProxyClim.dev <- function(clim.signal,
     # no need to estimate this from the psuedo data
     # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
     smoothing.width = sum(bioturb.weights*abs(bioturb.window))
-    
+
     # Get bioturbation X no-seasonality weights matrix ---------
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
-  
+
     # Get bioturbation X seasonality weights matrix ---------
     seas.prod.weights <- seas.prod.weights[sig.window.i.1, , drop = FALSE]
     seas.prod.weights <- seas.prod.weights / sum(seas.prod.weights)
@@ -244,7 +244,7 @@ ClimToProxyClim.dev <- function(clim.signal,
       proxy.bt.sb.sampYM <- colMeans(samp)
 
       # Get without seasonal aliasing (bioturbation aliasing only)
-      
+
       clim.sig.window.ann <- rowSums(clim.sig.window * seas.prod.weights)
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
