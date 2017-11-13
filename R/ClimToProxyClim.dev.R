@@ -68,28 +68,30 @@ ClimToProxyClim.dev <- function(clim.signal,
     }
     #print(range(bioturb.window))
     return(c(max = max(bioturb.window + timepoints[tp]),
-                min = min(bioturb.window + timepoints[tp])))
+             min = min(bioturb.window + timepoints[tp])))
   }))
 
   #print(max.min.windows)
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
+  min.ind <- max.min.windows[,"min"] <  1
+
   if (any(max.ind))
     warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
-                paste(timepoints[max.ind], collapse = ", "),
-                " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
+                   paste(timepoints[max.ind], collapse = ", "),
+                   " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
 
   if (any(max.min.windows[,"min"] < 1))
-    stop(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
+    warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
                 timepoints[max.min.windows[, "min"] < 1],
-                " extend(s) above start of input climate signal."))
+                " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
 
 
-  timepoints <- timepoints[max.ind == FALSE]
+  timepoints <- timepoints[max.ind == FALSE & min.ind == FALSE]
   n.timepoints <- length(timepoints)
 
   # Trim timepoint invariant values ------
-  sed.acc.rate <- sed.acc.rate[max.ind == FALSE]
-  n.samples <- n.samples[max.ind == FALSE]
+  sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
+  n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
 
 
 
@@ -131,7 +133,7 @@ ClimToProxyClim.dev <- function(clim.signal,
     proxy.clim.signal <- clim.signal
   }
 
-  # Create smoothed climate signal
+  # Create smoothed climate signal --------
   if (is.na(smoothed.signal.res)) {
     timepoints.smoothed <- NA
     clim.signal.smoothed <- NA
@@ -177,8 +179,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 
 
     if (max(sig.window.i.1) >= max.clim.signal.i) {
-      # this should never happen
-      warning("Test warmn")
+      warning("Bioturbation window extends below end of clim.signal")
     }
 
     valid.window.logical <- sig.window.i.1 > 0 &
@@ -309,8 +310,7 @@ ClimToProxyClim.dev <- function(clim.signal,
   }
 
   # Calculate chunked climate at timepoints
-  # get 100 year clim.average at timepoints -------
-
+  
   # Create smoothed climate signal
   if (is.na(smoothed.signal.res)) {
     out$clim.timepoints.ssr <- NA
