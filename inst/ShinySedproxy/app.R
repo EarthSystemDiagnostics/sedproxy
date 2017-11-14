@@ -4,10 +4,10 @@ library(sedproxy)
 # Functions ----
 SimPowerlaw <- function(beta, N)
 {
-  N2 <- (3^ceiling(log(N, base = 3)))
+  N2 <- (3 ^ ceiling(log(N, base = 3)))
   df  <- 1 / N2
-  f <- seq(from = df, to = 1/2, by = df)
-  Filter <- sqrt(1/(f^beta))
+  f <- seq(from = df, to = 1 / 2, by = df)
+  Filter <- sqrt(1 / (f ^ beta))
   Filter <- c(max(Filter), Filter, rev(Filter))
   x   <- rnorm(N2, 1)
   fx  <- fft(x)
@@ -19,7 +19,9 @@ SimPowerlaw <- function(beta, N)
 # Define UI ----
 ui <- fluidPage(
   titlePanel("sedproxy"),
-  p(em("sedproxy"), "is a forward model for sediment archived climate proxies.
+  p(
+    em("sedproxy"),
+    "is a forward model for sediment archived climate proxies.
     It is based on work described in Laepple and Huybers (2013).
     A manuscript is in preparation, Dolman and Laepple (in prep.),
     which will more fully describe the forward model and its applications.
@@ -27,11 +29,14 @@ ui <- fluidPage(
     or Dr Thomas Laepple <tlaepple@awi.de>, at the Alfred-Wegener-Institute,
     Helmholtz Centre for Polar and Marine Research,
     Germany, for more information.
-    "),
+    "
+  ),
   p("This work is supported by the BMBF funded PalMod project."),
-  p("Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
+  p(
+    "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
     and Mg/Ca reconstructions of Holocene marine temperature variability.
-    Earth and Planetary Science Letters, 375: 418–429."),
+    Earth and Planetary Science Letters, 375: 418–429."
+  ),
   sidebarLayout(
     sidebarPanel(
       fluidRow(
@@ -71,10 +76,10 @@ ui <- fluidPage(
           numericInput(
             "seas.amp",
             h5("Amplitude of the seasonal cycle"),
-            value = 1,
-            step = 0.1,
-            min = 0.5,
-            max = 3
+            value = 5,
+            step = 0.5,
+            min = 0,
+            max = 20
           )
         )
       ),
@@ -105,7 +110,7 @@ ui <- fluidPage(
           width = 6,
           numericInput(
             "t.res",
-            h5("Timepoint res."),
+            h5("Core sampling resolution [years]"),
             value = 100,
             step = 100,
             min = 1,
@@ -120,7 +125,7 @@ ui <- fluidPage(
             value = 30,
             step = 1,
             min = 1,
-            max = Inf
+            max = 1000
           )
         )
       ),
@@ -149,6 +154,43 @@ ui <- fluidPage(
           )
         )
       ),
+      fluidRow(h4("Proxy production weights (monthly)"),
+               column(
+                 12,
+                 fluidRow(
+                   radioButtons(
+                     "seas",
+                     label = NULL,
+                     choices = c("Uniform", "Custom"),
+                     selected = "Uniform",
+                     inline = TRUE
+                   ),
+                   conditionalPanel(
+                     condition = "input.seas == 'Custom'",
+                     column(
+                       4,
+                       sliderInput("Jan", "Jan", 0, 1, 0.5, 0.1),
+                       sliderInput("Feb", "Feb", 0, 1, 0.5, 0.1),
+                       sliderInput("Mar", "Mar", 0, 1, 0.5, 0.1),
+                       sliderInput("Apr", "Apr", 0, 1, 0.5, 0.1)
+                     ),
+                     column(
+                       4,
+                       sliderInput("May", "May", 0, 1, 0.5, 0.1),
+                       sliderInput("Jun", "Jun", 0, 1, 0.5, 0.1),
+                       sliderInput("Jul", "Jul", 0, 1, 0.5, 0.1),
+                       sliderInput("Aug", "Aug", 0, 1, 0.5, 0.1)
+                     ),
+                     column(
+                       4,
+                       sliderInput("Sep", "Sep", 0, 1, 0.5, 0.1),
+                       sliderInput("Oct", "Oct", 0, 1, 0.5, 0.1),
+                       sliderInput("Nov", "Nov", 0, 1, 0.5, 0.1),
+                       sliderInput("Dec", "Dec", 0, 1, 0.5, 0.1)
+                     )
+                   )
+                 )
+               )),
       fluidRow(
         h4("Noise parameters"),
         column(
@@ -174,43 +216,75 @@ ui <- fluidPage(
           )
         )
       )
-
+      
     ),
     mainPanel(tabsetPanel(
-                tabPanel("Plots",
-                         plotOutput("pfm.plot", height = "800px")
-                         ),
-                tabPanel("Numbers",
-                         dataTableOutput("pfm.str")),
-                tabPanel("Placeholder")
-              ))
+      tabPanel("Plots",
+               plotOutput("pfm.plot", height = "800px")),
+      tabPanel("Numbers",
+               dataTableOutput("pfm.str")),
+      tabPanel("Placeholder", textOutput("seas.prod"))
+    ))
   )
   )
 
 # Define server logic ----
 server <- function(input, output) {
-  input.clim <- eventReactive(input$run.pfm, {
+  clim <- eventReactive(input$run.pfm, {
     set.seed(input$seed)
-    ann <- SimPowerlaw(input$clim.signal.beta, input$clim.signal.length)
-    mon <-cos(seq(pi, 3 * pi, length.out = 12)) * input$seas.amp / 2
+    ann <-
+      SimPowerlaw(input$clim.signal.beta, input$clim.signal.length)
+    mon <-
+      cos(seq(pi, 3 * pi, length.out = 12)) * input$seas.amp / 2
     clim <- outer(ann, mon, "+")
     return(clim)
   }, ignoreNULL = FALSE)
   timepoints <- eventReactive(input$run.pfm, {
-    res <- 100
-    tp <- seq(1, input$clim.signal.length, by = res)
+    #res <- 100
+    tp <- seq(1, input$clim.signal.length, by = input$t.res)
     t.min <- ceiling(input$bio.depth / input$sed.acc.rate) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)
   }, ignoreNULL = FALSE)
+  seasprod <- eventReactive({
+    input$run.pfm
+    # input$Jan
+    # input$Feb
+    # input$Mar
+    # input$Apr
+    # input$May
+    # input$Jun
+    # input$Jul
+    # input$Aug
+    # input$Sep
+    # input$Oct
+    # input$Nov
+    # input$Dec
+  }, {
+    c(
+      input$Jan,
+      input$Feb,
+      input$Mar,
+      input$Apr,
+      input$May,
+      input$Jun,
+      input$Jul,
+      input$Aug,
+      input$Sep,
+      input$Oct,
+      input$Nov,
+      input$Dec
+    )
+  }, ignoreNULL = FALSE)
   pfm <- eventReactive(input$run.pfm, {
     pfm <- ClimToProxyClim(
-      clim.signal = input.clim(),
+      clim.signal = clim(),
       timepoints = timepoints(),
-      smoothed.signal.res = input$t.res,
+      smoothed.signal.res = 100,
       bio.depth = input$bio.depth,
       sed.acc.rate = input$sed.acc.rate,
+      seas.prod = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
       meas.noise = input$meas.noise,
@@ -220,7 +294,7 @@ server <- function(input, output) {
   output$pfm.plot <- renderPlot({
     PlotPFMs(pfm()$everything) +
       ggplot2::labs(x = "Age [years]")
-  }, res = 72*2)
+  }, res = 72 * 2)
   output$pfm.str <- renderDataTable({
     round(pfm()$simulated.proxy, 5)
   })
