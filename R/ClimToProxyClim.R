@@ -452,7 +452,7 @@ ClimToProxyClim <- function(clim.signal,
                                    timepoints = timepoints.smoothed,
                                    value = clim.signal.smoothed)
 
-  smoothed.signal$Stage <- "clim.signal.smoothed"
+  smoothed.signal$stage <- "clim.signal.smoothed"
 
   everything <- MakePFMDataframe(out)
 
@@ -492,7 +492,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #'
 #' @return
 #' @export
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows filter
 #' @importFrom tidyr gather
 #'
 #' @examples
@@ -530,7 +530,7 @@ MakePFMDataframe <- function(PFM){
 
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
-  rtn <- droplevels(filter(rtn, complete.cases(value)))
+  rtn <- droplevels(dplyr::filter(rtn, complete.cases(value)))
 
   return(rtn)
 }
