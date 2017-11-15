@@ -710,6 +710,22 @@ ImpulseResponse <- function(z, d, z0 = 0) {
   }
   return(result)
 }
+# Functions
+SimPowerlaw <- function(beta, N)
+{
+  N2 <- (3^ceiling(log(N, base = 3)))
+  df  <- 1 / N2
+  f <- seq(from = df, to = 1/2, by = df)
+  Filter <- sqrt(1/(f^beta))
+  Filter <- c(max(Filter), Filter, rev(Filter))
+  x   <- rnorm(N2, 1)
+  fx  <- fft(x)
+  ffx <- fx * Filter
+  result <- Re(fft(ffx, inverse = TRUE))[1:N]
+  return(scale(result)[1:N])
+}
+
+
 # Define UI ----
 ui <- fluidPage(
   titlePanel("sedproxy"),
@@ -726,19 +742,21 @@ ui <- fluidPage(
     "
   ),
   p("This work is supported by the BMBF funded PalMod project."),
-  p(
+  p("Reference: ",
     "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
     and Mg/Ca reconstructions of Holocene marine temperature variability.
     Earth and Planetary Science Letters, 375: 418-429."
   ),
-  sidebarLayout(
-    sidebarPanel(
+  sidebarPanel(
+    tabsetPanel(
+      tabPanel("Model parameters",
       fluidRow(
-        p(
+        h4(
           "Update the parameter values below
           and then run the proxy forward model."
         ),
-        actionButton("run.pfm", "Run forward model"),
+        column(12, 
+        actionButton("run.pfm", "Run forward model")),
         hr()
         ),
       fluidRow(
@@ -898,6 +916,20 @@ ui <- fluidPage(
       )
 
     ),
+    tabPanel("Plot appearance",
+             fluidRow(
+               h4("Plot proxy stages:"),
+               checkboxGroupInput("stages", "Stages:",
+                                  choices = list("Input climate" = "clim.signal.smoothed",
+                                                 "Bioturbated climate" = "proxy.bt",
+                                                 "Bioturbated + seasonally biased climate" =  "proxy.bt.sb",
+                                                 "Sampled climate inc. aliasing" = "proxy.bt.sb.sampYM",
+                                                 "Final pseudo-proxy" = "simulated.proxy"),
+                                  selected = list("clim.signal.smoothed", "proxy.bt",
+                                                  "proxy.bt.sb", "proxy.bt.sb.sampYM",
+                                                  "simulated.proxy"))
+             ))
+    )),
     mainPanel(tabsetPanel(
       tabPanel("Plots",
                plotOutput("pfm.plot", height = "800px")),
@@ -906,7 +938,7 @@ ui <- fluidPage(
       tabPanel("Placeholder", textOutput("seas.prod"))
     ))
   )
-  )
+  
 
 # Define server logic ----
 server <- function(input, output) {
@@ -962,8 +994,12 @@ server <- function(input, output) {
     )
   }, ignoreNULL = FALSE)
   output$pfm.plot <- renderPlot({
-    PlotPFMs(pfm()$everything) +
-      ggplot2::labs(x = "Age [years]")
+    dat <- pfm()$everything
+    dat <- subset(dat, dat$stage %in% input$stages)
+    if (nrow(dat) > 0){
+      PlotPFMs(dat) +
+        ggplot2::labs(x = "Age [years]")
+      }
   }, res = 72 * 2)
   output$pfm.str <- renderDataTable({
     round(pfm()$simulated.proxy, 5)
