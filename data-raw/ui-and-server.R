@@ -1,21 +1,3 @@
-# Packages ---
-library(sedproxy)
-
-# Functions ----
-SimPowerlaw <- function(beta, N)
-{
-  N2 <- (3 ^ ceiling(log(N, base = 3)))
-  df  <- 1 / N2
-  f <- seq(from = df, to = 1 / 2, by = df)
-  Filter <- sqrt(1 / (f ^ beta))
-  Filter <- c(max(Filter), Filter, rev(Filter))
-  x   <- rnorm(N2, 1)
-  fx  <- fft(x)
-  ffx <- fx * Filter
-  result <- Re(fft(ffx, inverse = TRUE))[1:N]
-  return(scale(result)[1:N])
-}
-
 # Define UI ----
 ui <- fluidPage(
   titlePanel("sedproxy"),
@@ -35,7 +17,7 @@ ui <- fluidPage(
   p(
     "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
     and Mg/Ca reconstructions of Holocene marine temperature variability.
-    Earth and Planetary Science Letters, 375: 418–429."
+    Earth and Planetary Science Letters, 375: 418-429."
   ),
   sidebarLayout(
     sidebarPanel(

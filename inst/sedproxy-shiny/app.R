@@ -1,3 +1,4 @@
+library(ggplot2) 
 #' @md
 #' @title Simulate sediment archived proxy records from an "assumed true" climate signal.
 #' @description \code{ClimToProxyClim} simulates the creation of a proxy climate record
@@ -539,4 +540,436 @@ MakePFMDataframe <- function(PFM){
 # a <- MakePFMDataframe(PFM$everything)
 # b <- MakePFMDataframe_2(PFM$everything)
 # all_equal(a, b)
+
+#' Plot forward modelled sedimentary proxies
+#'
+#' @param PFMs A dataframe of forward modelled proxies
+#' @param breaks Proxy stages for legend, in order
+#' @param colr.palette Colours for the proxy stages
+#' @param alpha.palette Alpha levels for the proxy stages
+#' @param levl.labels Labels for the proxy stages, in order
+#' @param max.replicates Maximum number of replicates to plot at once
+#'
+#' @import ggplot2
+#' @importFrom dplyr filter
+#' @export PlotPFMs
+#'
+#' @examples
+PlotPFMs <- function(PFMs,
+                     breaks = "default.breaks",
+                     max.replicates = 5,
+                     colr.palette = "default.colr.palette",
+                     alpha.palette = "default.alpha.palette",
+                     levl.labels = "default.levl.labels"){
+
+
+
+  if(exists("replicate", where = PFMs)){
+    rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "Observed proxy"),
+                             replicate == 1)
+  }else{
+    rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "Observed proxy"))
+    rug.dat$replicate <- 1
+    PFMs$replicate <- 1
+  }
+
+  if(exists("Location", where = PFMs)==FALSE){
+    PFMs$Location <- ""
+  }
+
+  if(exists("ID.no", where = PFMs)==FALSE){
+    PFMs$ID.no <- ""
+  }
+  if(exists("Proxy", where = PFMs)==FALSE){
+    PFMs$Proxy <- ""
+  }
+
+  # assign default asthetic mappings
+  if (breaks == "default.breaks"){
+    breaks <-
+      c(
+        "clim.signal.ann",
+        "clim.timepoints.1000",
+        "clim.timepoints.100",
+        "clim.timepoints.50",
+        "clim.timepoints.ssr",
+        "clim.signal.smoothed",
+        "proxy.bt",
+        "proxy.bt.sb",
+        "proxy.bt.sb.inf.b",
+        "proxy.bt.sb.sampYM.b",
+        "proxy.bt.sb.sampYM",
+        "proxy.bt.sb.inf.b.n",
+        "proxy.bt.sb.sampYM.b.n",
+        "simulated.proxy",
+        "Observed proxy"
+      )}
+
+  if (colr.palette == "default.colr.palette") colr.palette  <-
+      structure(c("#018571", "#018571","#018571", "#018571","#018571", "#018571",
+                  "Green", "Gold",
+                  "White", "White",
+                  "#d95f02",
+                  "#7570b3", "#7570b3", "#7570b3",
+                  "Red"),
+                .Names = breaks)
+
+  if (alpha.palette == "default.alpha.palette") alpha.palette  <-
+      structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5),
+                .Names = breaks)
+
+  if (levl.labels == "default.levl.labels") levl.labels  <-
+      structure(c(rep(" Input climate", 6),
+                  "+Bioturbation",
+                  "+Seasonality",
+                  rep("+Bias", 2),
+                  "+Finite sample",
+                  rep("+Measurement error", 3),
+                  "Observed proxy"),
+                .Names = breaks)
+
+
+  plotting.levels <- c("clim.signal.smoothed", "proxy.bt",
+                       "proxy.bt.sb", "proxy.bt.sb.sampYM",
+                       "simulated.proxy", "Observed proxy")
+
+  PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
+                        replicate <= max.replicates)
+
+  #set factor level ordering for stage
+  PFMs$stage <- factor(PFMs$stage, levels = rev(plotting.levels), ordered = TRUE)
+
+
+
+  p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
+                               colour = stage, alpha = stage,
+                               linetype = as.factor(replicate))) +
+    # geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
+    geom_line() +
+    theme_bw() +
+    theme(legend.position = "top", panel.grid.minor = element_blank()) +
+    guides(colour = guide_legend(label.position = "top",
+                                 label.hjust = 1,
+                                 nrow = 1,
+                                 override.aes = list(alpha = 1))) +
+    labs(x = expression("timepoints"),
+         y = expression("Proxy value")) +
+
+    #scale_linetype(guide = FALSE) +
+    #scale_alpha_discrete(guide = FALSE) +
+    scale_linetype_manual(values = rep(1, 15), guide = FALSE)
+
+  if (is.null(colr.palette) == FALSE)
+    p <- p + scale_colour_manual("", values = colr.palette, breaks = breaks, labels = levl.labels)
+
+  if (is.null(alpha.palette) == FALSE)
+    p <- p + scale_alpha_manual("", values = alpha.palette, breaks = breaks,
+                                labels = levl.labels)
+
+  return(p)
+}
+
+
+
+
+
+
+#' @title ImpulseResponse
+#'
+#' @param z depth relative to focus horizon
+#' @param d mixing depth. If d == 0, a single weight of 1 is returned
+#' @param z0 depth of the pulse without bioturbation
+#'
+#' @description Depth solution for Berger and Heath; e.g. page 65 in Officer and
+#'   Lynch (1983).
+#'
+#'   For a given mixing depth \code{d}, it gives the probability
+#'   that a particle has been moved from a depth horizon \code{z} units away
+#'   from the focus horizon.
+#'
+#' @return Given a vector of depths, \code{z}, relative to a given horizon, the
+#'   function returns a vector of probabilities that a given particle at that
+#'   horizon has been moved there by bioturbation from depth \code{z}
+#' @export
+#'
+#' @examples
+#' z <- seq(-100, 100, length.out = 1000)
+#' d <- 10
+#'
+#' plot(z, ImpulseResponse(z, d), type = "l")
+#' abline(v = d)
+#'
+ImpulseResponse <- function(z, d, z0 = 0) {
+  if (d == 0){
+    result <- 1
+  }else{
+    x <- z0 + d - z
+    epsilon <- x / d
+    result <- 1 / d * exp(-epsilon)
+    result[z > (z0 + d)] <- 0
+  }
+  return(result)
+}
+# Define UI ----
+ui <- fluidPage(
+  titlePanel("sedproxy"),
+  p(
+    em("sedproxy"),
+    "is a forward model for sediment archived climate proxies.
+    It is based on work described in Laepple and Huybers (2013).
+    A manuscript is in preparation, Dolman and Laepple (in prep.),
+    which will more fully describe the forward model and its applications.
+    Please contact Dr Andrew Dolman <andrew.dolman@awi.de>,
+    or Dr Thomas Laepple <tlaepple@awi.de>, at the Alfred-Wegener-Institute,
+    Helmholtz Centre for Polar and Marine Research,
+    Germany, for more information.
+    "
+  ),
+  p("This work is supported by the BMBF funded PalMod project."),
+  p(
+    "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
+    and Mg/Ca reconstructions of Holocene marine temperature variability.
+    Earth and Planetary Science Letters, 375: 418-429."
+  ),
+  sidebarLayout(
+    sidebarPanel(
+      fluidRow(
+        p(
+          "Update the parameter values below
+          and then run the proxy forward model."
+        ),
+        actionButton("run.pfm", "Run forward model"),
+        hr()
+        ),
+      fluidRow(
+        h4("Setup input climate signal"),
+        column(
+          width = 12,
+          sliderInput(
+            "clim.signal.length",
+            h5("Length of input climate signal [years]"),
+            value = 10000,
+            step = 1000,
+            min = 5000,
+            max = 100000
+          )
+        ),
+        column(
+          width = 6,
+          numericInput(
+            "clim.signal.beta",
+            h5("Slope of the power spectrum of the input climate signal"),
+            value = 1,
+            step = 0.1,
+            min = 0.1,
+            max = 3
+          )
+        ),
+        column(
+          width = 6,
+          numericInput(
+            "seas.amp",
+            h5("Amplitude of the seasonal cycle"),
+            value = 5,
+            step = 0.5,
+            min = 0,
+            max = 20
+          )
+        )
+      ),
+      fluidRow(
+        h4("Control sampling"),
+        column(width = 6,
+               numericInput(
+                 "seed",
+                 h5("Set RNG seed"),
+                 value = 1,
+                 step = 1,
+                 min = 1
+               )),
+        column(
+          width = 6,
+          numericInput(
+            "n.replicates",
+            h5("No. replicates"),
+            value = 1,
+            step = 1,
+            min = 1,
+            max = 100
+          )
+        )
+      ),
+      fluidRow(
+        column(
+          width = 6,
+          numericInput(
+            "t.res",
+            h5("Core sampling resolution [years]"),
+            value = 100,
+            step = 100,
+            min = 1,
+            max = 10000
+          )
+        ),
+        column(
+          width = 6,
+          numericInput(
+            "n.samples",
+            h5("No. samples per timepoint"),
+            value = 30,
+            step = 1,
+            min = 1,
+            max = 1000
+          )
+        )
+      ),
+      fluidRow(
+        h4("Sedimentation parameters"),
+        column(
+          6,
+          numericInput(
+            "bio.depth",
+            h5("Bioturbation depth [m]"),
+            value = 0.1,
+            step = 0.01,
+            min = 0,
+            max = 1
+          )
+        ),
+        column(
+          6,
+          numericInput(
+            "sed.acc.rate",
+            h5("Sediment accumulation rate [m/ka]"),
+            value = 5e-04,
+            step = 0.01 / 100,
+            min = 0,
+            max = 1
+          )
+        )
+      ),
+      fluidRow(h4("Proxy production weights (monthly)"),
+               column(12,
+                      fluidRow(
+                        column(
+                          12,
+                          radioButtons(
+                            "seas",
+                            label = NULL,
+                            choices = c("Uniform", "Custom"),
+                            selected = "Uniform",
+                            inline = TRUE
+                          ),
+                          conditionalPanel(
+                            condition = "input.seas == 'Custom'",
+                            textInput(
+                              "mon.vec",
+                              "Modify the 12 monthly weights",
+                              "1,1,1,1,1,1,1,1,1,1,1,1"
+                            ),
+                            span(textOutput("seas.prod.check"), style = "color:red")
+                          )
+                        )
+                      ))),
+      fluidRow(
+        h4("Noise parameters"),
+        column(
+          6,
+          numericInput(
+            "meas.noise",
+            h5("Measurement noise"),
+            value = 0.46,
+            step = 0.01,
+            min = 0,
+            max = 1
+          )
+        ),
+        column(
+          6,
+          numericInput(
+            "meas.bias",
+            h5("Measurement bias"),
+            value = 0,
+            step = 0.1,
+            min = 0,
+            max = 2
+          )
+        )
+      )
+
+    ),
+    mainPanel(tabsetPanel(
+      tabPanel("Plots",
+               plotOutput("pfm.plot", height = "800px")),
+      tabPanel("Numbers",
+               dataTableOutput("pfm.str")),
+      tabPanel("Placeholder", textOutput("seas.prod"))
+    ))
+  )
+  )
+
+# Define server logic ----
+server <- function(input, output) {
+  clim <- eventReactive(input$run.pfm, {
+    set.seed(input$seed)
+    ann <-
+      SimPowerlaw(input$clim.signal.beta, input$clim.signal.length)
+    mon <-
+      cos(seq(pi, 3 * pi, length.out = 12)) * input$seas.amp / 2
+    clim <- outer(ann, mon, "+")
+    return(clim)
+  }, ignoreNULL = FALSE)
+  timepoints <- eventReactive(input$run.pfm, {
+    #res <- 100
+    tp <- seq(1, input$clim.signal.length, by = input$t.res)
+    t.min <- ceiling(input$bio.depth / input$sed.acc.rate) + 1
+    t.max <- input$clim.signal.length - 3 * t.min
+    tp <- tp[tp > t.min & tp < t.max]
+    return(tp)
+  }, ignoreNULL = FALSE)
+  seasprod <- eventReactive({
+    input$mon.vec
+    input$seas
+  }, {
+    if (input$seas == 'Custom')
+    {
+      v <- as.numeric(unlist(strsplit(input$mon.vec, ",")))
+    } else{
+      v <- rep(1, 12)
+    }
+    return(v)
+  }, ignoreNULL = FALSE)
+  output$seas.prod.check <- renderText({
+    if (length(seasprod()) != 12)
+    {
+      paste0("You entered ",
+             length(seasprod()),
+             " values; 12 are required.")
+    }
+  })
+  pfm <- eventReactive(input$run.pfm, {
+    pfm <- ClimToProxyClim(
+      clim.signal = clim(),
+      timepoints = timepoints(),
+      smoothed.signal.res = 100,
+      bio.depth = input$bio.depth,
+      sed.acc.rate = input$sed.acc.rate,
+      seas.prod = seasprod(),
+      n.samples = input$n.samples,
+      n.replicates = input$n.replicates,
+      meas.noise = input$meas.noise,
+      meas.bias = input$meas.bias
+    )
+  }, ignoreNULL = FALSE)
+  output$pfm.plot <- renderPlot({
+    PlotPFMs(pfm()$everything) +
+      ggplot2::labs(x = "Age [years]")
+  }, res = 72 * 2)
+  output$pfm.str <- renderDataTable({
+    round(pfm()$simulated.proxy, 5)
+  })
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
 
