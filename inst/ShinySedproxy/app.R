@@ -48,7 +48,7 @@ ui <- fluidPage(
         hr()
         ),
       fluidRow(
-        h4("Setup input climate"),
+        h4("Setup input climate signal"),
         column(
           width = 12,
           sliderInput(
@@ -155,42 +155,28 @@ ui <- fluidPage(
         )
       ),
       fluidRow(h4("Proxy production weights (monthly)"),
-               column(
-                 12,
-                 fluidRow(
-                   radioButtons(
-                     "seas",
-                     label = NULL,
-                     choices = c("Uniform", "Custom"),
-                     selected = "Uniform",
-                     inline = TRUE
-                   ),
-                   conditionalPanel(
-                     condition = "input.seas == 'Custom'",
-                     column(
-                       4,
-                       sliderInput("Jan", "Jan", 0, 1, 0.5, 0.1),
-                       sliderInput("Feb", "Feb", 0, 1, 0.5, 0.1),
-                       sliderInput("Mar", "Mar", 0, 1, 0.5, 0.1),
-                       sliderInput("Apr", "Apr", 0, 1, 0.5, 0.1)
-                     ),
-                     column(
-                       4,
-                       sliderInput("May", "May", 0, 1, 0.5, 0.1),
-                       sliderInput("Jun", "Jun", 0, 1, 0.5, 0.1),
-                       sliderInput("Jul", "Jul", 0, 1, 0.5, 0.1),
-                       sliderInput("Aug", "Aug", 0, 1, 0.5, 0.1)
-                     ),
-                     column(
-                       4,
-                       sliderInput("Sep", "Sep", 0, 1, 0.5, 0.1),
-                       sliderInput("Oct", "Oct", 0, 1, 0.5, 0.1),
-                       sliderInput("Nov", "Nov", 0, 1, 0.5, 0.1),
-                       sliderInput("Dec", "Dec", 0, 1, 0.5, 0.1)
-                     )
-                   )
-                 )
-               )),
+               column(12,
+                      fluidRow(
+                        column(
+                          12,
+                          radioButtons(
+                            "seas",
+                            label = NULL,
+                            choices = c("Uniform", "Custom"),
+                            selected = "Uniform",
+                            inline = TRUE
+                          ),
+                          conditionalPanel(
+                            condition = "input.seas == 'Custom'",
+                            textInput(
+                              "mon.vec",
+                              "Modify the 12 monthly weights",
+                              "1,1,1,1,1,1,1,1,1,1,1,1"
+                            ),
+                            span(textOutput("seas.prod.check"), style = "color:red")
+                          )
+                        )
+                      ))),
       fluidRow(
         h4("Noise parameters"),
         column(
@@ -216,7 +202,7 @@ ui <- fluidPage(
           )
         )
       )
-      
+
     ),
     mainPanel(tabsetPanel(
       tabPanel("Plots",
@@ -248,35 +234,25 @@ server <- function(input, output) {
     return(tp)
   }, ignoreNULL = FALSE)
   seasprod <- eventReactive({
-    input$run.pfm
-    # input$Jan
-    # input$Feb
-    # input$Mar
-    # input$Apr
-    # input$May
-    # input$Jun
-    # input$Jul
-    # input$Aug
-    # input$Sep
-    # input$Oct
-    # input$Nov
-    # input$Dec
+    input$mon.vec
+    input$seas
   }, {
-    c(
-      input$Jan,
-      input$Feb,
-      input$Mar,
-      input$Apr,
-      input$May,
-      input$Jun,
-      input$Jul,
-      input$Aug,
-      input$Sep,
-      input$Oct,
-      input$Nov,
-      input$Dec
-    )
+    if (input$seas == 'Custom')
+    {
+      v <- as.numeric(unlist(strsplit(input$mon.vec, ",")))
+    } else{
+      v <- rep(1, 12)
+    }
+    return(v)
   }, ignoreNULL = FALSE)
+  output$seas.prod.check <- renderText({
+    if (length(seasprod()) != 12)
+    {
+      paste0("You entered ",
+             length(seasprod()),
+             " values; 12 are required.")
+    }
+  })
   pfm <- eventReactive(input$run.pfm, {
     pfm <- ClimToProxyClim(
       clim.signal = clim(),

@@ -142,6 +142,7 @@ ClimToProxyClim <- function(clim.signal,
     stop("Matrix form of seasonality not yet supported")
 
   # check no production weights match dimensions of climate
+  #print(paste0("seas.prod = ", seas.prod))
   stopifnot(ncol(clim.signal) == length(seas.prod))
 
   # Ensure seasonal productivities are weights
