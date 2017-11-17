@@ -29,12 +29,7 @@ To run the Shiny app enter the following in the R terminal:
 
 ```r
 library(sedproxy)
-fl <- system.file("ShinySedproxy/app.R", package = "sedproxy")
-shiny::runApp(fl)
-
-or 
-
-sedproxy::ShinySedproxy()
+ShinySedproxy()
 ```
 
 Below are some brief examples of how to run `sedproxy` from a script or the command line.

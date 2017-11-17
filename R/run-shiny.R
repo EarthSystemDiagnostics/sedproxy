@@ -7,7 +7,7 @@
 #' @examples
 #' ShinySedproxy()
 ShinySedproxy <- function(){
-  fl <- system.file("ShinySedproxy/app.R", package = "sedproxy")
+  fl <- system.file("sedproxy-shiny/app.R", package = "sedproxy")
   shiny::runApp(fl)
 }
 
