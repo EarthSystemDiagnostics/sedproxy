@@ -9,6 +9,8 @@ inst/doc
 vignettes/*.html
 vignettes/*.R
 
+inst/sedproxy-shiny/rsconnect/*
+
 docs
 
 *_files

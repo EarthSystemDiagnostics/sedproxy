@@ -755,7 +755,7 @@ ui <- fluidPage(
           "Update the parameter values below
           and then run the proxy forward model."
         ),
-        column(12, 
+        column(12,
         actionButton("run.pfm", "Run forward model")),
         hr()
         ),
@@ -847,22 +847,22 @@ ui <- fluidPage(
           6,
           numericInput(
             "bio.depth",
-            h5("Bioturbation depth [m]"),
-            value = 0.1,
-            step = 0.01,
+            h5("Bioturbation depth [cm]"),
+            value = 10,
+            step = 1,
             min = 0,
-            max = 1
+            max = 30
           )
         ),
         column(
           6,
           numericInput(
             "sed.acc.rate",
-            h5("Sediment accumulation rate [m/ka]"),
-            value = 5e-04,
-            step = 0.01 / 100,
+            h5("Sediment accumulation rate [cm/ka]"),
+            value = 50,
+            step = 1,
             min = 0,
-            max = 1
+            max = 100
           )
         )
       ),
@@ -938,7 +938,7 @@ ui <- fluidPage(
       tabPanel("Placeholder", textOutput("seas.prod"))
     ))
   )
-  
+
 
 # Define server logic ----
 server <- function(input, output) {
@@ -954,7 +954,7 @@ server <- function(input, output) {
   timepoints <- eventReactive(input$run.pfm, {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
-    t.min <- ceiling(input$bio.depth / input$sed.acc.rate) + 1
+    t.min <- ceiling((input$bio.depth/100) / (input$sed.acc.rate/1000/100)) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)
@@ -984,8 +984,8 @@ server <- function(input, output) {
       clim.signal = clim(),
       timepoints = timepoints(),
       smoothed.signal.res = 100,
-      bio.depth = input$bio.depth,
-      sed.acc.rate = input$sed.acc.rate,
+      bio.depth = (input$bio.depth/100),
+      sed.acc.rate = (input$sed.acc.rate/1000/100),
       seas.prod = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
