@@ -713,10 +713,10 @@ ImpulseResponse <- function(z, d, z0 = 0) {
 # Functions
 SimPowerlaw <- function(beta, N)
 {
-  N2 <- (3^ceiling(log(N, base = 3)))
+  N2 <- (3 ^ ceiling(log(N, base = 3)))
   df  <- 1 / N2
-  f <- seq(from = df, to = 1/2, by = df)
-  Filter <- sqrt(1/(f^beta))
+  f <- seq(from = df, to = 1 / 2, by = df)
+  Filter <- sqrt(1 / (f ^ beta))
   Filter <- c(max(Filter), Filter, rev(Filter))
   x   <- rnorm(N2, 1)
   fx  <- fft(x)
@@ -724,7 +724,6 @@ SimPowerlaw <- function(beta, N)
   result <- Re(fft(ffx, inverse = TRUE))[1:N]
   return(scale(result)[1:N])
 }
-
 
 # Define UI ----
 ui <- fluidPage(
@@ -742,21 +741,22 @@ ui <- fluidPage(
     "
   ),
   p("This work is supported by the BMBF funded PalMod project."),
-  p("Reference: ",
+  p(
+    "Reference: ",
     "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
     and Mg/Ca reconstructions of Holocene marine temperature variability.
     Earth and Planetary Science Letters, 375: 418-429."
   ),
-  sidebarPanel(
-    tabsetPanel(
-      tabPanel("Model parameters",
+  sidebarPanel(tabsetPanel(
+    tabPanel(
+      "Model parameters",
       fluidRow(
         h4(
           "Update the parameter values below
           and then run the proxy forward model."
         ),
         column(12,
-        actionButton("run.pfm", "Run forward model")),
+               actionButton("run.pfm", "Run forward model")),
         hr()
         ),
       fluidRow(
@@ -915,28 +915,37 @@ ui <- fluidPage(
         )
       )
 
-    ),
-    tabPanel("Plot appearance",
-             fluidRow(
-               h4("Plot proxy stages:"),
-               checkboxGroupInput("stages", "Stages:",
-                                  choices = list("Input climate" = "clim.signal.smoothed",
-                                                 "Bioturbated climate" = "proxy.bt",
-                                                 "Bioturbated + seasonally biased climate" =  "proxy.bt.sb",
-                                                 "Sampled climate inc. aliasing" = "proxy.bt.sb.sampYM",
-                                                 "Final pseudo-proxy" = "simulated.proxy"),
-                                  selected = list("clim.signal.smoothed", "proxy.bt",
-                                                  "proxy.bt.sb", "proxy.bt.sb.sampYM",
-                                                  "simulated.proxy"))
-             ))
+  ),
+  tabPanel("Plot appearance",
+           fluidRow(
+             h4("Plot proxy stages:"),
+             checkboxGroupInput(
+               "stages",
+               "Stages:",
+               choices = list(
+                 "Input climate" = "clim.signal.smoothed",
+                 "Bioturbated climate" = "proxy.bt",
+                 "Bioturbated + seasonally biased climate" =  "proxy.bt.sb",
+                 "Sampled climate inc. aliasing" = "proxy.bt.sb.sampYM",
+                 "Final pseudo-proxy" = "simulated.proxy"
+               ),
+               selected = list(
+                 "clim.signal.smoothed",
+                 "proxy.bt",
+                 "proxy.bt.sb",
+                 "proxy.bt.sb.sampYM",
+                 "simulated.proxy"
+               )
+             )
+           ))
     )),
-    mainPanel(tabsetPanel(
-      tabPanel("Plots",
-               plotOutput("pfm.plot", height = "800px")),
-      tabPanel("Numbers",
-               dataTableOutput("pfm.str")),
-      tabPanel("Placeholder", textOutput("seas.prod"))
-    ))
+  mainPanel(tabsetPanel(
+    tabPanel("Plots",
+             plotOutput("pfm.plot", height = "800px")),
+    tabPanel("Numbers",
+             dataTableOutput("pfm.str")),
+    tabPanel("Placeholder", textOutput("seas.prod"))
+  ))
   )
 
 
@@ -954,7 +963,8 @@ server <- function(input, output) {
   timepoints <- eventReactive(input$run.pfm, {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
-    t.min <- ceiling((input$bio.depth/100) / (input$sed.acc.rate/1000/100)) + 1
+    t.min <-
+      ceiling((input$bio.depth / 100) / (input$sed.acc.rate / 1000 / 100)) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)
@@ -984,8 +994,8 @@ server <- function(input, output) {
       clim.signal = clim(),
       timepoints = timepoints(),
       smoothed.signal.res = 100,
-      bio.depth = (input$bio.depth/100),
-      sed.acc.rate = (input$sed.acc.rate/1000/100),
+      bio.depth = (input$bio.depth / 100),
+      sed.acc.rate = (input$sed.acc.rate / 1000 / 100),
       seas.prod = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
@@ -996,10 +1006,10 @@ server <- function(input, output) {
   output$pfm.plot <- renderPlot({
     dat <- pfm()$everything
     dat <- subset(dat, dat$stage %in% input$stages)
-    if (nrow(dat) > 0){
+    if (nrow(dat) > 0) {
       PlotPFMs(dat) +
         ggplot2::labs(x = "Age [years]")
-      }
+    }
   }, res = 72 * 2)
   output$pfm.str <- renderDataTable({
     round(pfm()$simulated.proxy, 5)

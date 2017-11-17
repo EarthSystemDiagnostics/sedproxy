@@ -1,5 +1,7 @@
 #' Run ShinySedproxy
 #'
+#' Launches the shiny app GUI interface to sedproxy
+#'
 #' @export
 #'
 #' @examples
