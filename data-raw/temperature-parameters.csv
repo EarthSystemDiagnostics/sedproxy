@@ -1,0 +1,15 @@
+Taxon;Tsigma;Topt;Tmax;Tmin;Source
+None;100000;0;;;FLAT
+N.pachyderma (sin.);4.0;3.8;;;Fraile.et.al.2008
+N.pachyderma (dex.);6.0;15.0;;;Fraile.et.al.2008
+G.bulloides;6.0;12.0;;;Fraile.et.al.2008
+G.ruber (white);4.0;23.5;;;Fraile.et.al.2008
+G.sacculifer;4.0;28;;;Fraile.et.al.2008
+G.ruber (white);14;32;32;13;Schmidt.Mulitza.2002
+G.ruber (pink) (KO);6.0;27;31;16;Schmidt.Mulitza.2002
+G.ruber (pink) (SM);4.0;22;31;17;Schmidt.Mulitza.2002
+G.sacculifer;3.5;22;30.5;18;Schmidt.Mulitza.2002
+N.pachyderma (l);2.5;3;8.5;-2;Schmidt.Mulitza.2002
+N.pachyderma (r);3.5;10;13;1;Schmidt.Mulitza.2002
+G.bulloides (North Atlantic);4;11;19;3;Schmidt.Mulitza.2002
+G.bulloides (Southern Hemisphere);7;1;17;1;Schmidt.Mulitza.2002
