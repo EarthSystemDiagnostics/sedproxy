@@ -4,15 +4,14 @@
 \alias{PlotPFMs}
 \title{Plot forward modelled sedimentary proxies}
 \usage{
-PlotPFMs(PFMs, breaks = "default.breaks", max.replicates = 5,
-  colr.palette = "default.colr.palette",
-  alpha.palette = "default.alpha.palette",
-  levl.labels = "default.levl.labels")
+PlotPFMs(PFMs, plot.stages = c("default"), max.replicates = 5,
+  colr.palette = "default", alpha.palette = "default",
+  levl.labels = "default", facetted = FALSE)
 }
 \arguments{
 \item{PFMs}{A dataframe of forward modelled proxies}
 
-\item{breaks}{Proxy stages for legend, in order}
+\item{plot.stages}{Proxy stages to be plotted, "default", "all", or a custom character vector}
 
 \item{max.replicates}{Maximum number of replicates to plot at once}
 
@@ -20,7 +19,7 @@ PlotPFMs(PFMs, breaks = "default.breaks", max.replicates = 5,
 
 \item{alpha.palette}{Alpha levels for the proxy stages}
 
-\item{levl.labels}{Labels for the proxy stages, in order}
+\item{levl.labels}{Labels for the proxy stages}
 }
 \description{
 Plot forward modelled sedimentary proxies

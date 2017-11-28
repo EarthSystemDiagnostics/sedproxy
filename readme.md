@@ -52,8 +52,9 @@ library(sedproxy)
 
 ```r
 N41.proxy.details %>% 
+  mutate_if(is.numeric, round, digits = 2) %>% 
   gather() %>% 
-  kable(., format = "markdown")
+  kable(., format = "markdown", digits = 2)
 ```
 
 
@@ -65,11 +66,11 @@ N41.proxy.details %>%
 |Core            |MD97-2141                                        |
 |Location        |Sulu Sea                                         |
 |Proxy           |Mg/Ca                                            |
-|Lat             |8.78333                                          |
-|Lon             |121.2833                                         |
+|Lat             |8.78                                             |
+|Lon             |121.28                                           |
 |Elevation       |-3633.000000                                     |
 |Reference       |Rosenthal et al., 2003                           |
-|Resolution      |77.8894472361809                                 |
+|Resolution      |77.89                                            |
 |Calibration.ref |Rosenthal and Lohman, 2002                       |
 |Calibration     |T = ln(MgCa/0.28)/0.095                          |
 |Foram.sp        |G. ruber                                         |
@@ -147,20 +148,21 @@ PFM$everything
 ```
 
 ```
-## # A tibble: 7,565 x 4
-##    timepoints replicate              stage    value
-##         <dbl>     <dbl>              <chr>    <dbl>
-##  1       4334         1 proxy.bt.sb.sampYM 28.52609
-##  2       4527         1 proxy.bt.sb.sampYM 27.48838
-##  3       4576         1 proxy.bt.sb.sampYM 28.02794
-##  4       4721         1 proxy.bt.sb.sampYM 27.19180
-##  5       4914         1 proxy.bt.sb.sampYM 27.38228
-##  6       4994         1 proxy.bt.sb.sampYM 27.85321
-##  7       5092         1 proxy.bt.sb.sampYM 27.87501
-##  8       5156         1 proxy.bt.sb.sampYM 27.83270
-##  9       5254         1 proxy.bt.sb.sampYM 27.46396
-## 10       5318         1 proxy.bt.sb.sampYM 27.36841
-## # ... with 7,555 more rows
+## # A tibble: 9,725 x 9
+##    timepoints replicate             stage    value            label
+##         <dbl>     <dbl>             <chr>    <dbl>            <chr>
+##  1       4334         1 proxy.bt.sb.sampY 27.77735 +Undersampling Y
+##  2       4527         1 proxy.bt.sb.sampY 27.71641 +Undersampling Y
+##  3       4576         1 proxy.bt.sb.sampY 27.74539 +Undersampling Y
+##  4       4721         1 proxy.bt.sb.sampY 27.68920 +Undersampling Y
+##  5       4914         1 proxy.bt.sb.sampY 27.70921 +Undersampling Y
+##  6       4994         1 proxy.bt.sb.sampY 27.66351 +Undersampling Y
+##  7       5092         1 proxy.bt.sb.sampY 27.67081 +Undersampling Y
+##  8       5156         1 proxy.bt.sb.sampY 27.65508 +Undersampling Y
+##  9       5254         1 proxy.bt.sb.sampY 27.65605 +Undersampling Y
+## 10       5318         1 proxy.bt.sb.sampY 27.62041 +Undersampling Y
+## # ... with 9,715 more rows, and 4 more variables: description <chr>,
+## #   plot.order <dbl>, plotting.colour <chr>, plotting.alpha <dbl>
 ```
 
 **Simple plotting**

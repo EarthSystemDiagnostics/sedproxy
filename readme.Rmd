@@ -53,8 +53,9 @@ library(sedproxy)
 
 ```{r}
 N41.proxy.details %>% 
+  mutate_if(is.numeric, round, digits = 2) %>% 
   gather() %>% 
-  kable(., format = "markdown")
+  kable(., format = "markdown", digits = 2)
 ```
 
 

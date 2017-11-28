@@ -499,6 +499,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #' @examples
 MakePFMDataframe <- function(PFM){
   df <- data.frame(
+    proxy.bt.sb.sampY = as.vector(PFM$proxy.bt.sb.sampY),
     proxy.bt.sb.sampYM = as.vector(PFM$proxy.bt.sb.sampYM),
     proxy.bt.sb.inf.b = as.vector(PFM$proxy.bt.sb.inf.b),
     proxy.bt.sb.sampYM.b = as.vector(PFM$proxy.bt.sb.sampYM.b),
@@ -532,11 +533,7 @@ MakePFMDataframe <- function(PFM){
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
   rtn <- droplevels(dplyr::filter(rtn, complete.cases(value)))
+  rtn <- dplyr::left_join(rtn, stages.key, by = "stage")
 
   return(rtn)
 }
-
-# a <- MakePFMDataframe(PFM$everything)
-# b <- MakePFMDataframe_2(PFM$everything)
-# all_equal(a, b)
-
