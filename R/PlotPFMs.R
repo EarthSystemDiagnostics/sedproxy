@@ -1,6 +1,8 @@
 #' Plot forward modelled sedimentary proxies
 #'
 #' @param PFMs A dataframe of forward modelled proxies
+#' @param stage.order Controls the order in which proxy stages are plotted,
+#' either sequentially, "seq", or in order of variance, "var". Defaults to var.
 #' @param plot.stages Proxy stages to be plotted, "default", "all", or a custom character vector
 #' @param colr.palette Colours for the proxy stages
 #' @param alpha.palette Alpha levels for the proxy stages
@@ -12,7 +14,26 @@
 #' @export PlotPFMs
 #'
 #' @examples
+#' set.seed(26052017)
+#' clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+#'
+#' PFM <- ClimToProxyClim(clim.signal = clim.in,
+#'                        timepoints = round(N41.proxy$Published.age),
+#'                        proxy.calibration.type = "identity",
+#'                        seas.prod = N41.G.ruber.seasonality,
+#'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+#'                        meas.noise = 0.46, n.samples = 30,
+#'                        smoothed.signal.res = 10,
+#'                        n.replicates = 10)
+#'
+#' PFM$everything %>%
+#'   PlotPFMs(max.replicates = 1, stage.order = "seq") +
+#'   facet_wrap(~stage)
+#'
+#' PFM$everything %>%
+#'   PlotPFMs(max.replicates = 1, stage.order = "var")
 PlotPFMs <- function(PFMs,
+                     stage.order = c("var", "seq"),
                      plot.stages = c("default"),
                      max.replicates = 5,
                      colr.palette = "default",
@@ -42,24 +63,25 @@ PlotPFMs <- function(PFMs,
     PFMs$Proxy <- ""
   }
 
+
   # assign default asthetic mappings
-  
+
   breaks <- stages.key$stage
 
-  if (colr.palette == "default") 
-    colr.palette  <- 
+  if (colr.palette[1] == "default")
+    colr.palette  <-
       structure(stages.key$plotting.colour,
                 .Names = stages.key$stage)
 
-  if (alpha.palette == "default") alpha.palette  <-
+  if (alpha.palette[1] == "default") alpha.palette  <-
       structure(stages.key$plotting.alpha,
                 .Names = stages.key$stage)
 
-  if (levl.labels == "default") levl.labels  <-
+  if (levl.labels[1] == "default") levl.labels  <-
       structure(stages.key$label,
                 .Names = stages.key$stage)
-  
-  if (plot.stages == "default") {
+
+  if (plot.stages[1] == "default") {
     plotting.levels <- c(
       "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
       "proxy.bt.sb.sampYM",  "simulated.proxy", "observed.proxy"
@@ -74,9 +96,22 @@ PlotPFMs <- function(PFMs,
                         replicate <= max.replicates)
 
   #set factor level ordering for stages
-  if (facetted) {PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE)}else{
-    PFMs$stage <- factor(PFMs$stage, levels = rev(plotting.levels), ordered = TRUE)
-  }
+  stage.order <- match.arg(stage.order)
+  switch(stage.order,
+         seq = PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE),
+         var = {
+           var.order <- tapply(PFMs$value, PFMs$stage, FUN = var)
+           var.order <- rank(var.order, ties.method = "first")
+           var.order <- names(sort(var.order, decreasing = TRUE))
+           PFMs$stage <- factor(PFMs$stage,
+                                levels = var.order, ordered = TRUE)
+           })
+
+
+
+  # if (facetted) {PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE)}else{
+  #   PFMs$stage <- factor(PFMs$stage, levels = rev(plotting.levels), ordered = TRUE)
+  # }
 
 
   p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
@@ -104,7 +139,7 @@ PlotPFMs <- function(PFMs,
   if (is.null(alpha.palette) == FALSE)
     p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
-  
+
   if (facetted)
     p <- p + facet_wrap(~stage, labeller = as_labeller(levl.labels))
 

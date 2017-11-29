@@ -4,12 +4,15 @@
 \alias{PlotPFMs}
 \title{Plot forward modelled sedimentary proxies}
 \usage{
-PlotPFMs(PFMs, plot.stages = c("default"), max.replicates = 5,
-  colr.palette = "default", alpha.palette = "default",
+PlotPFMs(PFMs, stage.order = c("var", "seq"), plot.stages = c("default"),
+  max.replicates = 5, colr.palette = "default", alpha.palette = "default",
   levl.labels = "default", facetted = FALSE)
 }
 \arguments{
 \item{PFMs}{A dataframe of forward modelled proxies}
+
+\item{stage.order}{Controls the order in which proxy stages are plotted,
+either sequentially, "seq", or in order of variance, "var". Defaults to var.}
 
 \item{plot.stages}{Proxy stages to be plotted, "default", "all", or a custom character vector}
 
@@ -23,4 +26,24 @@ PlotPFMs(PFMs, plot.stages = c("default"), max.replicates = 5,
 }
 \description{
 Plot forward modelled sedimentary proxies
+}
+\examples{
+set.seed(26052017)
+clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+
+PFM <- ClimToProxyClim(clim.signal = clim.in,
+                       timepoints = round(N41.proxy$Published.age),
+                       proxy.calibration.type = "identity",
+                       seas.prod = N41.G.ruber.seasonality,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                       meas.noise = 0.46, n.samples = 30,
+                       smoothed.signal.res = 10,
+                       n.replicates = 10)
+
+PFM$everything \%>\%
+  PlotPFMs(max.replicates = 1, stage.order = "seq") +
+  facet_wrap(~stage)
+
+PFM$everything \%>\%
+  PlotPFMs(max.replicates = 1, stage.order = "var")
 }

@@ -56,6 +56,8 @@ stages.key <- dplyr::tibble(
 )
 
 #with(stages.key, factor(stage, ordered = TRUE, levels = stage[order(plot.order)]))
+stage.labels <- stages.key$label
+names(stage.labels) <- stages.key$stage
 
-devtools::use_data(stages.key, overwrite = TRUE)
+devtools::use_data(stages.key, stage.labels, overwrite = TRUE)
 
