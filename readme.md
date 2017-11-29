@@ -111,14 +111,14 @@ kable(head(N41.proxy), format = "markdown")
 
 
 
-| Published.age| Published.temperature| Sed.acc.rate.m.yr|
-|-------------:|---------------------:|-----------------:|
-|      4334.286|                 28.92|         0.0003679|
-|      4527.429|                 29.20|         0.0003675|
-|      4575.714|                 29.15|         0.0003677|
-|      4720.571|                 28.55|         0.0003677|
-|      4913.714|                 28.33|         0.0003670|
-|      4994.400|                 29.44|         0.0003667|
+| Published.age| Published.temperature| Sed.acc.rate.m.yr| Sed.acc.rate.cm.kyr|
+|-------------:|---------------------:|-----------------:|-------------------:|
+|      4334.286|                 28.92|         0.0003679|               36.79|
+|      4527.429|                 29.20|         0.0003675|               36.75|
+|      4575.714|                 29.15|         0.0003677|               36.77|
+|      4720.571|                 28.55|         0.0003677|               36.77|
+|      4913.714|                 28.33|         0.0003670|               36.70|
+|      4994.400|                 29.44|         0.0003667|               36.67|
 
 *******
 
@@ -136,7 +136,7 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
-                       sed.acc.rate = N41.proxy$Sed.acc.rate.m.yr,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
                        meas.noise = 0.46, n.samples = 30,
                        n.replicates = 10)
 ```
@@ -155,7 +155,7 @@ PFM$everything
 ##  2       4527         1 proxy.bt.sb.sampY 27.71641 +Undersampling Y
 ##  3       4576         1 proxy.bt.sb.sampY 27.74539 +Undersampling Y
 ##  4       4721         1 proxy.bt.sb.sampY 27.68920 +Undersampling Y
-##  5       4914         1 proxy.bt.sb.sampY 27.70921 +Undersampling Y
+##  5       4914         1 proxy.bt.sb.sampY 27.66205 +Undersampling Y
 ##  6       4994         1 proxy.bt.sb.sampY 27.66351 +Undersampling Y
 ##  7       5092         1 proxy.bt.sb.sampY 27.67081 +Undersampling Y
 ##  8       5156         1 proxy.bt.sb.sampY 27.65508 +Undersampling Y

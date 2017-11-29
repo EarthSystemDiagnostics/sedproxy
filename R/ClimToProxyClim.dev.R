@@ -19,8 +19,8 @@ ClimToProxyClim.dev <- function(clim.signal,
                             smoothed.signal.res = 100,
                             seas.prod = rep(1, 12),
                             seas.prod.args = NULL,
-                            bio.depth = 0.1,
-                            sed.acc.rate = 5e-04,
+                            bio.depth = 10,
+                            sed.acc.rate = 50,
                             meas.noise = 0,
                             meas.bias = 0,
                             n.samples = Inf,
@@ -46,6 +46,9 @@ ClimToProxyClim.dev <- function(clim.signal,
   # Calculate timepoint invariant values ------
   max.clim.signal.i <- nrow(clim.signal)
   sig.years.i <- 1:max.clim.signal.i
+
+  # Rescale sed.acc.rate to per year
+  sed.acc.rate <- sed.acc.rate / 1000
 
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
@@ -310,7 +313,7 @@ ClimToProxyClim.dev <- function(clim.signal,
   }
 
   # Calculate chunked climate at timepoints
-  
+
   # Create smoothed climate signal
   if (is.na(smoothed.signal.res)) {
     out$clim.timepoints.ssr <- NA
@@ -382,7 +385,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 # PFM <- ClimToProxyClim(clim.signal = clim.in,
 #                        timepoints = c(round(N41.proxy$Published.age), 22030),
 #                        proxy.calibration.type = "identity",
-#                        sed.acc.rate = c(N41.proxy$Sed.acc.rate.m.yr, 3.047077e-04),
+#                        sed.acc.rate = c(N41.proxy$Sed.acc.rate.cm.kyr, 30),
 #                        seas.prod = N41.G.ruber.seasonality,
 #                        meas.noise = 0.46, n.samples = 30,
 #                        n.replicates = 10)
@@ -393,7 +396,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 #                                proxy.calibration.type = "identity",
 #                                seas.prod = dnorm,
 #                                seas.prod.args = list(mean = 26, sd = 2),
-#                                sed.acc.rate = c(N41.proxy$Sed.acc.rate.m.yr, 3.047077e-04),
+#                                sed.acc.rate = c(N41.proxy$Sed.acc.rate.cm.kyr, 30),
 #                                meas.noise = 0.46, n.samples = 30,
 #                                n.replicates = 10)
 #
@@ -403,7 +406,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 #                                proxy.calibration.type = "identity",
 #                                seas.prod = dnorm,
 #                                seas.prod.args = list(mean = 26, sd = 2),
-#                                sed.acc.rate = c(3.047077e-04, N41.proxy$Sed.acc.rate.m.yr),
+#                                sed.acc.rate = c(30, N41.proxy$Sed.acc.rate.cm.kyr),
 #                                meas.noise = 0.46, n.samples = 30,
 #                                n.replicates = 10)
 #
@@ -413,7 +416,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 #                                proxy.calibration.type = "identity",
 #                                seas.prod = dnorm,
 #                                seas.prod.args = list(mean = 26, sd = 2),
-#                                sed.acc.rate = c(N41.proxy$Sed.acc.rate.m.yr),
+#                                sed.acc.rate = c(N41.proxy$Sed.acc.rate.cm.kyr),
 #                                meas.noise = 0.46, n.samples = 30,
 #                                n.replicates = 10)
 #
@@ -423,4 +426,28 @@ ClimToProxyClim.dev <- function(clim.signal,
 #
 # PFM.dev$everything %>%
 #   PlotPFMs(max.replicates = 1)
+
+# ## Habitat tracking
+#
+# G.ruber (white) temperature habitat parameters from Fraile et al. (2008), table 1. mu = 23.5, sigma = 4
+# set.seed(20171120)
+# Mg_Ca.30 <- ClimToProxyClim(clim.signal = N41.t21k.climate.in,
+#                             timepoints = N41.proxy$Published.age,
+#                             sed.acc.rate = N41.sed.acc.rate,
+#                             seas.prod = N41.G.ruber.seasonality,
+#                             meas.noise = 0.46, n.samples = 30, n.replicates = 10)
+#
+# set.seed(20171120)
+# Mg_Ca.ht <- ClimToProxyClim.dev(clim.signal = N41.t21k.climate.in,
+#                                 timepoints = N41.proxy$Published.age,
+#                                 sed.acc.rate = N41.sed.acc.rate,
+#                                 seas.prod = dnorm,
+#                                 seas.prod.args = list(mean = 23.5, sd = 4),
+#                                 meas.noise = 0.46, n.samples = 30, n.replicates = 10)
+#
+# comb <- bind_rows(Fixed = Mg_Ca.30$everything, Tracking = Mg_Ca.ht$everything,
+#                   .id = "Proxy seasonality")
+#
+# PlotPFMs(comb) +
+#   facet_grid(~`Proxy seasonality`)
 

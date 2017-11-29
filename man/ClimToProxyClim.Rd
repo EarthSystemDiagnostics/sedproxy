@@ -6,8 +6,8 @@
 \usage{
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, seas.prod = rep(1, 12), bio.depth = 0.1,
-  sed.acc.rate = 5e-04, meas.noise = 0, meas.bias = 0, n.samples = Inf,
+  smoothed.signal.res = 100, seas.prod = rep(1, 12), bio.depth = 10,
+  sed.acc.rate = 50, meas.noise = 0, meas.bias = 0, n.samples = Inf,
   n.replicates = 1)
 }
 \arguments{
@@ -28,12 +28,12 @@ climate output is generated, this can speed up some simulations.}
 archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
 distribution.}
 
-\item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m. If
+\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
 bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 equivalent to sampling a laminated sediment core.}
 
-\item{sed.acc.rate}{Sediment accumulation rate in metres per year. Defaults
-to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+\item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
+to 50 cm per kyr. Either a single value, or vector of same
 length as "timepoints"}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
@@ -103,7 +103,7 @@ phytoplankton for Alkenone unsaturation indices).
 timepoint, the simulated proxy consists of a weighted mean of the climate
 signal over a time window that is determined by the sediment accumulation
 rate {sed.acc.rate} and the bioturbation depth {bio.depth} which defaults
-to 0.1 m. The weights are given by the depth solution to an impulse
+to 10 cm. The weights are given by the depth solution to an impulse
 response function (Berger and Heath, 1968).
 \item Aliasing of seasonal and inter-annual climate variation onto to
 bioturbated (smoothed) signal.

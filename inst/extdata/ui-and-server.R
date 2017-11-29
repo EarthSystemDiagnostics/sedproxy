@@ -252,7 +252,7 @@ server <- function(input, output) {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
     t.min <-
-      ceiling((input$bio.depth / 100) / (input$sed.acc.rate / 1000 / 100)) + 1
+      ceiling(input$bio.depth / input$sed.acc.rate) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)
@@ -282,8 +282,8 @@ server <- function(input, output) {
       clim.signal = clim(),
       timepoints = timepoints(),
       smoothed.signal.res = 100,
-      bio.depth = (input$bio.depth / 100),
-      sed.acc.rate = (input$sed.acc.rate / 1000 / 100),
+      bio.depth = input$bio.depth,
+      sed.acc.rate = input$sed.acc.rate,
       seas.prod = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,

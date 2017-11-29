@@ -14,7 +14,7 @@
 #'   timepoint, the simulated proxy consists of a weighted mean of the climate
 #'   signal over a time window that is determined by the sediment accumulation
 #'   rate \{sed.acc.rate} and the bioturbation depth \{bio.depth} which defaults
-#'   to 0.1 m. The weights are given by the depth solution to an impulse
+#'   to 10 cm. The weights are given by the depth solution to an impulse
 #'   response function (Berger and Heath, 1968).
 #'
 #'   3. Aliasing of seasonal and inter-annual climate variation onto to
@@ -53,11 +53,11 @@
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
 #'   archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
 #'   distribution.
-#' @param bio.depth Depth of the bioturbated layer in metres, defaults to 0.1 m. If
+#' @param bio.depth Depth of the bioturbated layer in cm, defaults to 10 cm. If
 #' bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 #' equivalent to sampling a laminated sediment core.
-#' @param sed.acc.rate Sediment accumulation rate in metres per year. Defaults
-#'   to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+#' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
+#'   to 50 cm per kyr. Either a single value, or vector of same
 #'   length as "timepoints"
 #' @param meas.noise The amount of noise to add to each simulated proxy value.
 #'   Defined as the standard deviation of a normal distribution with mean = 0
@@ -118,8 +118,8 @@ ClimToProxyClim <- function(clim.signal,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             smoothed.signal.res = 100,
                             seas.prod = rep(1, 12),
-                            bio.depth = 0.1,
-                            sed.acc.rate = 5e-04,
+                            bio.depth = 10,
+                            sed.acc.rate = 50,
                             meas.noise = 0,
                             meas.bias = 0,
                             n.samples = Inf,
@@ -151,6 +151,9 @@ ClimToProxyClim <- function(clim.signal,
   # Calculate timepoint invariant values ------
   max.clim.signal.i <- nrow(clim.signal)
   sig.years.i <- 1:max.clim.signal.i
+
+  # Rescale sed.acc.rate to per year
+  sed.acc.rate <- sed.acc.rate / 1000
 
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)

@@ -7,7 +7,7 @@
 ClimToProxyClim.dev(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
   smoothed.signal.res = 100, seas.prod = rep(1, 12),
-  seas.prod.args = NULL, bio.depth = 0.1, sed.acc.rate = 5e-04,
+  seas.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
   meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
@@ -31,12 +31,12 @@ Defaults to a uniform seasonal distribution.}
 
 \item{seas.prod.args}{A named list of parameters to be passed to a function named in seas.prod}
 
-\item{bio.depth}{Depth of the bioturbated layer in metres, defaults to 0.1 m. If
+\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
 bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 equivalent to sampling a laminated sediment core.}
 
-\item{sed.acc.rate}{Sediment accumulation rate in metres per year. Defaults
-to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+\item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
+to 50 cm per kyr. Either a single value, or vector of same
 length as "timepoints"}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.

@@ -15,7 +15,7 @@ library(ggplot2)
 #'   timepoint, the simulated proxy consists of a weighted mean of the climate
 #'   signal over a time window that is determined by the sediment accumulation
 #'   rate \{sed.acc.rate} and the bioturbation depth \{bio.depth} which defaults
-#'   to 0.1 m. The weights are given by the depth solution to an impulse
+#'   to 10 cm. The weights are given by the depth solution to an impulse
 #'   response function (Berger and Heath, 1968).
 #'
 #'   3. Aliasing of seasonal and inter-annual climate variation onto to
@@ -54,11 +54,11 @@ library(ggplot2)
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
 #'   archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
 #'   distribution.
-#' @param bio.depth Depth of the bioturbated layer in metres, defaults to 0.1 m. If
+#' @param bio.depth Depth of the bioturbated layer in cm, defaults to 10 cm. If
 #' bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 #' equivalent to sampling a laminated sediment core.
-#' @param sed.acc.rate Sediment accumulation rate in metres per year. Defaults
-#'   to 5e-04 m per year (0.5 m / kyr). Either a single value, or vector of same
+#' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
+#'   to 50 cm per kyr. Either a single value, or vector of same
 #'   length as "timepoints"
 #' @param meas.noise The amount of noise to add to each simulated proxy value.
 #'   Defined as the standard deviation of a normal distribution with mean = 0
@@ -119,8 +119,8 @@ ClimToProxyClim <- function(clim.signal,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             smoothed.signal.res = 100,
                             seas.prod = rep(1, 12),
-                            bio.depth = 0.1,
-                            sed.acc.rate = 5e-04,
+                            bio.depth = 10,
+                            sed.acc.rate = 50,
                             meas.noise = 0,
                             meas.bias = 0,
                             n.samples = Inf,
@@ -152,6 +152,9 @@ ClimToProxyClim <- function(clim.signal,
   # Calculate timepoint invariant values ------
   max.clim.signal.i <- nrow(clim.signal)
   sig.years.i <- 1:max.clim.signal.i
+
+  # Rescale sed.acc.rate to per year
+  sed.acc.rate <- sed.acc.rate / 1000
 
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
@@ -500,6 +503,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #' @examples
 MakePFMDataframe <- function(PFM){
   df <- data.frame(
+    proxy.bt.sb.sampY = as.vector(PFM$proxy.bt.sb.sampY),
     proxy.bt.sb.sampYM = as.vector(PFM$proxy.bt.sb.sampYM),
     proxy.bt.sb.inf.b = as.vector(PFM$proxy.bt.sb.inf.b),
     proxy.bt.sb.sampYM.b = as.vector(PFM$proxy.bt.sb.sampYM.b),
@@ -533,21 +537,17 @@ MakePFMDataframe <- function(PFM){
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
   rtn <- droplevels(dplyr::filter(rtn, complete.cases(value)))
+  rtn <- dplyr::left_join(rtn, stages.key, by = "stage")
 
   return(rtn)
 }
-
-# a <- MakePFMDataframe(PFM$everything)
-# b <- MakePFMDataframe_2(PFM$everything)
-# all_equal(a, b)
-
 #' Plot forward modelled sedimentary proxies
 #'
 #' @param PFMs A dataframe of forward modelled proxies
-#' @param breaks Proxy stages for legend, in order
+#' @param plot.stages Proxy stages to be plotted, "default", "all", or a custom character vector
 #' @param colr.palette Colours for the proxy stages
 #' @param alpha.palette Alpha levels for the proxy stages
-#' @param levl.labels Labels for the proxy stages, in order
+#' @param levl.labels Labels for the proxy stages
 #' @param max.replicates Maximum number of replicates to plot at once
 #'
 #' @import ggplot2
@@ -556,19 +556,20 @@ MakePFMDataframe <- function(PFM){
 #'
 #' @examples
 PlotPFMs <- function(PFMs,
-                     breaks = "default.breaks",
+                     plot.stages = c("default"),
                      max.replicates = 5,
-                     colr.palette = "default.colr.palette",
-                     alpha.palette = "default.alpha.palette",
-                     levl.labels = "default.levl.labels"){
+                     colr.palette = "default",
+                     alpha.palette = "default",
+                     levl.labels = "default",
+                     facetted = FALSE){
 
 
 
   if(exists("replicate", where = PFMs)){
-    rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "Observed proxy"),
+    rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "observed.proxy"),
                              replicate == 1)
   }else{
-    rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "Observed proxy"))
+    rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "observed.proxy"))
     rug.dat$replicate <- 1
     PFMs$replicate <- 1
   }
@@ -585,60 +586,40 @@ PlotPFMs <- function(PFMs,
   }
 
   # assign default asthetic mappings
-  if (breaks == "default.breaks"){
-    breaks <-
-      c(
-        "clim.signal.ann",
-        "clim.timepoints.1000",
-        "clim.timepoints.100",
-        "clim.timepoints.50",
-        "clim.timepoints.ssr",
-        "clim.signal.smoothed",
-        "proxy.bt",
-        "proxy.bt.sb",
-        "proxy.bt.sb.inf.b",
-        "proxy.bt.sb.sampYM.b",
-        "proxy.bt.sb.sampYM",
-        "proxy.bt.sb.inf.b.n",
-        "proxy.bt.sb.sampYM.b.n",
-        "simulated.proxy",
-        "Observed proxy"
-      )}
+  
+  breaks <- stages.key$stage
 
-  if (colr.palette == "default.colr.palette") colr.palette  <-
-      structure(c("#018571", "#018571","#018571", "#018571","#018571", "#018571",
-                  "Green", "Gold",
-                  "White", "White",
-                  "#d95f02",
-                  "#7570b3", "#7570b3", "#7570b3",
-                  "Red"),
-                .Names = breaks)
+  if (colr.palette == "default") 
+    colr.palette  <- 
+      structure(stages.key$plotting.colour,
+                .Names = stages.key$stage)
 
-  if (alpha.palette == "default.alpha.palette") alpha.palette  <-
-      structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5),
-                .Names = breaks)
+  if (alpha.palette == "default") alpha.palette  <-
+      structure(stages.key$plotting.alpha,
+                .Names = stages.key$stage)
 
-  if (levl.labels == "default.levl.labels") levl.labels  <-
-      structure(c(rep(" Input climate", 6),
-                  "+Bioturbation",
-                  "+Seasonality",
-                  rep("+Bias", 2),
-                  "+Finite sample",
-                  rep("+Measurement error", 3),
-                  "Observed proxy"),
-                .Names = breaks)
-
-
-  plotting.levels <- c("clim.signal.smoothed", "proxy.bt",
-                       "proxy.bt.sb", "proxy.bt.sb.sampYM",
-                       "simulated.proxy", "Observed proxy")
+  if (levl.labels == "default") levl.labels  <-
+      structure(stages.key$label,
+                .Names = stages.key$stage)
+  
+  if (plot.stages == "default") {
+    plotting.levels <- c(
+      "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
+      "proxy.bt.sb.sampYM",  "simulated.proxy", "observed.proxy"
+      )
+  } else if (plot.stages == "all") {
+    plotting.levels <- stages.key$stage
+  } else{
+    plotting.levels <- plot.stages
+  }
 
   PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
                         replicate <= max.replicates)
 
-  #set factor level ordering for stage
-  PFMs$stage <- factor(PFMs$stage, levels = rev(plotting.levels), ordered = TRUE)
-
+  #set factor level ordering for stages
+  if (facetted) {PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE)}else{
+    PFMs$stage <- factor(PFMs$stage, levels = rev(plotting.levels), ordered = TRUE)
+  }
 
 
   p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
@@ -652,7 +633,7 @@ PlotPFMs <- function(PFMs,
                                  label.hjust = 1,
                                  nrow = 1,
                                  override.aes = list(alpha = 1))) +
-    labs(x = expression("timepoints"),
+    labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +
 
     #scale_linetype(guide = FALSE) +
@@ -660,11 +641,15 @@ PlotPFMs <- function(PFMs,
     scale_linetype_manual(values = rep(1, 15), guide = FALSE)
 
   if (is.null(colr.palette) == FALSE)
-    p <- p + scale_colour_manual("", values = colr.palette, breaks = breaks, labels = levl.labels)
+    p <- p + scale_colour_manual("", values = colr.palette, breaks = names(colr.palette),
+                                 labels = levl.labels)
 
   if (is.null(alpha.palette) == FALSE)
-    p <- p + scale_alpha_manual("", values = alpha.palette, breaks = breaks,
+    p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
+  
+  if (facetted)
+    p <- p + facet_wrap(~stage, labeller = as_labeller(levl.labels))
 
   return(p)
 }
@@ -964,7 +949,7 @@ server <- function(input, output) {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
     t.min <-
-      ceiling((input$bio.depth / 100) / (input$sed.acc.rate / 1000 / 100)) + 1
+      ceiling(input$bio.depth / input$sed.acc.rate) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)
@@ -994,8 +979,8 @@ server <- function(input, output) {
       clim.signal = clim(),
       timepoints = timepoints(),
       smoothed.signal.res = 100,
-      bio.depth = (input$bio.depth / 100),
-      sed.acc.rate = (input$sed.acc.rate / 1000 / 100),
+      bio.depth = input$bio.depth,
+      sed.acc.rate = input$sed.acc.rate,
       seas.prod = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,

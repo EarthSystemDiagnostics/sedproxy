@@ -11,8 +11,9 @@ N41.proxy <- climproxyrecords::shakun.sed.acc %>%
          ID.no == "N41") %>%
   mutate(Sed.acc.rate.m.yr = ifelse(Sed.acc.rate.m.yr < 0.2 * mean(Sed.acc.rate.m.yr),
                                         0.2 * mean(Sed.acc.rate.m.yr),
-                                        Sed.acc.rate.m.yr)) %>%
-  select(Published.age, Published.temperature, Sed.acc.rate.m.yr)
+                                        Sed.acc.rate.m.yr),
+         Sed.acc.rate.cm.kyr = round(Sed.acc.rate.m.yr * 1000*100, 2)) %>%
+  select(Published.age, Published.temperature, Sed.acc.rate.m.yr, Sed.acc.rate.cm.kyr)
 
 N41.proxy.details <- climproxyrecords::shakun.metadata %>%
   filter(ID.no == "N41")
@@ -25,14 +26,7 @@ N41.G.ruber.seasonality <- ecusdata::shak.fraile.seasonality %>%
   gather() %>%
   .[["value"]]
 
-N41.sed.acc.rate <- climproxyrecords::shakun.sed.acc %>%
-  filter(ID.no == "N41",
-         Published.age < 21000) %>%
-  select(Sed.acc.rate.m.yr) %>%
-  mutate(Sed.acc.rate.m.yr = ifelse(Sed.acc.rate.m.yr < 0.2 * mean(Sed.acc.rate.m.yr),
-                                    0.2 * mean(Sed.acc.rate.m.yr),
-                                    Sed.acc.rate.m.yr)) %>%
-  .[[1]]
+N41.sed.acc.rate <- N41.proxy$Sed.acc.rate.cm.kyr
 
 devtools::use_data(N41.sed.acc.rate, N41.t21k.climate, N41.proxy, N41.proxy.details, N41.G.ruber.seasonality, overwrite = TRUE)
 
