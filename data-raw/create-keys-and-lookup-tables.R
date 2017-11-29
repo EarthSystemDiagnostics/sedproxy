@@ -1,5 +1,4 @@
 ## Create key and label lookup tables
-
 stages.key <- dplyr::tibble(
   stage = c(
     "clim.signal.ann",
@@ -24,8 +23,8 @@ stages.key <- dplyr::tibble(
     "+Production bias",
     "+Calibration bias",
     "+Measurement error",
-    "+Undersampling Y",
-    "+Undersampling YM",
+    "+Aliasing Y",
+    "+Aliasing YM",
     "+Calibration bias",
     "+Measurement error",
     "Simulated proxy",
@@ -39,10 +38,10 @@ stages.key <- dplyr::tibble(
     "Climate signal after bioturbation and production bias",
     "Climate signal after bioturbation, production bias, and calibration bias",
     "Climate signal after bioturbation, production bias, and measurement error",
-    "Climate signal after bioturbation, production bias, and undersampling of inter-annual variation",
-    "Climate signal after bioturbation, production bias, and undersampling of inter-annual and intra-annual variation such as monthly temperatures or depth habitats",
-    "Climate signal after bioturbation, production bias, and undersampling of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias",
-    "Climate signal after bioturbation, production bias, undersampling, and measurement error",
+    "Climate signal after bioturbation, production bias, and aliasing of inter-annual variation",
+    "Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats",
+    "Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias",
+    "Climate signal after bioturbation, production bias, aliasing, and measurement error",
     "Final simulated pseudo-proxy",
     "True observed proxy (when supplied)"
   ),
