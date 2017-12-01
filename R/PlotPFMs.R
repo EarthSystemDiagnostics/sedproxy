@@ -22,8 +22,8 @@
 #'                        proxy.calibration.type = "identity",
 #'                        seas.prod = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
-#'                        meas.noise = 0.46, n.samples = 30,
-#'                        smoothed.signal.res = 10,
+#'                        meas.noise = 0.46, n.samples = Inf,
+#'                        smoothed.signal.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
 #'
 #' PFM$everything %>%
@@ -32,16 +32,17 @@
 #'
 #' PFM$everything %>%
 #'   PlotPFMs(max.replicates = 1, stage.order = "var")
+#'
+#' PFM$everything %>%
+#'   PlotPFMs(stage.order = "var", plot.stages = "all")
+#'
 PlotPFMs <- function(PFMs,
                      stage.order = c("var", "seq"),
                      plot.stages = c("default"),
                      max.replicates = 5,
                      colr.palette = "default",
                      alpha.palette = "default",
-                     levl.labels = "default",
-                     facetted = FALSE){
-
-
+                     levl.labels = "default"){
 
   if(exists("replicate", where = PFMs)){
     rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "observed.proxy"),
@@ -62,7 +63,6 @@ PlotPFMs <- function(PFMs,
   if(exists("Proxy", where = PFMs)==FALSE){
     PFMs$Proxy <- ""
   }
-
 
   # assign default asthetic mappings
 
@@ -88,6 +88,7 @@ PlotPFMs <- function(PFMs,
       )
   } else if (plot.stages == "all") {
     plotting.levels <- stages.key$stage
+    plotting.levels <- subset(plotting.levels, plotting.levels %in% c("clim.signal.ann", "clim.timepoints.ssr") == FALSE)
   } else{
     plotting.levels <- plot.stages
   }
@@ -108,16 +109,10 @@ PlotPFMs <- function(PFMs,
            })
 
 
-
-  # if (facetted) {PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE)}else{
-  #   PFMs$stage <- factor(PFMs$stage, levels = rev(plotting.levels), ordered = TRUE)
-  # }
-
-
   p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
                                colour = stage, alpha = stage,
                                linetype = as.factor(replicate))) +
-    # geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
+    geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
     geom_line() +
     theme_bw() +
     theme(legend.position = "top", panel.grid.minor = element_blank()) +
@@ -127,10 +122,8 @@ PlotPFMs <- function(PFMs,
                                  override.aes = list(alpha = 1))) +
     labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +
-
-    #scale_linetype(guide = FALSE) +
-    #scale_alpha_discrete(guide = FALSE) +
-    scale_linetype_manual(values = rep(1, 15), guide = FALSE)
+    scale_linetype_manual(values = rep(1, 13), guide = FALSE)+
+    scale_alpha_manual(guide = FALSE)
 
   if (is.null(colr.palette) == FALSE)
     p <- p + scale_colour_manual("", values = colr.palette, breaks = names(colr.palette),
@@ -139,9 +132,6 @@ PlotPFMs <- function(PFMs,
   if (is.null(alpha.palette) == FALSE)
     p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
-
-  if (facetted)
-    p <- p + facet_wrap(~stage, labeller = as_labeller(levl.labels))
 
   return(p)
 }

@@ -6,7 +6,7 @@
 \usage{
 PlotPFMs(PFMs, stage.order = c("var", "seq"), plot.stages = c("default"),
   max.replicates = 5, colr.palette = "default", alpha.palette = "default",
-  levl.labels = "default", facetted = FALSE)
+  levl.labels = "default")
 }
 \arguments{
 \item{PFMs}{A dataframe of forward modelled proxies}
@@ -36,8 +36,8 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
-                       meas.noise = 0.46, n.samples = 30,
-                       smoothed.signal.res = 10,
+                       meas.noise = 0.46, n.samples = Inf,
+                       smoothed.signal.res = 10, meas.bias = 1,
                        n.replicates = 10)
 
 PFM$everything \%>\%
@@ -46,4 +46,8 @@ PFM$everything \%>\%
 
 PFM$everything \%>\%
   PlotPFMs(max.replicates = 1, stage.order = "var")
+
+PFM$everything \%>\%
+  PlotPFMs(stage.order = "var", plot.stages = "all")
+
 }

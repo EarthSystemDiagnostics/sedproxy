@@ -16,19 +16,19 @@ stages.key <- dplyr::tibble(
     "observed.proxy"
   ),
   label = c(
-    "Input climate",
-    "Input climate",
-    "Input climate",
-    "+Bioturbation",
-    "+Production bias",
-    "+Calibration bias",
-    "+Measurement error",
-    "+Aliasing Y",
-    "+Aliasing YM",
-    "+Calibration bias",
-    "+Measurement error",
-    "Simulated proxy",
-    "Observed proxy"
+    "(1) Input climate",
+    "(1) Input climate",
+    "(1) Input climate",
+    "(2) +Bioturbation",
+    "(3) +Production bias",
+    "(.) +Calibration bias",
+    "(5) +Measurement error",
+    "(4) +Aliasing Y",
+    "(4) +Aliasing YM",
+    "(.) +Calibration bias",
+    "(5) +Measurement error",
+    "(5) Simulated proxy",
+    "(*) Observed proxy"
   ),
   description = c(
     "Input climate signal at requested timepoints at annual resolution",
@@ -48,11 +48,12 @@ stages.key <- dplyr::tibble(
   plot.order = c(1, 2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12, 13),
   plotting.colour = c("#018571", "#018571","#018571",
                       "Green", "Gold",
-                      "White", "White",
+                      "Pink", "#7570b3",
                       "#d95f02", "#d95f02",
-                      "#7570b3", "#7570b3", "#7570b3",
+                      "Pink", "#7570b3", "#7570b3",
                       "Red"),
   plotting.alpha = c(1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+  #plotting.alpha = rep(1, 13)
 )
 
 #with(stages.key, factor(stage, ordered = TRUE, levels = stage[order(plot.order)]))
