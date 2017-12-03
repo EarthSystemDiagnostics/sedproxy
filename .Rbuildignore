@@ -5,3 +5,4 @@
 ^.*\_files
 ^inst/extdata
 ^docs$
+^R/zzz.R
