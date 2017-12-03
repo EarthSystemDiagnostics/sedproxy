@@ -17,6 +17,9 @@ or parameters sampled from the fitted calibration model}
 
 \item{n}{the number of replicate conversions to make in the case of sampled calibration parameters}
 }
+\value{
+a vector of temperatures or proxy values
+}
 \description{
 Convert between UK'37 and Temperature in degrees C
 }
@@ -48,7 +51,9 @@ CalibUK37(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sa
            , n = 5, point.or.sample = "sample")
 
 ## Incompatible arguments
+\dontrun{
 CalibUK37(temperature = 1, proxy.value = 1)
+}
 }
 \seealso{
 Other calib: \code{\link{CalibMgCa}},

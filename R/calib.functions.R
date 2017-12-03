@@ -9,7 +9,7 @@
 #' or parameters sampled from the fitted calibration model
 #' @param n the number of replicate conversions to make in the case of sampled calibration parameters
 #'
-#' @return
+#' @return a vector of temperatures or proxy values
 #' @export
 #' @importFrom mvtnorm rmvnorm
 #' @family calib
@@ -32,7 +32,9 @@
 #'            , n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")
 #'
 #' ## Incompatible arguments
-#' ProxyConversion(temperature = 1, proxy.value = 1)
+#' \dontrun{
+#' CalibUK37(temperature = 1, proxy.value = 1)
+#' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                             proxy.calibration.type = c("MgCa", "UK37"),
                             point.or.sample = c("point", "sample"), n = 1){
@@ -58,7 +60,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #'
 #' @inheritParams ProxyConversion
 #'
-#' @return
+#' @return a vector of temperatures or proxy values
 #' @export
 #' @family calib
 #'
@@ -80,7 +82,9 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #'            , n = 5, point.or.sample = "sample")
 #'
 #' ## Incompatible arguments
+#' \dontrun{
 #' CalibUK37(temperature = 1, proxy.value = 1)
+#' }
 #' @details To get the UK'37 calibration parameters
 #' \preformatted{
 #' uk37.dat <- ecusdata::mueller.uk37.sst
@@ -107,8 +111,8 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
                 -2.80815422746781e-06, 1.46053818728255e-07),
               .Dim = c(2L, 2L),
               .Dimnames = list(
-                c("(Intercept)", "`SST (1-12) [°C]`"),
-                c("(Intercept)", "`SST (1-12) [°C]`")))
+                c("(Intercept)", "`SST (1-12) [C]`"),
+                c("(Intercept)", "`SST (1-12) [C]`")))
 
   if (type == "sample"){
     cfs.mueller <- mvtnorm::rmvnorm(n=n, mean=cfs.mueller, sigma=vcov.mueller)
@@ -131,7 +135,7 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 #'
 #' @inheritParams ProxyConversion
 #'
-#' @return
+#' @return a vector of temperatures or proxy values
 #' @export
 #' @family calib
 #'
@@ -153,7 +157,9 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 #'            , n = 5, point.or.sample = "sample")
 #'
 #' ## Incompatible arguments
-#' CalibMgCa(temperature = 1, proxy.value = 1)
+#' \dontrun{
+#' CalibUK37(temperature = 1, proxy.value = 1)
+#' }
 CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
                       point.or.sample = c("point", "sample"), n = 1){
 
@@ -169,7 +175,7 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 
   # Need the covariance between A and B
   if (type == "sample"){
-    cfs.anand <- matrix(c(rnorm(n, 0.09, 0.003), rnorm(n, 0.38, 0.02)),
+    cfs.anand <- matrix(c(stats::rnorm(n, 0.09, 0.003), stats::rnorm(n, 0.38, 0.02)),
                         ncol = 2, byrow = FALSE, dimnames = list(NULL, c("A", "B")))
   }
 
@@ -185,41 +191,3 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 
   return(out)
 }
-
-
-# CalibMgCa(temperature = c(15, 25), point.or.sample = "point")
-# CalibMgCa(proxy.value = c(2, 4), point.or.sample = "point")
-#
-# CalibMgCa(temperature = c(15, 25), point.or.sample = "sample", n = 2)
-#
-# CalibMgCa(proxy.value = c(2, 4), point.or.sample = "sample", n = 2)
-#
-# CalibMgCa(proxy.value = as.vector(
-#   CalibMgCa(temperature = c(15, 25),point.or.sample = "point"))
-#   , point.or.sample = "point")
-#
-#
-# Tmps <- runif(100, 12, 28)
-# MgCas <- CalibMgCa(temperature = Tmps
-#                   , n = 15, point.or.sample = "sample") %>%
-#   tbl_df() %>%
-#   mutate(Temperature = Tmps) %>%
-#   gather(Rep, MgCa, -Temperature)
-#
-# MgCas %>%
-#   ggplot(aes(x = Temperature, y = log(MgCa), group = Rep)) +
-#   geom_point()
-#
-#
-#
-# MgCas <- runif(100, 1, 6)
-#
-# Tmps <- CalibMgCa(proxy.value = MgCas
-#                     , n = 105, point.or.sample = "sample") %>%
-#   tbl_df() %>%
-#   mutate(MgCa = MgCas) %>%
-#   gather(Rep, Temperature, -MgCa)
-#
-# Tmps %>%
-#   ggplot(aes(x = MgCa, y = (Temperature), group = Rep)) +
-#   geom_line(alpha = 0.05)

@@ -2,13 +2,18 @@
 % Please edit documentation in R/ClimToProxyClim.R
 \name{MakePFMDataframe}
 \alias{MakePFMDataframe}
-\title{Convert "everything" part of output from ClimToProxyClim to dataframe}
+\title{Convert "everything" part of output from ClimToProxyClim to dataframe.
+Used internally.}
 \usage{
 MakePFMDataframe(PFM)
 }
 \arguments{
 \item{PFM}{output from ClimToProxyClim}
 }
+\value{
+a dataframe
+}
 \description{
-Convert "everything" part of output from ClimToProxyClim to dataframe
+Convert "everything" part of output from ClimToProxyClim to dataframe.
+Used internally.
 }

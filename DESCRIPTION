@@ -14,5 +14,6 @@ Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    tidyverse
 VignetteBuilder: knitr

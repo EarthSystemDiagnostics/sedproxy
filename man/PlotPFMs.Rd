@@ -28,6 +28,7 @@ either sequentially, "seq", or in order of variance, "var". Defaults to var.}
 Plot forward modelled sedimentary proxies
 }
 \examples{
+library(ggplot2)
 set.seed(26052017)
 clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 
@@ -40,14 +41,11 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        smoothed.signal.res = 10, meas.bias = 1,
                        n.replicates = 10)
 
-PFM$everything \%>\%
-  PlotPFMs(max.replicates = 1, stage.order = "seq") +
+PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
   facet_wrap(~stage)
 
-PFM$everything \%>\%
-  PlotPFMs(max.replicates = 1, stage.order = "var")
+PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
 
-PFM$everything \%>\%
-  PlotPFMs(stage.order = "var", plot.stages = "all")
-
+PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
+ 
 }

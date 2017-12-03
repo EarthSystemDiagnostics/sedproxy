@@ -113,6 +113,26 @@
 #' @export
 #'
 #' @examples
+#' library(ggplot2)
+#' set.seed(26052017)
+#' clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+#'
+#' PFM <- ClimToProxyClim(clim.signal = clim.in,
+#'                        timepoints = round(N41.proxy$Published.age),
+#'                        proxy.calibration.type = "identity",
+#'                        seas.prod = N41.G.ruber.seasonality,
+#'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+#'                        meas.noise = 0.46, n.samples = Inf,
+#'                        smoothed.signal.res = 10, meas.bias = 1,
+#'                        n.replicates = 10)
+#'
+#' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
+#'   facet_wrap(~stage)
+#'
+#' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
+#'
+#' PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
+#'   
 ClimToProxyClim <- function(clim.signal,
                             timepoints,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
@@ -374,12 +394,12 @@ ClimToProxyClim <- function(clim.signal,
 
   # Add bias and noise to infinite sample --------
   if (meas.bias != 0) {
-    bias <- rnorm(n = n.replicates, mean = 0, sd = meas.bias)
+    bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
   } else{
     bias <- rep(0, n.replicates)
   }
   if (meas.noise != 0) {
-    noise <- rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
+    noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
   }else{
     noise <- rep(0, n.replicates)
   }
@@ -490,16 +510,13 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 }
 
 
-#' Convert "everything" part of output from ClimToProxyClim to dataframe
+#' Convert "everything" part of output from ClimToProxyClim to dataframe.
+#' Used internally.
 #'
 #' @param PFM output from ClimToProxyClim
-#'
-#' @return
-#' @export
+#' @return a dataframe
 #' @importFrom dplyr bind_rows filter
 #' @importFrom tidyr gather
-#'
-#' @examples
 MakePFMDataframe <- function(PFM){
   df <- data.frame(
     proxy.bt.sb.sampY = as.vector(PFM$proxy.bt.sb.sampY),

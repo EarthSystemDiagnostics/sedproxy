@@ -5,7 +5,7 @@
 #' @export
 #'
 #' @examples
-#' ShinySedproxy()
+#' \dontrun{ShinySedproxy()}
 ShinySedproxy <- function(){
   fl <- system.file("sedproxy-shiny/app.R", package = "sedproxy")
   shiny::runApp(fl)

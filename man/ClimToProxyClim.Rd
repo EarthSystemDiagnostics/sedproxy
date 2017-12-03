@@ -127,3 +127,25 @@ replicate has a different bias applied.
 \code{ClimToProxyClim} returns one or more replicates of the final simulated proxy
 as well as several intermediate stages (see section \strong{Value} below).
 }
+\examples{
+library(ggplot2)
+set.seed(26052017)
+clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+
+PFM <- ClimToProxyClim(clim.signal = clim.in,
+                       timepoints = round(N41.proxy$Published.age),
+                       proxy.calibration.type = "identity",
+                       seas.prod = N41.G.ruber.seasonality,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                       meas.noise = 0.46, n.samples = Inf,
+                       smoothed.signal.res = 10, meas.bias = 1,
+                       n.replicates = 10)
+
+PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
+  facet_wrap(~stage)
+
+PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
+
+PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
+  
+}
