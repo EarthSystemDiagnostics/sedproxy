@@ -20,13 +20,11 @@ N41.proxy.details <- climproxyrecords::shakun.metadata %>%
 
 N41.G.ruber.seasonality <- ecusdata::shak.fraile.seasonality %>%
   ungroup() %>%
-  filter(complete.cases(V1),
+  filter(stats::complete.cases(V1),
          ID.no == "N41") %>%
   select(starts_with("V")) %>%
   gather() %>%
   .[["value"]]
 
-N41.sed.acc.rate <- N41.proxy$Sed.acc.rate.cm.kyr
-
-devtools::use_data(N41.sed.acc.rate, N41.t21k.climate, N41.proxy, N41.proxy.details, N41.G.ruber.seasonality, overwrite = TRUE)
+devtools::use_data(N41.t21k.climate, N41.proxy, N41.proxy.details, N41.G.ruber.seasonality, overwrite = TRUE)
 

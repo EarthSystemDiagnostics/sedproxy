@@ -149,18 +149,18 @@ PFM$everything
 
 ```
 ## # A tibble: 9,725 x 9
-##    timepoints replicate             stage    value       label
-##         <dbl>     <dbl>             <chr>    <dbl>       <chr>
-##  1       4334         1 proxy.bt.sb.sampY 27.77735 +Aliasing Y
-##  2       4527         1 proxy.bt.sb.sampY 27.71641 +Aliasing Y
-##  3       4576         1 proxy.bt.sb.sampY 27.74539 +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY 27.68920 +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY 27.66205 +Aliasing Y
-##  6       4994         1 proxy.bt.sb.sampY 27.66351 +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY 27.67081 +Aliasing Y
-##  8       5156         1 proxy.bt.sb.sampY 27.65508 +Aliasing Y
-##  9       5254         1 proxy.bt.sb.sampY 27.65605 +Aliasing Y
-## 10       5318         1 proxy.bt.sb.sampY 27.62041 +Aliasing Y
+##    timepoints replicate             stage    value           label
+##         <dbl>     <dbl>             <chr>    <dbl>           <chr>
+##  1       4334         1 proxy.bt.sb.sampY 27.77735 (4) +Aliasing Y
+##  2       4527         1 proxy.bt.sb.sampY 27.71641 (4) +Aliasing Y
+##  3       4576         1 proxy.bt.sb.sampY 27.74539 (4) +Aliasing Y
+##  4       4721         1 proxy.bt.sb.sampY 27.68920 (4) +Aliasing Y
+##  5       4914         1 proxy.bt.sb.sampY 27.66205 (4) +Aliasing Y
+##  6       4994         1 proxy.bt.sb.sampY 27.66351 (4) +Aliasing Y
+##  7       5092         1 proxy.bt.sb.sampY 27.67081 (4) +Aliasing Y
+##  8       5156         1 proxy.bt.sb.sampY 27.65508 (4) +Aliasing Y
+##  9       5254         1 proxy.bt.sb.sampY 27.65605 (4) +Aliasing Y
+## 10       5318         1 proxy.bt.sb.sampY 27.62041 (4) +Aliasing Y
 ## # ... with 9,715 more rows, and 4 more variables: description <chr>,
 ## #   plot.order <dbl>, plotting.colour <chr>, plotting.alpha <dbl>
 ```
@@ -173,6 +173,11 @@ PFM$everything %>%
   PlotPFMs(max.replicates = 1)
 ```
 
+```
+## Scale for 'alpha' is already present. Adding another scale for 'alpha',
+## which will replace the existing scale.
+```
+
 ![](readme_files/figure-html/default_plot-1.png)<!-- -->
 
 
@@ -183,6 +188,11 @@ PFM$everything %>%
 PFM$everything %>% 
   filter(stage == "simulated.proxy") %>% 
   PlotPFMs(., max.replicates = 5)
+```
+
+```
+## Scale for 'alpha' is already present. Adding another scale for 'alpha',
+## which will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/plot_reps-1.png)<!-- -->

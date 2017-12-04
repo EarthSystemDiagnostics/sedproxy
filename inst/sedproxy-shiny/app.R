@@ -133,7 +133,7 @@ library(ggplot2)
 #' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
 #'
 #' PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
-#'   
+#'
 ClimToProxyClim <- function(clim.signal,
                             timepoints,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
@@ -553,7 +553,7 @@ MakePFMDataframe <- function(PFM){
 
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
-  rtn <- droplevels(dplyr::filter(rtn, complete.cases(value)))
+  rtn <- droplevels(dplyr::filter(rtn, stats::complete.cases(value)))
   rtn <- dplyr::left_join(rtn, stages.key, by = "stage")
 
   return(rtn)

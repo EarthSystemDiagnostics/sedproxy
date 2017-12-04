@@ -1,0 +1,84 @@
+#' Example data
+#'
+#' @name example.data
+#' @title Data for running the examples in package \code{sedproxy}
+#' @seealso N41.proxy, N41.proxy.details
+NULL
+
+#' @title Mg/Ca proxy based temperature reconctruction for core MD97-2141
+#' @description Mg/Ca proxy based temperature reconstruction for core MD97-2141, originally published in
+#' Rosenthal et al. (2003), extracted from Shakun et al. (2012).
+#' @format A data frame with 216 rows and 4 variables:
+#' \tabular{ll}{
+#'   \cr \code{Published.age} \tab Age in yr BP
+#'   \cr \code{Published.temperature} \tab Reconstructed temperature in degrees C
+#'   \cr \code{Sed.acc.rate.m.yr} \tab Sediment accumulation rate in meters per yr
+#'   \cr \code{Sed.acc.rate.cm.kyr} \tab Sediment accumulation rate in cm per kyr
+#'   }
+#' @details Published age and publishe temperature were extracted from
+#' Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
+#' Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing
+#' carbon dioxide concentrations during the last deglaciation. Nature,
+#' 484(7392), 49–54. \url{https://doi.org/10.1038/nature10915}.
+#'
+#' Sediment accumulation rates were estimated by fitting splines to the published
+#' age and depth estimates.
+#'
+#' @source Original reference: Rosenthal, Y., Oppo, D. W., & Linsley, B. K.
+#' (2003). The amplitude and phasing of climate change during the last
+#' deglaciation in the Sulu Sea, western equatorial Pacific. Geophysical
+#' Research Letters, 30(8), 1428. \url{https://doi.org/10.1029/2002GL016612}.
+#'
+"N41.proxy"
+
+#' @title Metadata for datset \code{N41.proxy}
+#' @description Metadata for core MD97-2141 taken from Shakun et al. (2012)
+#' @format A data frame with 1 rows and 17 variables:
+#' \tabular{ll}{
+#'    \cr \code{Number} \tab Proxy ID number from Shakun et al. (2012)
+#'    \cr \code{ID.no} \tab Proxy ID number from Shakun et al. (2012) with prefix "N"
+#'    \cr \code{Core} \tab ID code of sediment core
+#'    \cr \code{Location} \tab Location of core
+#'    \cr \code{Proxy} \tab Proxy type
+#'    \cr \code{Lat} \tab Latutide of core
+#'    \cr \code{Lon} \tab Longitude of core
+#'    \cr \code{Elevation} \tab Depth of core-top below sea level in metres
+#'    \cr \code{Reference} \tab Original reference for the proxy record
+#'    \cr \code{Resolution} \tab Average time resolution in years
+#'    \cr \code{Calibration.ref} \tab Reference for Mg/Ca calibration
+#'    \cr \code{Calibration} \tab Mg/Ca calibration formula
+#'    \cr \code{Foram.sp} \tab Foram species analyses for proxy
+#'    \cr \code{Ref.14C} \tab Reference for carbon dating
+#'    \cr \code{Notes} \tab
+#'    \cr \code{Geo.cluster} \tab Coarse geographic location
+#'    \cr \code{Archive.type} \tab Type of proxy archive
+#'}
+#' @details
+#' @source Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
+#' Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing
+#' carbon dioxide concentrations during the last deglaciation. Nature,
+#' 484(7392), 49–54. \url{https://doi.org/10.1038/nature10915}
+"N41.proxy.details"
+
+#' @title Seasonality of Globigerinoides ruber at core MD97-2141
+#' @description Seasonality of Globigerinoides ruber at core MD97-2141 predicted
+#' by the PLAFOM model (Fraile et al. 2008).
+#' @format A vector of 12 values
+#' @source Fraile, I., Schulz, M., Mulitza, S., & Kucera, M. (2008).
+#' Predicting the global distribution of planktonic foraminifera using a
+#' dynamic ecosystem model. Biogeosciences, 5(3), 891–911.
+#'
+"N41.G.ruber.seasonality"
+
+#' @title Climate (surface temperature) at core MD97-2141 from TraCE-21ka
+#' @description Modelled surface temperature at core MD97-2141. Model output
+#' from TraCE-21ka simulations.
+#' @format A matrix with 22040 rows and 12 columns
+#' @source Liu, Z., Otto-Bliesner, B. L., He, F., Brady, E. C., Tomas, R.,
+#' Clark, P. U., … Cheng, J. (2009).
+#' Transient Simulation of Last Deglaciation with a New Mechanism for
+#' Bølling-Allerød Warming. Science, 325(5938), 310–314.
+#' https://doi.org/10.1126/science.1171041
+"N41.t21k.climate"
+
+
