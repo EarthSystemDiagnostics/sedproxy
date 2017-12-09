@@ -47,5 +47,5 @@ PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
 PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
 
 PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
- 
+
 }

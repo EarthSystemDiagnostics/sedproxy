@@ -4,8 +4,16 @@
 \alias{example.data}
 \title{Data for running the examples in package \code{sedproxy}}
 \description{
-Example data
+A set of data objects for running the examples in \code{sedproxy}
+
+\code{\link{N41.proxy}}
+
+\code{\link{N41.proxy.details}}
+
+\code{\link{N41.G.ruber.seasonality}}
+
+\code{\link{N41.t21k.climate}}
 }
-\seealso{
-N41.proxy, N41.proxy.details
+\details{
+Example data
 }

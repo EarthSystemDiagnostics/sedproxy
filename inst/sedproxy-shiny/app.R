@@ -593,7 +593,7 @@ MakePFMDataframe <- function(PFM){
 #' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
 #'
 #' PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
-#'  
+#'
 PlotPFMs <- function(PFMs,
                      stage.order = c("var", "seq"),
                      plot.stages = c("default"),
@@ -653,7 +653,6 @@ PlotPFMs <- function(PFMs,
 
   PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
                         replicate <= max.replicates)
-
   #set factor level ordering for stages
   stage.order <- match.arg(stage.order)
   switch(stage.order,
@@ -670,7 +669,7 @@ PlotPFMs <- function(PFMs,
   p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
                                colour = stage, alpha = stage,
                                linetype = as.factor(replicate))) +
-    geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
+    #geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
     geom_line() +
     theme_bw() +
     theme(legend.position = "top", panel.grid.minor = element_blank()) +

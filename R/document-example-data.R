@@ -2,7 +2,15 @@
 #'
 #' @name example.data
 #' @title Data for running the examples in package \code{sedproxy}
-#' @seealso N41.proxy, N41.proxy.details
+#' @description A set of data objects for running the examples in \code{sedproxy}
+#'
+#' \code{\link{N41.proxy}}
+#'
+#' \code{\link{N41.proxy.details}}
+#'
+#' \code{\link{N41.G.ruber.seasonality}}
+#'
+#' \code{\link{N41.t21k.climate}}
 NULL
 
 #' @title Mg/Ca proxy based temperature reconctruction for core MD97-2141
@@ -53,7 +61,6 @@ NULL
 #'    \cr \code{Geo.cluster} \tab Coarse geographic location
 #'    \cr \code{Archive.type} \tab Type of proxy archive
 #'}
-#' @details
 #' @source Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
 #' Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing
 #' carbon dioxide concentrations during the last deglaciation. Nature,
