@@ -13,7 +13,7 @@ N41.proxy <- climproxyrecords::shakun.sed.acc %>%
                                         0.2 * mean(Sed.acc.rate.m.yr),
                                         Sed.acc.rate.m.yr),
          Sed.acc.rate.cm.kyr = round(Sed.acc.rate.m.yr * 1000*100, 2)) %>%
-  select(Published.age, Published.temperature, Sed.acc.rate.m.yr, Sed.acc.rate.cm.kyr)
+  select(Published.age, Published.temperature, Sed.acc.rate.cm.kyr)
 
 N41.proxy.details <- climproxyrecords::shakun.metadata %>%
   filter(ID.no == "N41")
