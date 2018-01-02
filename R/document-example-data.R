@@ -87,4 +87,13 @@ NULL
 #' https://doi.org/10.1126/science.1171041
 "N41.t21k.climate"
 
+#' @title Scussolini et al. (2013) Table 1
+#' @description Data from table 1 in Scussolini et al. (2013)
+#' @format A dataframe with 22 rows and 6 columns
+#' @source Scussolini, P., van Sebille, E., & Durgadoo, J. V. (2013).
+#' Paleo Agulhas rings enter the subtropical gyre during the penultimate
+#' deglaciation. Climate of the Past, 9(6), 2631–2639.
+#' https://doi.org/10.5194/cp-9-2631-2013
+"scussolini.tab1"
+
 

@@ -1,4 +1,4 @@
-library(ggplot2)
+library(ggplot2) 
 #' @md
 #' @title Simulate sediment archived proxy records from an "assumed true" climate signal.
 #' @description \code{ClimToProxyClim} simulates the creation of a proxy climate record
@@ -122,7 +122,7 @@ library(ggplot2)
 #'                        timepoints = round(N41.proxy$Published.age),
 #'                        proxy.calibration.type = "identity",
 #'                        seas.prod = N41.G.ruber.seasonality,
-#'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
+#'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
 #'                        meas.noise = 0.46, n.samples = Inf,
 #'                        smoothed.signal.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)

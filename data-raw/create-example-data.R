@@ -27,3 +27,7 @@ N41.G.ruber.seasonality <- ecusdata::shak.fraile.seasonality %>%
 
 devtools::use_data(N41.t21k.climate, N41.proxy, N41.proxy.details, N41.G.ruber.seasonality, overwrite = TRUE)
 
+
+# Scussolini data
+scussolini.tab1 <- ecusdata::scussolini.tab1
+devtools::use_data(scussolini.tab1, overwrite = TRUE)
