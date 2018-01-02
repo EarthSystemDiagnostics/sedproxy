@@ -111,14 +111,14 @@ kable(head(N41.proxy), format = "markdown")
 
 
 
-| Published.age| Published.temperature| Sed.acc.rate.cm.kyr|
-|-------------:|---------------------:|-------------------:|
-|      4334.286|                 28.92|               36.79|
-|      4527.429|                 29.20|               36.75|
-|      4575.714|                 29.15|               36.77|
-|      4720.571|                 28.55|               36.77|
-|      4913.714|                 28.33|               36.70|
-|      4994.400|                 29.44|               36.67|
+| Published.age| Published.temperature| Sed.acc.rate.cm.ka|
+|-------------:|---------------------:|------------------:|
+|      4334.286|                 28.92|              36.79|
+|      4527.429|                 29.20|              36.75|
+|      4575.714|                 29.15|              36.77|
+|      4720.571|                 28.55|              36.77|
+|      4913.714|                 28.33|              36.70|
+|      4994.400|                 29.44|              36.67|
 
 *******
 
@@ -136,7 +136,7 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
-                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        meas.noise = 0.46, n.samples = 30,
                        n.replicates = 10)
 ```

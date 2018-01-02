@@ -20,8 +20,7 @@ NULL
 #' \tabular{ll}{
 #'   \cr \code{Published.age} \tab Age in yr BP
 #'   \cr \code{Published.temperature} \tab Reconstructed temperature in degrees C
-#'   \cr \code{Sed.acc.rate.m.yr} \tab Sediment accumulation rate in meters per yr
-#'   \cr \code{Sed.acc.rate.cm.kyr} \tab Sediment accumulation rate in cm per kyr
+#'   \cr \code{Sed.acc.rate.cm.ka} \tab Sediment accumulation rate in cm per kyr
 #'   }
 #' @details Published age and publishe temperature were extracted from
 #' Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
