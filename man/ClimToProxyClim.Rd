@@ -6,17 +6,20 @@
 \usage{
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, seas.prod = rep(1, 12), bio.depth = 10,
-  sed.acc.rate = 50, meas.noise = 0, meas.bias = 0, n.samples = Inf,
-  n.replicates = 1)
+  smoothed.signal.res = 100, seas.prod = rep(1/ncol(clim.signal),
+  ncol(clim.signal)), bio.depth = 10, sed.acc.rate = 50, layer.width = 1,
+  meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or
-instrumental record. A years x 12 (months) matrix of temperatures.}
+instrumental record. A \code{\link{ts}} object consisting of a
+years x 12 (months) x n habitats (e.g. depths) matrix of temperatures. The
+time series should be at annual resolution and in reverse, i.e. "most recent
+timepoint first" order.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{proxy.calibration.type}{Type of proxy, e.g. UK37 or MgCa, to which the clim.signal is
+\item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the clim.signal is
 converted before the archiving and measurement of the proxy is simulated}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed
@@ -25,16 +28,21 @@ This does not affect what the proxy model uses as input. If set to NA, no smooth
 climate output is generated, this can speed up some simulations.}
 
 \item{seas.prod}{The seasonal pattern of productivity for the organism(s)
-archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
-distribution.}
+archived in the proxy. A vector of values with length = ncols(clim.signal).
+i.e. 1 weight for each month x habitat combination. Defaults to a vector of
+equal weights.}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
 bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 equivalent to sampling a laminated sediment core.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
-to 50 cm per kyr. Either a single value, or vector of same
+to 50 cm per ka. Either a single value, or vector of same
 length as "timepoints"}
+
+\item{layer.width}{the width of the sediment layer from which samples were
+taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
+Defaults to 1 cm.}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
 Defined as the standard deviation of a normal distribution with mean = 0}
@@ -130,13 +138,14 @@ as well as several intermediate stages (see section \strong{Value} below).
 \examples{
 library(ggplot2)
 set.seed(26052017)
-clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, start = -39)
 
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
-                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
+                       layer.width = 1,
                        meas.noise = 0.46, n.samples = Inf,
                        smoothed.signal.res = 10, meas.bias = 1,
                        n.replicates = 10)

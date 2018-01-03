@@ -20,8 +20,7 @@ NULL
 #' \tabular{ll}{
 #'   \cr \code{Published.age} \tab Age in yr BP
 #'   \cr \code{Published.temperature} \tab Reconstructed temperature in degrees C
-#'   \cr \code{Sed.acc.rate.m.yr} \tab Sediment accumulation rate in meters per yr
-#'   \cr \code{Sed.acc.rate.cm.kyr} \tab Sediment accumulation rate in cm per kyr
+#'   \cr \code{Sed.acc.rate.cm.ka} \tab Sediment accumulation rate in cm per kyr
 #'   }
 #' @details Published age and publishe temperature were extracted from
 #' Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
@@ -87,5 +86,14 @@ NULL
 #' Bølling-Allerød Warming. Science, 325(5938), 310–314.
 #' https://doi.org/10.1126/science.1171041
 "N41.t21k.climate"
+
+#' @title Scussolini et al. (2013) Table 1
+#' @description Data from table 1 in Scussolini et al. (2013)
+#' @format A dataframe with 22 rows and 6 columns
+#' @source Scussolini, P., van Sebille, E., & Durgadoo, J. V. (2013).
+#' Paleo Agulhas rings enter the subtropical gyre during the penultimate
+#' deglaciation. Climate of the Past, 9(6), 2631–2639.
+#' https://doi.org/10.5194/cp-9-2631-2013
+"scussolini.tab1"
 
 

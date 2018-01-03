@@ -87,11 +87,16 @@ kable(head(N41.proxy), format = "markdown")
 set.seed(26052017)
 clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 
+# The input climate signal should be a time series object
+# The Trace simulation runs to the year 1990 AD, therefore the start time for 
+# the input climate is -39 years BP
+clim.in <- ts(clim.in, start = -39)
+
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
-                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        meas.noise = 0.46, n.samples = 30,
                        n.replicates = 10)
 ```
@@ -124,11 +129,11 @@ PFM$everything %>%
 # The initial input climate signal can be converted into "proxy units" if a `proxy.calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
 
 set.seed(26052017)
-PFM_2 <- ClimToProxyClim(clim.signal = N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, 
+PFM_2 <- ClimToProxyClim(clim.signal = clim.in, 
                          timepoints = round(N41.proxy$Published.age),
                          proxy.calibration.type = "MgCa",
                          seas.prod = N41.G.ruber.seasonality,
-                         sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                         sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                          meas.noise = 0.46, n.samples = 30,
                          n.replicates = 1)
 ```
