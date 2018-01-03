@@ -279,7 +279,7 @@ ClimToProxyClim <- function(clim.signal,
     # Get bioturbation weights --------
     bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.depth = timepoints[tp],
                                            layer.width = layer.width, sed.acc.rate = sed.acc.rate[tp],
-                                           mix.depth = bio.depth)
+                                           bio.depth = bio.depth)
 
     bioturb.weights <- bioturb.weights / sum(bioturb.weights)
 

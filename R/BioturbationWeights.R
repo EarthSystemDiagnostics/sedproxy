@@ -1,22 +1,36 @@
-#' Title
-#'
-#' @param z
-#' @param focal.depth
-#' @param layer.width
-#' @param sed.acc.rate
-#' @param mix.depth
-#'
-#' @return
+#' Bioturbation weights
+#' @description For a given focal depth (or time), this function returns the probability
+#' that material collected from that depth was orignially deposited at depth(s)
+#' z. In other words, that the material would have been found at depth z if there
+#' had been no bioturbation. It is the convolution of the depth solution from
+#' Berger and Heath (1968) with a uniform distribution to account for the width
+#' of the sediment layer from which samples
+#' were picked/extracted. It is a probability density function.
+#' @inheritParams ClimToProxyClim
+#' @param z A vector of times or depths at which to evaluate the bioturbation weights
+#' @param focal.depth The depth (or time) for which source dates are wanted
+#' @param scale whether to scale depths by sediment accumulation rate to give
+#' positions in terms of time
+#' @return a vector of weights
 #' @export
-#'
+#' @references Berger, W. H., & Heath, G. R. (1968).
+#' Vertical mixing in pelagic sediments.
+#' Journal of Marine Research, 26(2), 134–143.
 #' @examples
 #' z <- 0:10000
-#' w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, mix.depth = 10)
+#' w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, bio.depth = 10)
 #' plot(z, w, "l")
-BioturbationWeights <- function(z = NULL, focal.depth, layer.width, sed.acc.rate, mix.depth){
+BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio.depth, scale = c("time", "depth")){
 
-  lwy <- (layer.width / sed.acc.rate)
-  mdy <- (mix.depth / sed.acc.rate)
+  sed.acc.rate <- sed.acc.rate / 1000
+
+  if (scale == "time"){
+    lwy <- (layer.width / sed.acc.rate)
+    mdy <- (bio.depth / sed.acc.rate)
+  }else{
+    lwy <- (layer.width)
+    mdy <- (bio.depth)
+  }
 
   fd <- focal.depth
 
@@ -38,5 +52,6 @@ BioturbationWeights <- function(z = NULL, focal.depth, layer.width, sed.acc.rate
   return(fz)
 }
 
-
-
+z <- seq(0, 500, length.out = 1000)
+w <- BioturbationWeights(z, focal.depth = 50, layer.width = 1, sed.acc.rate = 50, bio.depth = 10, scale = "depth")
+plot(z, w, "l")
