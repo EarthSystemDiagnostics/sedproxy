@@ -24,21 +24,20 @@ converted before the archiving and measurement of the proxy is simulated}
 This does not affect what the proxy model uses as input. If set to NA, no smoothed
 climate output is generated, this can speed up some simulations.}
 
-\item{seas.prod}{Either the seasonal pattern of productivity for the organism(s)
-recording / producing the proxy as a vector of 12 values, or a function that
-produces an index of productivity as a function of temperature.
-Defaults to a uniform seasonal distribution.}
+\item{seas.prod}{The seasonal pattern of productivity for the organism(s)
+archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
+distribution.}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
 bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 equivalent to sampling a laminated sediment core.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
-to 50 cm per kyr. Either a single value, or vector of same
+to 50 cm per ka. Either a single value, or vector of same
 length as "timepoints"}
 
 \item{layer.width}{the width of the sediment layer from which samples were taken
-e.g. foraminifera were picked or alkenones were extracted.}
+e.g. foraminifera were picked or alkenones were extracted, in cm.}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
 Defined as the standard deviation of a normal distribution with mean = 0}
@@ -99,22 +98,57 @@ Simulate sediment archived proxy records from an "assumed true" climate signal.
 \examples{
 library(ggplot2)
 set.seed(26052017)
-clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+clim.in <- N41.t21k.climate[(nrow(N41.t21k.climate)-40):1, ] - 273.15
+clim.in.ts <- ts(N41.t21k.climate[(nrow(N41.t21k.climate)):1, ] - 273.15, start = -39)
 
-PFM <- ClimToProxyClim(clim.signal = clim.in,
-                       timepoints = round(N41.proxy$Published.age),
-                       proxy.calibration.type = "identity",
-                       seas.prod = N41.G.ruber.seasonality,
-                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       meas.noise = 0.46, n.samples = Inf,
-                       smoothed.signal.res = 10, meas.bias = 1,
-                       n.replicates = 10)
+tpts <- c(1, round(N41.proxy$Published.age), 21*1000)
+#'tpts <- 10000
+n.samps <- round(runif(length(tpts), 10, 40))
+sed.acc.rates <- c(25, N41.proxy$Sed.acc.rate.cm.ka, 25)
+#'sed.acc.rates <- 505+pi
+system.time({
+  set.seed(1)
+  PFM <- ClimToProxyClim(clim.signal = clim.in,
+                         timepoints = tpts,
+                         proxy.calibration.type = "identity",
+                         seas.prod = N41.G.ruber.seasonality,
+                         sed.acc.rate = sed.acc.rates,
+                         meas.noise = 0.46, n.samples = n.samps,
+                         smoothed.signal.res = 100, meas.bias = 1,
+                         n.replicates = 10)
+})
+
+system.time({
+  set.seed(1)
+  PFM.ts <- ClimToProxyClim.ts(clim.signal = clim.in.ts,
+                               timepoints = tpts,
+                               proxy.calibration.type = "identity",
+                               seas.prod = N41.G.ruber.seasonality,
+                               sed.acc.rate = sed.acc.rates,
+                               layer.width = 0,
+                               meas.noise = 0.46, n.samples = n.samps,
+                               smoothed.signal.res = 100, meas.bias = 1,
+                               n.replicates = 10)
+})
 
 PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
   facet_wrap(~stage)
 
-PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "var")
+PlotPFMs(PFM.ts$everything, max.replicates = 1, stage.order = "seq") +
+  facet_wrap(~stage)
 
-PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
+table(PFM$simulated.proxy$simulated.proxy - PFM.ts$simulated.proxy$simulated.proxy)
+table(PFM$simulated.proxy$proxy.bt - PFM.ts$simulated.proxy$proxy.bt)
 
+plot(PFM$simulated.proxy$simulated.proxy, PFM.ts$simulated.proxy$simulated.proxy)
+abline(0,1)
+
+sub <- PFM.ts$smoothed.signal \%>\%
+  filter(timepoints > 0)
+
+plot(PFM$smoothed.signal$value, sub$value)
+table(PFM$smoothed.signal$value - sub$value)
+
+plot(PFM$simulated.proxy$clim.timepoints.ssr, PFM.ts$simulated.proxy$clim.timepoints.ssr)
+table((PFM$simulated.proxy$clim.timepoints.ssr - PFM.ts$simulated.proxy$clim.timepoints.ssr) == 0)
 }

@@ -33,7 +33,7 @@ bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 equivalent to sampling a laminated sediment core.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
-to 50 cm per kyr. Either a single value, or vector of same
+to 50 cm per ka. Either a single value, or vector of same
 length as "timepoints"}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
@@ -136,7 +136,7 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
-                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        meas.noise = 0.46, n.samples = Inf,
                        smoothed.signal.res = 10, meas.bias = 1,
                        n.replicates = 10)

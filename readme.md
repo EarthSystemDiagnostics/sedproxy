@@ -132,7 +132,12 @@ kable(head(N41.proxy), format = "markdown")
 set.seed(26052017)
 clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 
-PFM <- ClimToProxyClim(clim.signal = clim.in,
+# The input climate signal should be a time series object
+# The Trace simulation runs to the year 1990 AD, therefore the start time for 
+# the input climate is -39 years BP
+clim.in <- ts(clim.in, start = -39)
+
+PFM <- ClimToProxyClim.ts(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,
@@ -151,16 +156,16 @@ PFM$everything
 ## # A tibble: 9,725 x 9
 ##    timepoints replicate             stage    value           label
 ##         <dbl>     <dbl>             <chr>    <dbl>           <chr>
-##  1       4334         1 proxy.bt.sb.sampY 27.77735 (4) +Aliasing Y
-##  2       4527         1 proxy.bt.sb.sampY 27.71641 (4) +Aliasing Y
-##  3       4576         1 proxy.bt.sb.sampY 27.74539 (4) +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY 27.68920 (4) +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY 27.66205 (4) +Aliasing Y
-##  6       4994         1 proxy.bt.sb.sampY 27.66351 (4) +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY 27.67081 (4) +Aliasing Y
-##  8       5156         1 proxy.bt.sb.sampY 27.65508 (4) +Aliasing Y
-##  9       5254         1 proxy.bt.sb.sampY 27.65605 (4) +Aliasing Y
-## 10       5318         1 proxy.bt.sb.sampY 27.62041 (4) +Aliasing Y
+##  1       4334         1 proxy.bt.sb.sampY 27.72916 (4) +Aliasing Y
+##  2       4527         1 proxy.bt.sb.sampY 27.69545 (4) +Aliasing Y
+##  3       4576         1 proxy.bt.sb.sampY 27.71834 (4) +Aliasing Y
+##  4       4721         1 proxy.bt.sb.sampY 27.68866 (4) +Aliasing Y
+##  5       4914         1 proxy.bt.sb.sampY 27.72985 (4) +Aliasing Y
+##  6       4994         1 proxy.bt.sb.sampY 27.63903 (4) +Aliasing Y
+##  7       5092         1 proxy.bt.sb.sampY 27.63409 (4) +Aliasing Y
+##  8       5156         1 proxy.bt.sb.sampY 27.61887 (4) +Aliasing Y
+##  9       5254         1 proxy.bt.sb.sampY 27.69607 (4) +Aliasing Y
+## 10       5318         1 proxy.bt.sb.sampY 27.62952 (4) +Aliasing Y
 ## # ... with 9,715 more rows, and 4 more variables: description <chr>,
 ## #   plot.order <dbl>, plotting.colour <chr>, plotting.alpha <dbl>
 ```

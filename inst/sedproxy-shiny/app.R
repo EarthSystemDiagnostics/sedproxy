@@ -58,7 +58,7 @@ library(ggplot2)
 #' bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 #' equivalent to sampling a laminated sediment core.
 #' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
-#'   to 50 cm per kyr. Either a single value, or vector of same
+#'   to 50 cm per ka. Either a single value, or vector of same
 #'   length as "timepoints"
 #' @param meas.noise The amount of noise to add to each simulated proxy value.
 #'   Defined as the standard deviation of a normal distribution with mean = 0
@@ -122,7 +122,7 @@ library(ggplot2)
 #'                        timepoints = round(N41.proxy$Published.age),
 #'                        proxy.calibration.type = "identity",
 #'                        seas.prod = N41.G.ruber.seasonality,
-#'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.kyr,
+#'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
 #'                        meas.noise = 0.46, n.samples = Inf,
 #'                        smoothed.signal.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
@@ -196,7 +196,6 @@ ClimToProxyClim <- function(clim.signal,
     }else{
       bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
     }
-    #print(range(bioturb.window))
     return(c(max = max(bioturb.window + timepoints[tp]),
              min = min(bioturb.window + timepoints[tp])))
   }))
@@ -267,11 +266,17 @@ ClimToProxyClim <- function(clim.signal,
       bioturb.window <- 1
     }else{
       bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
+    #   print(bioturb.window+timepoints[tp])
+    #   print(sum(bioturb.window+timepoints[tp]))
     }
 
     # Get bioturbation weights --------
+    # allow fractional bio.depth.timesteps
     bioturb.weights <-
-      ImpulseResponse(-bioturb.window, bio.depth.timesteps, z0 = 0)
+      ImpulseResponse(-bioturb.window, bio.depth / sed.acc.rate[tp], z0 = 0)
+
+    # print(bioturb.weights)
+    # print(sum(bioturb.weights))
 
     # Check depth and time order match
     # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
@@ -300,6 +305,9 @@ ClimToProxyClim <- function(clim.signal,
 
     bioturb.weights <- bioturb.weights[valid.window.logical]
 
+    # print(bioturb.weights)
+    # print(sum(bioturb.weights))
+
     sig.window.i <-
       sig.window.i.1[valid.window.logical]
 
@@ -316,6 +324,7 @@ ClimToProxyClim <- function(clim.signal,
 
 
     # Get bioturbation X no-seasonality weights matrix ---------
+    bioturb.weights <- bioturb.weights / sum(bioturb.weights)
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
@@ -488,26 +497,38 @@ ClimToProxyClim <- function(clim.signal,
 }
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
-  max.clim.signal.i <- nrow(climate.matrix)
 
-  rel.wind <- 1:width -round(width/2)
+  if (is.ts(climate.matrix)) {
+     sapply(timepoints, function(tp){
+      rel.wind <- 1:width -round(width/2)
+      #if(tp == 10000) print(rel.wind)
+      inds <- rel.wind + tp - start(climate.matrix)[1] + 1
+      #if(tp == 10000) print(inds)
+      inds <- inds[inds > 0 & inds < nrow(climate.matrix)]
+      #if(tp == 10000) print(inds)
+      m <- climate.matrix[inds, , drop = FALSE]
+      mean(m)
+    })}else{
+    max.clim.signal.i <- nrow(climate.matrix)
 
-  sapply(timepoints, function(tp){
+    rel.wind <- 1:width -round(width/2)
 
-    avg.window.i.1 <- (rel.wind) + tp
+    sapply(timepoints, function(tp){
 
-    if (max(avg.window.i.1) > max.clim.signal.i) {
-      warning("In ChunkMatrix: window extends below end of clim.signal")
-    }
+      avg.window.i.1 <- (rel.wind) + tp
 
-    avg.window.i <- avg.window.i.1[avg.window.i.1 > 0 &
-                                     avg.window.i.1 < max.clim.signal.i]
+      if (max(avg.window.i.1) > max.clim.signal.i) {
+        warning("In ChunkMatrix: window extends below end of clim.signal")
+      }
 
-    stopifnot(avg.window.i > 0)
-    stopifnot(max.clim.signal.i > max(avg.window.i))
+      avg.window.i <- avg.window.i.1[avg.window.i.1 > 0 &
+                                       avg.window.i.1 < max.clim.signal.i]
 
-    mean(climate.matrix[avg.window.i, , drop = FALSE])
-  })
+      stopifnot(avg.window.i > 0)
+      stopifnot(max.clim.signal.i > max(avg.window.i))
+      #if(tp == 10000) print(avg.window.i)
+      mean(climate.matrix[avg.window.i, , drop = FALSE])
+    })}
 }
 
 
