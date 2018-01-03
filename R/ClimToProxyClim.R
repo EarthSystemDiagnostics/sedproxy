@@ -42,23 +42,30 @@
 #'
 #'
 #' @param clim.signal The "assumed true" climate signal, e.g. climate model output or
-#'   instrumental record. A years x 12 (months) matrix of temperatures.
+#'   instrumental record. A \code{\link{ts}} object consisting of a
+#'   years x 12 (months) x n habitats (e.g. depths) matrix of temperatures. The
+#'   time series should be at annual resolution and in reverse, i.e. "most recent
+#'   timepoint first" order.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
-#' @param proxy.calibration.type Type of proxy, e.g. UK37 or MgCa, to which the clim.signal is
+#' @param proxy.calibration.type Type of proxy, e.g. Uk'37 or MgCa, to which the clim.signal is
 #' converted before the archiving and measurement of the proxy is simulated
 #' @param smoothed.signal.res The resolution, in years, of the smoothed
 #' (block averaged) version of the input climate signal returned for plotting.
 #' This does not affect what the proxy model uses as input. If set to NA, no smoothed
 #' climate output is generated, this can speed up some simulations.
 #' @param seas.prod The seasonal pattern of productivity for the organism(s)
-#'   archived in the proxy. A vector of 12 values. Defaults to a uniform seasonal
-#'   distribution.
+#'   archived in the proxy. A vector of values with length = ncols(clim.signal).
+#'   i.e. 1 weight for each month x habitat combination. Defaults to a vector of
+#'   equal weights.
 #' @param bio.depth Depth of the bioturbated layer in cm, defaults to 10 cm. If
 #' bio.depth == 0, each timepoint samples from a single year of the clim.signal,
 #' equivalent to sampling a laminated sediment core.
 #' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
 #'   to 50 cm per ka. Either a single value, or vector of same
 #'   length as "timepoints"
+#' @param layer.width the width of the sediment layer from which samples were
+#'  taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
+#'  Defaults to 1 cm.
 #' @param meas.noise The amount of noise to add to each simulated proxy value.
 #'   Defined as the standard deviation of a normal distribution with mean = 0
 #' @param meas.bias The amount of bias to add to each simulated proxy
@@ -115,13 +122,14 @@
 #' @examples
 #' library(ggplot2)
 #' set.seed(26052017)
-#' clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+#' clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, start = -39)
 #'
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
 #'                        proxy.calibration.type = "identity",
 #'                        seas.prod = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
+#'                        layer.width = 1,
 #'                        meas.noise = 0.46, n.samples = Inf,
 #'                        smoothed.signal.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
@@ -134,16 +142,18 @@
 #' PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
 #'
 ClimToProxyClim <- function(clim.signal,
-                            timepoints,
-                            proxy.calibration.type = c("identity", "UK37", "MgCa"),
-                            smoothed.signal.res = 100,
-                            seas.prod = rep(1, 12),
-                            bio.depth = 10,
-                            sed.acc.rate = 50,
-                            meas.noise = 0,
-                            meas.bias = 0,
-                            n.samples = Inf,
-                            n.replicates = 1) {
+                               timepoints,
+                               proxy.calibration.type = c("identity", "UK37", "MgCa"),
+                               smoothed.signal.res = 100,
+                               seas.prod = rep(1/ncol(clim.signal),
+                                               ncol(clim.signal)),
+                               bio.depth = 10,
+                               sed.acc.rate = 50,
+                               layer.width = 1,
+                               meas.noise = 0,
+                               meas.bias = 0,
+                               n.samples = Inf,
+                               n.replicates = 1) {
   # Check inputs --------
   n.timepoints <- length(timepoints)
 
@@ -155,6 +165,8 @@ ClimToProxyClim <- function(clim.signal,
     stop("n.samples cannot be a mix of finite and infinite")
 
   stopifnot(is.matrix(clim.signal))
+  if (is.ts(clim.signal)==FALSE)
+    stop("Since version 0.3.1 of sedproxy, ClimToProxyClim requires clim.signal to be a ts object")
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
 
@@ -169,8 +181,8 @@ ClimToProxyClim <- function(clim.signal,
   seas.prod <- seas.prod / sum(seas.prod)
 
   # Calculate timepoint invariant values ------
-  max.clim.signal.i <- nrow(clim.signal)
-  sig.years.i <- 1:max.clim.signal.i
+  max.clim.signal.i <- end(clim.signal)[1]
+  min.clim.signal.i <- start(clim.signal)[1]
 
   # Rescale sed.acc.rate to per year
   sed.acc.rate <- sed.acc.rate / 1000
@@ -184,42 +196,42 @@ ClimToProxyClim <- function(clim.signal,
     n.samples <- rep(n.samples, n.timepoints)
   }
 
-
   # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
 
-  max.min.windows <- t(sapply(1:length(timepoints), function(tp){
+  # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
+  # focal.timepoint + 3*bio.depth.timesteps
+
+  max.min.windows <- matrix(t(sapply(1:length(timepoints), function(tp) {
     bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
-    if (bio.depth.timesteps == 0){
-      bio.depth.timesteps <- 0
-      bioturb.window <- 1
-    }else{
-      bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
-    }
-    return(c(max = max(bioturb.window + timepoints[tp]),
-             min = min(bioturb.window + timepoints[tp])))
-  }))
+    layer.width.years <- ceiling(layer.width / sed.acc.rate[tp])
+    return(c(max = timepoints[tp] + 3 * bio.depth.timesteps,
+             min = timepoints[tp] - bio.depth.timesteps - layer.width.years / 2))
+  })), ncol = 2)
+
+  colnames(max.min.windows) <- c("max", "min")
 
   #print(max.min.windows)
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
-  min.ind <- max.min.windows[,"min"] <  1
+  min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
 
   if (any(max.ind))
     warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
                    paste(timepoints[max.ind], collapse = ", "),
                    " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
 
-  if (any(max.min.windows[,"min"] < 1))
+  if (any(max.min.windows[,"min"] < min.clim.signal.i))
     warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
-                timepoints[max.min.windows[, "min"] < 1],
-                " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
+                   timepoints[max.min.windows[, "min"] < min.clim.signal.i],
+                   " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
 
 
   timepoints <- timepoints[max.ind == FALSE & min.ind == FALSE]
   n.timepoints <- length(timepoints)
 
-  # Trim timepoint invariant values ------
+  # Remove timepoints that exceed clim.signal ------
   sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
   n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
+  max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
 
 
   # Convert to proxy units if requested --------
@@ -251,82 +263,41 @@ ClimToProxyClim <- function(clim.signal,
     timepoints.smoothed <- NA
     clim.signal.smoothed <- NA
   } else{
-    timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
+    timepoints.smoothed <- seq(min.clim.signal.i, max.clim.signal.i, by = smoothed.signal.res)
     clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res,
                                         proxy.clim.signal)
   }
 
+
   # For each timepoint ------
   out <- sapply(1:n.timepoints, function(tp) {
     # Get bioturbation window ----------
-    bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
-    if (bio.depth.timesteps == 0){
-      bio.depth.timesteps <- 0
-      bioturb.window <- 1
-    }else{
-      bioturb.window <- (-1*bio.depth.timesteps):(3*bio.depth.timesteps)
-    #   print(bioturb.window+timepoints[tp])
-    #   print(sum(bioturb.window+timepoints[tp]))
-    }
+    first.tp <- max.min.windows[tp, "min"]
+    last.tp <- max.min.windows[tp, "max"]
+    bioturb.window <- first.tp:last.tp
 
     # Get bioturbation weights --------
-    # allow fractional bio.depth.timesteps
-    bioturb.weights <-
-      ImpulseResponse(-bioturb.window, bio.depth / sed.acc.rate[tp], z0 = 0)
+    bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.depth = timepoints[tp],
+                                           layer.width = layer.width, sed.acc.rate = sed.acc.rate[tp],
+                                           mix.depth = bio.depth)
 
-    # print(bioturb.weights)
-    # print(sum(bioturb.weights))
-
-    # Check depth and time order match
-    # plot(bioturb.weights, (bioturb.window), type = "l", ylim = rev(range(bioturb.window)))
+    bioturb.weights <- bioturb.weights / sum(bioturb.weights)
 
     # Get portion of clim.signal corresponding to bioturbation window -------
-
-
-    # Correction 2017.09.29
-    # Do not shift by Tau: bioturbation does not cause a time shift (assuming constant
-    # sedimentation rate) once out of the bioturbated layer!
-
-    # [my speculative reasoning AMD]
-    # This will be generally true for any signal with a constant first derivative,
-    # like time if sedimentation rate is constant, or on average for stationary white noise.
-
-    ## shift by bio.depth.timesteps (tau in Torben's notation)
-    ## to remove timeshift due to bioturbation, which would effect dating in the same way
-    sig.window.i.1 <- bioturb.window + timepoints[tp] #+ bio.depth.timesteps
-
-    if (max(sig.window.i.1) >= max.clim.signal.i) {
-      warning("Bioturbation window extends below end of clim.signal")
-    }
-
-    valid.window.logical <- sig.window.i.1 > 0 &
-      sig.window.i.1 <= max.clim.signal.i
-
-    bioturb.weights <- bioturb.weights[valid.window.logical]
-
-    # print(bioturb.weights)
-    # print(sum(bioturb.weights))
-
-    sig.window.i <-
-      sig.window.i.1[valid.window.logical]
-
-    stopifnot(sig.window.i > 0)
-    stopifnot(max.clim.signal.i >= max(sig.window.i))
-
-    clim.sig.window <- proxy.clim.signal[sig.window.i, , drop = FALSE]
-
+    ## window is slow
+    # clim.sig.window <- stats:::window.ts(proxy.clim.signal,
+    #                           start = first.tp,
+    #                           end = last.tp)
+    clim.sig.window <-  clim.signal[first.tp:last.tp - min.clim.signal.i+1, ]
 
     # this is estimating mean deviation MD, (not MAD or SD)
     # no need to estimate this from the psuedo data
     # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
     smoothing.width = sum(bioturb.weights*abs(bioturb.window))
 
-
     # Get bioturbation X no-seasonality weights matrix ---------
-    bioturb.weights <- bioturb.weights / sum(bioturb.weights)
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
-
 
     # Get bioturbation X seasonality weights matrix ---------
     clim.sig.weights <- bioturb.weights %o% seas.prod

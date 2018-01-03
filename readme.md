@@ -137,7 +137,7 @@ clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 # the input climate is -39 years BP
 clim.in <- ts(clim.in, start = -39)
 
-PFM <- ClimToProxyClim.ts(clim.signal = clim.in,
+PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
                        seas.prod = N41.G.ruber.seasonality,

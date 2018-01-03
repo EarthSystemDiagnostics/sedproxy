@@ -12,11 +12,14 @@ ClimToProxyClim.dev(clim.signal, timepoints,
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or
-instrumental record. A years x 12 (months) matrix of temperatures.}
+instrumental record. A \code{\link{ts}} object consisting of a
+years x 12 (months) x n habitats (e.g. depths) matrix of temperatures. The
+time series should be at annual resolution and in reverse, i.e. "most recent
+timepoint first" order.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{proxy.calibration.type}{Type of proxy, e.g. UK37 or MgCa, to which the clim.signal is
+\item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the clim.signal is
 converted before the archiving and measurement of the proxy is simulated}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed
