@@ -246,6 +246,7 @@ server <- function(input, output) {
     mon <-
       cos(seq(pi, 3 * pi, length.out = 12)) * input$seas.amp / 2
     clim <- outer(ann, mon, "+")
+    clim <- ts(clim, start = 1)
     return(clim)
   }, ignoreNULL = FALSE)
   timepoints <- eventReactive(input$run.pfm, {
