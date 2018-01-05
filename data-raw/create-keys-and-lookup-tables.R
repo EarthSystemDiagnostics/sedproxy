@@ -62,3 +62,8 @@ names(stage.labels) <- stages.key$stage
 
 devtools::use_data(stages.key, stage.labels, overwrite = TRUE)
 
+
+# import parameter description table
+
+param.tab <- readr::read_delim("data-raw/parameter-descriptions.csv", delim = ";")
+devtools::use_data(param.tab, overwrite = TRUE)

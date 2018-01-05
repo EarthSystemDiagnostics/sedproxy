@@ -17,12 +17,12 @@ taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
 Defaults to 1 cm.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
-to 50 cm per ka. Either a single value, or vector of same
-length as "timepoints"}
+to 50 cm per ka. Either a single value, or vector of same length as
+"timepoints"}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
-bio.depth == 0, each timepoint samples from a single year of the clim.signal,
-equivalent to sampling a laminated sediment core.}
+bio.depth == 0, each timepoint samples from a single year of the
+clim.signal, equivalent to sampling a laminated sediment core.}
 
 \item{scale}{whether to scale depths by sediment accumulation rate to give
 positions in terms of time}
