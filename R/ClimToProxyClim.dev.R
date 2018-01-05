@@ -202,7 +202,7 @@ ClimToProxyClim.dev <- function(clim.signal,
     # this is estimating mean deviation MD, (not MAD or SD)
     # no need to estimate this from the psuedo data
     # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
-    smoothing.width = sum(bioturb.weights*abs(bioturb.window))
+    #smoothing.width = sum(bioturb.weights*abs(bioturb.window))
 
     # Get bioturbation X no-seasonality weights matrix ---------
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
@@ -260,7 +260,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 
     # Gather output ----------
     list(
-      smoothing.width = smoothing.width,
+      #smoothing.width = smoothing.width,
       proxy.bt = proxy.bt,
       proxy.bt.sb = proxy.bt.sb,
       proxy.bt.sb.sampY = proxy.bt.sb.sampY,
@@ -325,7 +325,7 @@ ClimToProxyClim.dev <- function(clim.signal,
   # Add items to output list -----------
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(proxy.clim.signal[timepoints,  , drop = FALSE]) / ncol(proxy.clim.signal)
-  out$sed.acc.rate = sed.acc.rate
+  #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
 
@@ -336,9 +336,9 @@ ClimToProxyClim.dev <- function(clim.signal,
       "clim.signal.ann",
       "clim.timepoints.ssr",
       "proxy.bt",
-      "proxy.bt.sb",
-      "sed.acc.rate",
-      "smoothing.width"
+      "proxy.bt.sb"#,
+      #"sed.acc.rate",
+      #"smoothing.width"
     )])
 
   simulated.proxy$proxy.bt.sb.sampY <- out$proxy.bt.sb.sampY[, 1, drop = TRUE]

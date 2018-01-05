@@ -82,8 +82,9 @@
 #'
 #' @return \code{ClimToProxyClim} returns a list with three elements:
 #'
-#'   1. a dataframe \code{simulated.proxy} 2. a dataframe \code{smoothed.signal}
-#'   3. a list \code{everything}
+#'   1. a dataframe \code{simulated.proxy}
+#'   2. a dataframe \code{smoothed.signal}
+#'   3. a dataframe \code{everything}
 #'
 #'
 #'   The dataframe \code{simulated.proxy} contains a single realisation of the
@@ -95,37 +96,29 @@
 #'   parameter smoothed.signal.res. This is useful for plotting against the
 #'   resulting simulated proxy.
 #'
-#'   The list \code{everything} contains all of the above, but where a stage
-#'   contains stochastically generated noise, rather than a vector, a
-#'   \code{timepoints} **by** \code{n.replicates} matrix is returned.
+#'   The dataframe \code{everything} contains all of the above but with multiple
+#'   replicates of the pseudo-proxy records if requested. The data are in
+#'   "long form", with the column "stage" inidcating the proxy stage or input
+#'   climate resolution and column "value" giving the values.
 #'
 #' **Named elements of the returned proxy record:**
 #'
-#'\tabular{ll}{ \bold{Variable} \tab \bold{Description} \cr timepoints
-#'\tab requested timepoints
-#'\cr clim.timepoints.ssr \tab means of climate signal at resolution =
-#'smoothed.signal.res evaluated at the requested timepoints
-#'\cr proxy.bt               \tab proxy after bioturbation
-#'\cr proxy.bt.sb              \tab proxy after bioturbation + seasonal bias
-#'\cr sed.acc.rate               \tab sediment accumulation rates for each
-#'timepoint
-#'\cr smoothing.width            \tab weighted mean time span represented in a
-#'sample after bioturbation
-#'\cr proxy.bt.sb.sampY             \tab proxy after bioturbation, seasonal bias
-#'and finite sampling of years but not seasonality
-#'\cr proxy.bt.sb.sampYM             \tab proxy after bioturbation, seasonal
-#'bias and finite sampling of years and months
-#'\cr proxy.bt.sb.inf.b            \tab proxy after bioturbation, seasonal bias
-#'and calibration bias
-#'\cr proxy.bt.sb.inf.b.n          \tab proxy after bioturbation, seasonal bias,
-#'calibration bias and measurement noise
-#'\cr proxy.bt.sb.sampYM.b           \tab proxy after bioturbation, seasonal
-#'bias, finite sampling and calibration bias
-#'\cr proxy.bt.sb.sampYM.b.n         \tab proxy after bioturbation, seasonal
-#'bias, finite sampling, calibration bias and measurement noise
-#'\cr simulated.proxy            \tab final simulated proxy, this will be same
-#'as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when
-#'n.samples is finite }
+#' \describe{
+#'    \item{timepoints}{Requested timepoints}
+#'    \item{clim.signal.ann}{Input climate signal at requested timepoints at annual resolution}
+#'    \item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = smoothed.signal.res}
+#'    \item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res}
+#'    \item{proxy.bt}{Climate signal after bioturbation}
+#'    \item{proxy.bt.sb}{Climate signal after bioturbation and production bias}
+#'    \item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, production bias, and calibration bias}
+#'    \item{proxy.bt.sb.inf.b.n}{Climate signal after bioturbation, production bias, and measurement error}
+#'    \item{proxy.bt.sb.sampY}{Climate signal after bioturbation, production bias, and aliasing of inter-annual variation}
+#'    \item{proxy.bt.sb.sampYM}{Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats}
+#'    \item{proxy.bt.sb.sampYM.b}{Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias}
+#'    \item{proxy.bt.sb.sampYM.b.n}{Climate signal after bioturbation, production bias, aliasing, and measurement error}
+#'    \item{simulated.proxy}{Final simulated pseudo-proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite}
+#'    \item{observed.proxy}{True observed proxy (when supplied)}
+#' }
 #'
 #'@importFrom dplyr tbl_df rename
 #'@importFrom plyr alply
@@ -305,7 +298,7 @@ ClimToProxyClim <- function(clim.signal,
     # this is estimating mean deviation MD, (not MAD or SD)
     # no need to estimate this from the psuedo data
     # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
-    smoothing.width = sum(bioturb.weights*abs(bioturb.window))
+    # smoothing.width = sum(bioturb.weights*abs(bioturb.window))
 
     # Get bioturbation X no-seasonality weights matrix ---------
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
@@ -362,7 +355,7 @@ ClimToProxyClim <- function(clim.signal,
 
     # Gather output ----------
     list(
-      smoothing.width = smoothing.width,
+      #smoothing.width = smoothing.width,
       proxy.bt = proxy.bt,
       proxy.bt.sb = proxy.bt.sb,
       proxy.bt.sb.sampY = proxy.bt.sb.sampY,
@@ -427,7 +420,7 @@ ClimToProxyClim <- function(clim.signal,
   # Add items to output list -----------
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(proxy.clim.signal[timepoints,  , drop = FALSE]) / ncol(proxy.clim.signal)
-  out$sed.acc.rate = sed.acc.rate
+  #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
 
@@ -438,9 +431,9 @@ ClimToProxyClim <- function(clim.signal,
       "clim.signal.ann",
       "clim.timepoints.ssr",
       "proxy.bt",
-      "proxy.bt.sb",
-      "sed.acc.rate",
-      "smoothing.width"
+      "proxy.bt.sb"#,
+      #"sed.acc.rate",
+      #"smoothing.width"
     )])
 
   simulated.proxy$proxy.bt.sb.sampY <- out$proxy.bt.sb.sampY[, 1, drop = TRUE]
