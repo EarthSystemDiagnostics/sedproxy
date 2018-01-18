@@ -2,11 +2,11 @@
 #'
 #' @md
 #' @inheritParams ClimToProxyClim
-#' @param seas.prod Either the seasonal pattern of productivity for the organism(s)
+#' @param proxy.prod.weights Either the seasonal pattern of productivity for the organism(s)
 #'   recording / producing the proxy as a vector of 12 values, or a function that
 #'   produces an index of productivity as a function of temperature.
 #'   Defaults to a uniform seasonal distribution.
-#' @param seas.prod.args A named list of parameters to be passed to a function named in seas.prod
+#' @param proxy.prod.args A named list of parameters to be passed to a function named in proxy.prod.weights
 #' @inherit ClimToProxyClim return
 #' @inherit ClimToProxyClim description
 #' @importFrom dplyr tbl_df
@@ -17,8 +17,8 @@ ClimToProxyClim.dev <- function(clim.signal,
                             timepoints,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             smoothed.signal.res = 100,
-                            seas.prod = rep(1, 12),
-                            seas.prod.args = NULL,
+                            proxy.prod.weights = rep(1, 12),
+                            proxy.prod.args = NULL,
                             bio.depth = 10,
                             sed.acc.rate = 50,
                             meas.noise = 0,
@@ -39,8 +39,8 @@ ClimToProxyClim.dev <- function(clim.signal,
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
 
-  if (any(is.function(seas.prod), (is.numeric(seas.prod)&length(seas.prod) == ncol(clim.signal))) == FALSE)
-    stop("seas.prod must be either a vector of weights with length = ncol(clim.signal), or a function.
+  if (any(is.function(proxy.prod.weights), (is.numeric(proxy.prod.weights)&length(proxy.prod.weights) == ncol(clim.signal))) == FALSE)
+    stop("proxy.prod.weights must be either a vector of weights with length = ncol(clim.signal), or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
   # Calculate timepoint invariant values ------
@@ -99,16 +99,16 @@ ClimToProxyClim.dev <- function(clim.signal,
 
 
   # Generate productivity weights from function if supplied
-  if (is.function(seas.prod)){
-    FUN <- match.fun(seas.prod)
-    seas.prod.weights <- do.call(FUN, args = c(list(x = clim.signal), seas.prod.args))
-    seas.prod.weights <- seas.prod.weights / sum(seas.prod.weights)
+  if (is.function(proxy.prod.weights)){
+    FUN <- match.fun(proxy.prod.weights)
+    proxy.prod.weights.weights <- do.call(FUN, args = c(list(x = clim.signal), proxy.prod.args))
+    proxy.prod.weights.weights <- proxy.prod.weights.weights / sum(proxy.prod.weights.weights)
   }
 
   # Ensure seasonal productivities are weights and matrix
-  if (is.numeric(seas.prod)){
-  seas.prod.weights <- seas.prod / sum(seas.prod)
-  seas.prod.weights <- matrix(rep(seas.prod.weights, nrow(clim.signal)),
+  if (is.numeric(proxy.prod.weights)){
+  proxy.prod.weights.weights <- proxy.prod.weights / sum(proxy.prod.weights)
+  proxy.prod.weights.weights <- matrix(rep(proxy.prod.weights.weights, nrow(clim.signal)),
                               nrow = nrow(clim.signal), byrow = TRUE)
   }
 
@@ -210,9 +210,9 @@ ClimToProxyClim.dev <- function(clim.signal,
 
 
     # Get bioturbation X seasonality weights matrix ---------
-    seas.prod.weights <- seas.prod.weights[sig.window.i.1, , drop = FALSE]
-    seas.prod.weights <- seas.prod.weights / sum(seas.prod.weights)
-    clim.sig.weights <- bioturb.weights * seas.prod.weights
+    proxy.prod.weights.weights <- proxy.prod.weights.weights[sig.window.i.1, , drop = FALSE]
+    proxy.prod.weights.weights <- proxy.prod.weights.weights / sum(proxy.prod.weights.weights)
+    clim.sig.weights <- bioturb.weights * proxy.prod.weights.weights
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
@@ -249,7 +249,7 @@ ClimToProxyClim.dev <- function(clim.signal,
 
       # Get without seasonal aliasing (bioturbation aliasing only)
 
-      clim.sig.window.ann <- rowSums(clim.sig.window * seas.prod.weights)
+      clim.sig.window.ann <- rowSums(clim.sig.window * proxy.prod.weights.weights)
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
       samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])

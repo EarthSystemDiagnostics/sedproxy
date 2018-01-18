@@ -21,7 +21,7 @@
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
 #'                        proxy.calibration.type = "identity",
-#'                        seas.prod = N41.G.ruber.seasonality,
+#'                        proxy.prod.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
 #'                        meas.noise = 0.46, n.samples = Inf,
 #'                        smoothed.signal.res = 10, meas.bias = 1,

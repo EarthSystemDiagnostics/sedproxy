@@ -53,7 +53,7 @@
 #' (block averaged) version of the input climate signal returned for plotting.
 #' This does not affect what the proxy model uses as input. If set to NA, no smoothed
 #' climate output is generated, this can speed up some simulations.
-#' @param seas.prod The seasonal pattern of productivity for the organism(s)
+#' @param proxy.prod.weights The seasonal pattern of productivity for the organism(s)
 #'   archived in the proxy. A vector of values with length = ncols(clim.signal).
 #'   i.e. 1 weight for each month x habitat combination. Defaults to a vector of
 #'   equal weights.
@@ -127,7 +127,7 @@
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
 #'                        proxy.calibration.type = "identity",
-#'                        seas.prod = N41.G.ruber.seasonality,
+#'                        proxy.prod.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
 #'                        layer.width = 1,
 #'                        meas.noise = 0.46, n.samples = Inf,
@@ -145,7 +145,7 @@ ClimToProxyClim <- function(clim.signal,
                                timepoints,
                                proxy.calibration.type = c("identity", "UK37", "MgCa"),
                                smoothed.signal.res = 100,
-                               seas.prod = rep(1/ncol(clim.signal),
+                               proxy.prod.weights = rep(1/ncol(clim.signal),
                                                ncol(clim.signal)),
                                bio.depth = 10,
                                sed.acc.rate = 50,
@@ -170,15 +170,15 @@ ClimToProxyClim <- function(clim.signal,
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
 
-  if (is.matrix(seas.prod))
+  if (is.matrix(proxy.prod.weights))
     stop("Matrix form of seasonality not yet supported")
 
   # check no production weights match dimensions of climate
-  #print(paste0("seas.prod = ", seas.prod))
-  stopifnot(ncol(clim.signal) == length(seas.prod))
+  #print(paste0("proxy.prod.weights = ", proxy.prod.weights))
+  stopifnot(ncol(clim.signal) == length(proxy.prod.weights))
 
   # Ensure seasonal productivities are weights
-  seas.prod <- seas.prod / sum(seas.prod)
+  proxy.prod.weights <- proxy.prod.weights / sum(proxy.prod.weights)
 
   # Calculate timepoint invariant values ------
   max.clim.signal.i <- end(clim.signal)[1]
@@ -300,7 +300,7 @@ ClimToProxyClim <- function(clim.signal,
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
     # Get bioturbation X seasonality weights matrix ---------
-    clim.sig.weights <- bioturb.weights %o% seas.prod
+    clim.sig.weights <- bioturb.weights %o% proxy.prod.weights
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
@@ -336,7 +336,7 @@ ClimToProxyClim <- function(clim.signal,
       proxy.bt.sb.sampYM <- colMeans(samp)
 
       # Get without seasonal aliasing (bioturbation aliasing only)
-      clim.sig.window.ann <- rowSums(clim.sig.window %*% diag(seas.prod))
+      clim.sig.window.ann <- rowSums(clim.sig.window %*% diag(proxy.prod.weights))
 
       # weights passed as a matrix are applied columnwise, so
       # modulo on nrows is need here

@@ -6,7 +6,7 @@
 \usage{
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, seas.prod = rep(1/ncol(clim.signal),
+  smoothed.signal.res = 100, proxy.prod.weights = rep(1/ncol(clim.signal),
   ncol(clim.signal)), bio.depth = 10, sed.acc.rate = 50, layer.width = 1,
   meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
@@ -27,7 +27,7 @@ converted before the archiving and measurement of the proxy is simulated}
 This does not affect what the proxy model uses as input. If set to NA, no smoothed
 climate output is generated, this can speed up some simulations.}
 
-\item{seas.prod}{The seasonal pattern of productivity for the organism(s)
+\item{proxy.prod.weights}{The seasonal pattern of productivity for the organism(s)
 archived in the proxy. A vector of values with length = ncols(clim.signal).
 i.e. 1 weight for each month x habitat combination. Defaults to a vector of
 equal weights.}
@@ -143,7 +143,7 @@ clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, start = -39)
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       seas.prod = N41.G.ruber.seasonality,
+                       proxy.prod.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        layer.width = 1,
                        meas.noise = 0.46, n.samples = Inf,

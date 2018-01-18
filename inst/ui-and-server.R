@@ -173,7 +173,7 @@ ui <- fluidPage(
                               "Modify the 12 monthly weights",
                               "1,1,1,1,1,1,1,1,1,1,1,1"
                             ),
-                            span(textOutput("seas.prod.check"), style = "color:red")
+                            span(textOutput("proxy.prod.weights.check"), style = "color:red")
                           )
                         )
                       ))),
@@ -232,7 +232,7 @@ ui <- fluidPage(
              plotOutput("pfm.plot", height = "800px")),
     tabPanel("Numbers",
              dataTableOutput("pfm.str")),
-    tabPanel("Placeholder", textOutput("seas.prod"))
+    tabPanel("Placeholder", textOutput("proxy.prod.weights"))
   ))
   )
 
@@ -269,7 +269,7 @@ server <- function(input, output) {
     }
     return(v)
   }, ignoreNULL = FALSE)
-  output$seas.prod.check <- renderText({
+  output$proxy.prod.weights.check <- renderText({
     if (length(seasprod()) != 12)
     {
       paste0("You entered ",
@@ -284,7 +284,7 @@ server <- function(input, output) {
       smoothed.signal.res = 100,
       bio.depth = input$bio.depth,
       sed.acc.rate = input$sed.acc.rate,
-      seas.prod = seasprod(),
+      proxy.prod.weights = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
       meas.noise = input$meas.noise,
