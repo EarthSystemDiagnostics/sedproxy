@@ -96,4 +96,13 @@ NULL
 #' https://doi.org/10.5194/cp-9-2631-2013
 "scussolini.tab1"
 
-
+#' @title sedproxy parameters
+#' @description Parameters and variables required to generate a pseudo-proxy with \code{ClimToProxyClim}
+#' @format A data frame with 12 rows and 4 variables:
+#' \describe{
+#'   \item{\code{Function argument}}{character Argument name in \code{ClimToProxyClim}}
+#'   \item{\code{Description}}{character Description of argument and corresponding variable/parameter}
+#'   \item{\code{Possible sources}}{character Source or possible sources of values for arguments}
+#'   \item{\code{Default}}{character Default values for arguments}
+#'}
+"param.tab"

@@ -2,19 +2,50 @@
 % Please edit documentation in R/BioturbationWeights.R
 \name{BioturbationWeights}
 \alias{BioturbationWeights}
-\title{Title}
+\title{Bioturbation weights}
 \usage{
-BioturbationWeights(z = NULL, focal.depth, layer.width, sed.acc.rate,
-  mix.depth)
+BioturbationWeights(z, focal.depth, layer.width = 1, sed.acc.rate, bio.depth,
+  scale = c("time", "depth"))
 }
 \arguments{
-\item{mix.depth}{}
+\item{z}{A vector of times or depths at which to evaluate the bioturbation weights}
+
+\item{focal.depth}{The depth (or time) for which source dates are wanted}
+
+\item{layer.width}{the width of the sediment layer from which samples were
+taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
+Defaults to 1 cm.}
+
+\item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
+to 50 cm per ka. Either a single value, or vector of same length as
+"timepoints"}
+
+\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
+bio.depth == 0, each timepoint samples from a single year of the
+clim.signal, equivalent to sampling a laminated sediment core.}
+
+\item{scale}{whether to scale depths by sediment accumulation rate to give
+positions in terms of time}
+}
+\value{
+a vector of weights
 }
 \description{
-Title
+For a given focal depth (or time), this function returns the probability
+that material collected from that depth was orignially deposited at depth(s)
+z. In other words, that the material would have been found at depth z if there
+had been no bioturbation. It is the convolution of the depth solution from
+Berger and Heath (1968) with a uniform distribution to account for the width
+of the sediment layer from which samples
+were picked/extracted. It is a probability density function.
 }
 \examples{
 z <- 0:10000
-w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, mix.depth = 10)
+w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, bio.depth = 10)
 plot(z, w, "l")
+}
+\references{
+Berger, W. H., & Heath, G. R. (1968).
+Vertical mixing in pelagic sediments.
+Journal of Marine Research, 26(2), 134–143.
 }

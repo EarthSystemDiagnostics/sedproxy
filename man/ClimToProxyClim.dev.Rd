@@ -11,21 +11,22 @@ ClimToProxyClim.dev(clim.signal, timepoints,
   meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
-\item{clim.signal}{The "assumed true" climate signal, e.g. climate model output or
-instrumental record. A \code{\link{ts}} object consisting of a
+\item{clim.signal}{The "assumed true" climate signal, e.g. climate model
+output or instrumental record. A \code{\link{ts}} object consisting of a
 years x 12 (months) x n habitats (e.g. depths) matrix of temperatures. The
-time series should be at annual resolution and in reverse, i.e. "most recent
-timepoint first" order.}
+time series should be at annual resolution and in reverse, i.e. "most
+recent timepoint first" order.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the clim.signal is
-converted before the archiving and measurement of the proxy is simulated}
+\item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
+clim.signal is converted before the archiving and measurement of the proxy
+is simulated}
 
-\item{smoothed.signal.res}{The resolution, in years, of the smoothed
-(block averaged) version of the input climate signal returned for plotting.
-This does not affect what the proxy model uses as input. If set to NA, no smoothed
-climate output is generated, this can speed up some simulations.}
+\item{smoothed.signal.res}{The resolution, in years, of the smoothed (block
+averaged) version of the input climate signal returned for plotting. This
+does not affect what the proxy model uses as input. If set to NA, no
+smoothed climate output is generated, this can speed up some simulations.}
 
 \item{proxy.prod.weights}{Either the seasonal pattern of productivity for the organism(s)
 recording / producing the proxy as a vector of 12 values, or a function that
@@ -35,12 +36,12 @@ Defaults to a uniform seasonal distribution.}
 \item{proxy.prod.args}{A named list of parameters to be passed to a function named in proxy.prod.weights}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
-bio.depth == 0, each timepoint samples from a single year of the clim.signal,
-equivalent to sampling a laminated sediment core.}
+bio.depth == 0, each timepoint samples from a single year of the
+clim.signal, equivalent to sampling a laminated sediment core.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
-to 50 cm per ka. Either a single value, or vector of same
-length as "timepoints"}
+to 50 cm per ka. Either a single value, or vector of same length as
+"timepoints"}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
 Defined as the standard deviation of a normal distribution with mean = 0}
@@ -61,7 +62,7 @@ the climate signal}
 \enumerate{
 \item a dataframe \code{simulated.proxy}
 \item a dataframe \code{smoothed.signal}
-\item a list \code{everything}
+\item a dataframe \code{everything}
 }
 
 The dataframe \code{simulated.proxy} contains a single realisation of the
@@ -69,30 +70,32 @@ final forward modelled proxy, as well as the intermediate stages and the
 original climate signal at the requested timepoints.
 
 The dataframe \code{smoothed.signal} contains a block averaged version the
-input climate signal, defaults to 100 year means but this is set by the parameter
-smoothed.signal.res. This is useful for plotting against the resulting simulated
-proxy.
+input climate signal, defaults to 100 year means but this is set by the
+parameter smoothed.signal.res. This is useful for plotting against the
+resulting simulated proxy.
 
-The list \code{everything} contains all of the above, but where a stage contains stochastically
-generated noise, rather than a vector, a \code{timepoints} \strong{by} \code{n.replicates} matrix is returned.
+The dataframe \code{everything} contains all of the above but with multiple
+replicates of the pseudo-proxy records if requested. The data are in
+"long form", with the column "stage" inidcating the proxy stage or input
+climate resolution and column "value" giving the values.
 
 \strong{Named elements of the returned proxy record:}
 
-\tabular{ll}{
-\bold{Variable} \tab \bold{Description} \cr
-timepoints                 \tab requested timepoints                                                                                                               \cr
-clim.timepoints.ssr \tab means of climate signal at resolution = smoothed.signal.res evaluated at the requested timepoints                                                             \cr
-proxy.bt               \tab proxy after bioturbation                                                                                                           \cr
-proxy.bt.sb              \tab proxy after bioturbation + seasonal bias                                                                                           \cr
-sed.acc.rate               \tab sediment accumulation rates for each timepoint                                                                                     \cr
-smoothing.width            \tab weighted mean time span represented in a sample after bioturbation                                                                 \cr
-proxy.bt.sb.sampY             \tab proxy after bioturbation, seasonal bias and finite sampling of years but not seasonality                                                                        \cr
-proxy.bt.sb.sampYM             \tab proxy after bioturbation, seasonal bias and finite sampling of years and months                                                                        \cr
-proxy.bt.sb.inf.b            \tab proxy after bioturbation, seasonal bias and calibration bias                                                                       \cr
-proxy.bt.sb.inf.b.n          \tab proxy after bioturbation, seasonal bias, calibration bias and measurement noise                                                    \cr
-proxy.bt.sb.sampYM.b           \tab proxy after bioturbation, seasonal bias, finite sampling and calibration bias                                                      \cr
-proxy.bt.sb.sampYM.b.n         \tab proxy after bioturbation, seasonal bias, finite sampling, calibration bias and measurement noise                                   \cr
-simulated.proxy            \tab final simulated proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite
+\describe{
+\item{timepoints}{Requested timepoints}
+\item{clim.signal.ann}{Input climate signal at requested timepoints at annual resolution}
+\item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = smoothed.signal.res}
+\item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res}
+\item{proxy.bt}{Climate signal after bioturbation}
+\item{proxy.bt.sb}{Climate signal after bioturbation and production bias}
+\item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, production bias, and calibration bias}
+\item{proxy.bt.sb.inf.b.n}{Climate signal after bioturbation, production bias, and measurement error}
+\item{proxy.bt.sb.sampY}{Climate signal after bioturbation, production bias, and aliasing of inter-annual variation}
+\item{proxy.bt.sb.sampYM}{Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats}
+\item{proxy.bt.sb.sampYM.b}{Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias}
+\item{proxy.bt.sb.sampYM.b.n}{Climate signal after bioturbation, production bias, aliasing, and measurement error}
+\item{simulated.proxy}{Final simulated pseudo-proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite}
+\item{observed.proxy}{True observed proxy (when supplied)}
 }
 }
 \description{
