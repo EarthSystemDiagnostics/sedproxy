@@ -24,6 +24,8 @@ BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio
 
   sed.acc.rate <- sed.acc.rate / 1000
 
+  scale <- match.arg(scale)
+
   if (scale == "time"){
     lwy <- (layer.width / sed.acc.rate)
     mdy <- (bio.depth / sed.acc.rate)
