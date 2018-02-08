@@ -253,7 +253,7 @@ server <- function(input, output) {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
     t.min <-
-      ceiling(input$bio.depth / input$sed.acc.rate) + 1
+      ceiling(1000 * input$bio.depth / input$sed.acc.rate) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)

@@ -191,9 +191,6 @@ ClimToProxyClim <- function(clim.signal,
   max.clim.signal.i <- end(clim.signal)[1]
   min.clim.signal.i <- start(clim.signal)[1]
 
-  # Rescale sed.acc.rate to per year
-  sed.acc.rate <- sed.acc.rate / 1000
-
   if (length(sed.acc.rate) == 1) {
     sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
   }
@@ -209,8 +206,8 @@ ClimToProxyClim <- function(clim.signal,
   # focal.timepoint + 3*bio.depth.timesteps
 
   max.min.windows <- matrix(t(sapply(1:length(timepoints), function(tp) {
-    bio.depth.timesteps <- round(bio.depth / sed.acc.rate[tp])
-    layer.width.years <- ceiling(layer.width / sed.acc.rate[tp])
+    bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate[tp])
+    layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate[tp])
     return(c(max = timepoints[tp] + 3 * bio.depth.timesteps,
              min = timepoints[tp] - bio.depth.timesteps - layer.width.years / 2))
   })), ncol = 2)

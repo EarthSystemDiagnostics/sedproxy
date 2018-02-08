@@ -1,4 +1,9 @@
-# Sedproxy: Simulation of Sediment Archived Climate Proxy Records.
+---
+title: "Sedproxy: Simulation of Sediment Archived Climate Proxy Records."
+output: 
+  html_document: 
+    keep_md: yes
+---
 
 ------------------------------
 
@@ -156,16 +161,16 @@ PFM$everything
 ## # A tibble: 9,725 x 9
 ##    timepoints replicate             stage    value           label
 ##         <dbl>     <dbl>             <chr>    <dbl>           <chr>
-##  1       4334         1 proxy.bt.sb.sampY 27.73002 (4) +Aliasing Y
-##  2       4527         1 proxy.bt.sb.sampY 27.69361 (4) +Aliasing Y
-##  3       4576         1 proxy.bt.sb.sampY 27.72911 (4) +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY 27.69777 (4) +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY 27.62979 (4) +Aliasing Y
-##  6       4994         1 proxy.bt.sb.sampY 27.63200 (4) +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY 27.62587 (4) +Aliasing Y
-##  8       5156         1 proxy.bt.sb.sampY 27.66293 (4) +Aliasing Y
-##  9       5254         1 proxy.bt.sb.sampY 27.68432 (4) +Aliasing Y
-## 10       5318         1 proxy.bt.sb.sampY 27.67379 (4) +Aliasing Y
+##  1       4334         1 proxy.bt.sb.sampY 27.72916 (4) +Aliasing Y
+##  2       4527         1 proxy.bt.sb.sampY 27.69545 (4) +Aliasing Y
+##  3       4576         1 proxy.bt.sb.sampY 27.71834 (4) +Aliasing Y
+##  4       4721         1 proxy.bt.sb.sampY 27.68866 (4) +Aliasing Y
+##  5       4914         1 proxy.bt.sb.sampY 27.72985 (4) +Aliasing Y
+##  6       4994         1 proxy.bt.sb.sampY 27.63903 (4) +Aliasing Y
+##  7       5092         1 proxy.bt.sb.sampY 27.63409 (4) +Aliasing Y
+##  8       5156         1 proxy.bt.sb.sampY 27.61887 (4) +Aliasing Y
+##  9       5254         1 proxy.bt.sb.sampY 27.69607 (4) +Aliasing Y
+## 10       5318         1 proxy.bt.sb.sampY 27.62952 (4) +Aliasing Y
 ## # ... with 9,715 more rows, and 4 more variables: description <chr>,
 ## #   plot.order <dbl>, plotting.colour <chr>, plotting.alpha <dbl>
 ```
