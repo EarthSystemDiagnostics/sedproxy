@@ -693,42 +693,95 @@ PlotPFMs <- function(PFMs,
 
 
 
-#' @title ImpulseResponse
-#'
-#' @param z depth relative to focus horizon
-#' @param d mixing depth. If d == 0, a single weight of 1 is returned
-#' @param z0 depth of the pulse without bioturbation
-#'
-#' @description Depth solution for Berger and Heath; e.g. page 65 in Officer and
-#'   Lynch (1983).
-#'
-#'   For a given mixing depth \code{d}, it gives the probability
-#'   that a particle has been moved from a depth horizon \code{z} units away
-#'   from the focus horizon.
-#'
-#' @return Given a vector of depths, \code{z}, relative to a given horizon, the
-#'   function returns a vector of probabilities that a given particle at that
-#'   horizon has been moved there by bioturbation from depth \code{z}
+#' Bioturbation weights
+#' @description For a given focal depth (or time), this function returns the probability
+#' that material collected from that depth was orignially deposited at depth(s)
+#' z. In other words, that the material would have been found at depth z if there
+#' had been no bioturbation. It is the convolution of the depth solution from
+#' Berger and Heath (1968) with a uniform distribution to account for the width
+#' of the sediment layer from which samples
+#' were picked/extracted. It is a probability density function.
+#' @inheritParams ClimToProxyClim
+#' @param z A vector of times or depths at which to evaluate the bioturbation weights
+#' @param focal.depth The depth (or time) for which source dates are wanted
+#' @param scale whether to scale depths by sediment accumulation rate to give
+#' positions in terms of time
+#' @return a vector of weights
 #' @export
-#'
+#' @references Berger, W. H., & Heath, G. R. (1968).
+#' Vertical mixing in pelagic sediments.
+#' Journal of Marine Research, 26(2), 134–143.
 #' @examples
-#' z <- seq(-100, 100, length.out = 1000)
-#' d <- 10
-#'
-#' plot(z, ImpulseResponse(z, d), type = "l")
-#' abline(v = d)
-#'
-ImpulseResponse <- function(z, d, z0 = 0) {
-  if (d == 0){
-    result <- 1
+#' z <- 0:10000
+#' w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, bio.depth = 10)
+#' plot(z, w, "l")
+BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio.depth, scale = c("time", "depth")){
+
+  sed.acc.rate <- sed.acc.rate / 1000
+
+  scale <- match.arg(scale)
+
+  if (scale == "time"){
+    lwy <- (layer.width / sed.acc.rate)
+    mdy <- (bio.depth / sed.acc.rate)
   }else{
-    x <- z0 + d - z
-    epsilon <- x / d
-    result <- 1 / d * exp(-epsilon)
-    result[z > (z0 + d)] <- 0
+    lwy <- (layer.width)
+    mdy <- (bio.depth)
   }
-  return(result)
+
+  fd <- focal.depth
+
+  C <- lwy/2
+  lam <- 1/mdy
+
+  z <- z - fd + mdy
+
+  if (mdy <= 1){
+    fz <- dunif(z, -C, C)
+  }else if (lwy == 0){
+    fz <- dexp(z, 1/mdy)
+  }else{
+    fz <- (z < -C) * 0 +
+      (z >= -C & z <= C) * (lam*(1/lam-exp(-lam*C-lam*z)/lam))/(2*C)  +
+      (z > C) * (lam*(exp(lam*C-lam*z)/lam-exp(-lam*C-lam*z)/lam))/(2*C)
+  }
+
+  return(fz)
 }
+
+z <- seq(0, 500, length.out = 1000)
+w <- BioturbationWeights(z, focal.depth = 50, layer.width = 1, sed.acc.rate = 50, bio.depth = 10, scale = "depth")
+plot(z, w, "l")
+# Objects
+stages.key <- structure(list(stage = c("timepoints", "clim.signal.ann", "clim.signal.smoothed",
+                         "clim.timepoints.ssr", "proxy.bt", "proxy.bt.sb", "proxy.bt.sb.inf.b",
+                         "proxy.bt.sb.inf.b.n", "proxy.bt.sb.sampY", "proxy.bt.sb.sampYM",
+                         "proxy.bt.sb.sampYM.b", "proxy.bt.sb.sampYM.b.n", "simulated.proxy",
+                         "observed.proxy"), label = c("Requested timepoints", "(1) Input climate",
+                                                      "(1) Input climate", "(1) Input climate", "(2) +Bioturbation",
+                                                      "(3) +Production bias", "(.) +Calibration bias", "(5) +Measurement error",
+                                                      "(4) +Aliasing Y", "(4) +Aliasing YM", "(.) +Calibration bias",
+                                                      "(5) +Measurement error", "(5) Simulated proxy", "(*) Observed proxy"
+                         ), description = c("Requested timepoints", "Input climate signal at requested timepoints at annual resolution",
+                                            "Input climate signal at regular time intervals and resolution = smoothed.signal.res",
+                                            "Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res",
+                                            "Climate signal after bioturbation", "Climate signal after bioturbation and production bias",
+                                            "Climate signal after bioturbation, production bias, and calibration bias",
+                                            "Climate signal after bioturbation, production bias, and measurement error",
+                                            "Climate signal after bioturbation, production bias, and aliasing of inter-annual variation",
+                                            "Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats",
+                                            "Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias",
+                                            "Climate signal after bioturbation, production bias, aliasing, and measurement error",
+                                            "Final simulated pseudo-proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite",
+                                            "True observed proxy (when supplied)"), plot.order = c(1, 1,
+                                                                                                   2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12, 13), plotting.colour = c("Black",
+                                                                                                                                                                "#018571", "#018571", "#018571", "Green", "Gold", "Pink", "#7570b3",
+                                                                                                                                                                "#d95f02", "#d95f02", "Pink", "#7570b3", "#7570b3", "Red"), plotting.alpha = c(1,
+                                                                                                                                                                                                                                               1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)), .Names = c("stage",
+                                                                                                                                                                                                                                                                                                               "label", "description", "plot.order", "plotting.colour", "plotting.alpha"
+                                                                                                                                                                                                                                               ), class = c("tbl_df", "tbl", "data.frame"), row.names = c(NA,
+                                                                                                                                                                                                                                                                                                          -14L))
+
 # Functions
 SimPowerlaw <- function(beta, N)
 {
@@ -984,7 +1037,7 @@ server <- function(input, output) {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
     t.min <-
-      ceiling(input$bio.depth / input$sed.acc.rate) + 1
+      ceiling(1000 * input$bio.depth / input$sed.acc.rate) + 1
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)

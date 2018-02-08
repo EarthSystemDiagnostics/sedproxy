@@ -5,7 +5,7 @@ obj <- paste0(
   "library(ggplot2) \n",
   read_file("R/ClimToProxyClim.R"),
   read_file("R/PlotPFMs.R"),
-  read_file("R/ImpulseResponse.R"),
+  read_file("R/BioturbationWeights.R"),
   read_file("inst/ui-and-server.R"),
   sep = "\n",
   collapse = "\n"
