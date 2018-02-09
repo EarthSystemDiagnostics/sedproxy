@@ -11,3 +11,4 @@ obj <- paste0(
   collapse = "\n"
 )
 write_file(obj, path = "inst/sedproxy-shiny/app.R")
+

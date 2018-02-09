@@ -812,12 +812,13 @@ ui <- fluidPage(
     Germany, for more information.
     "
   ),
-  p("This work is supported by the BMBF funded",
-    a("PalMod", href = "https://www.palmod.de/",  target = "_blank"),
-    "project.", br(),
+  p("This work was supported by German Federal Ministry of Education and Research
+    (BMBF) as Research for Sustainability initiative", a("(FONA)", href = "https://www.fona.de/",  target = "_blank"),
+    "through the", a("PalMod", href = "https://www.palmod.de/",  target = "_blank"), "project (FKZ: 01LP1509C).",
+    br(), br(),
     a(img(src="PalMod_Logo_RGB.png", align = "top"),
       href = "https://www.palmod.de/",
-      target = "_blank")),
+      target = "_blank")), br(),
   p(
     "Reference: ",
     "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
