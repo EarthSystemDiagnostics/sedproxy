@@ -39,6 +39,12 @@ library(sedproxy)
 ShinySedproxy()
 ```
 
+![](inst/extdata/sedproxy-screenshot.png)
+
+An online version of the Shiny app is hosted at [shinyapps.io](https://limnolrgy.shinyapps.io/sedproxy-shiny/)
+
+
+
 Below are some brief examples of how to run `sedproxy` from a script or the command line.
 
 ## Example data
