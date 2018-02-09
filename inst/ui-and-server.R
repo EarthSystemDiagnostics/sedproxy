@@ -58,7 +58,12 @@ ui <- fluidPage(
     Germany, for more information.
     "
   ),
-  p("This work is supported by the BMBF funded PalMod project."),
+  p("This work is supported by the BMBF funded",
+    a("PalMod", href = "https://www.palmod.de/",  target = "_blank"),
+    "project.", br(),
+    a(img(src="PalMod_Logo_RGB.png", align = "top"),
+      href = "https://www.palmod.de/",
+      target = "_blank")),
   p(
     "Reference: ",
     "Laepple, T., & Huybers, P. (2013): Reconciling discrepancies between Uk37
@@ -84,7 +89,7 @@ ui <- fluidPage(
           sliderInput(
             "clim.signal.length",
             h5("Length of input climate signal [years]"),
-            value = 10000,
+            value = 25000,
             step = 1000,
             min = 5000,
             max = 100000
