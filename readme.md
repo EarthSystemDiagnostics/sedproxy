@@ -1,3 +1,9 @@
+---
+output: 
+  html_document: 
+    keep_md: yes
+---
+
 # Sedproxy: Simulation of Sediment Archived Climate Proxy Records.
 
 -------
@@ -8,7 +14,7 @@
 
 This work was supported by German Federal Ministry of Education and Research (BMBF) as Research for Sustainability initiative [FONA](https://www.fona.de/) through the [PalMod](https://www.palmod.de/) project (FKZ: 01LP1509C). 
 
-![](inst/sedproxy-shiny/www/PalMod_Logo_RGB.png)
+
 
 ## Installation
 
@@ -210,11 +216,6 @@ PFM$everything %>%
 ```
 
 ![](readme_files/figure-html/plot_reps-1.png)<!-- -->
-
-
-
-
-
 
 
 
