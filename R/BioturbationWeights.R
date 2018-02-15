@@ -53,7 +53,3 @@ BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio
 
   return(fz)
 }
-
-z <- seq(0, 500, length.out = 1000)
-w <- BioturbationWeights(z, focal.depth = 50, layer.width = 1, sed.acc.rate = 50, bio.depth = 10, scale = "depth")
-plot(z, w, "l")
