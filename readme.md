@@ -10,11 +10,14 @@ output:
 
 ## Introduction
 
-`sedproxy` provides a forward model for sediment archived climate proxies. It is based on work described in Laepple and Huybers (2013). A manuscript is in preparation, Dolman and Laepple (in prep.), which will more fully describe the forward model and its applications. Please contact Dr Andrew Dolman <<andrew.dolman@awi.de>>, or Dr Thomas Laepple <<tlaepple@awi.de>>, at the Alfred-Wegener-Institute, Helmholtz Centre for Polar and Marine Research, Germany, for more information.
+`sedproxy` provides a forward model for sediment archived climate proxies. It is based on work described in Laepple and Huybers (2013). A manuscript is in review at Climate of the Past Discussions, which more fully describes the forward model and its applications [(Dolman and Laepple, in review)](https://www.clim-past-discuss.net/cp-2018-13/).
+
+
+Please contact Dr Andrew Dolman <<andrew.dolman@awi.de>>, or Dr Thomas Laepple <<tlaepple@awi.de>>, at the Alfred-Wegener-Institute, Helmholtz Centre for Polar and Marine Research, Germany, for more information.
 
 This work was supported by German Federal Ministry of Education and Research (BMBF) as Research for Sustainability initiative [FONA](https://www.fona.de/) through the [PalMod](https://www.palmod.de/) project (FKZ: 01LP1509C). 
 
-
+![](inst/sedproxy-shiny/www/PalMod_Logo_RGB.png)
 
 ## Installation
 
@@ -169,20 +172,20 @@ PFM$everything
 
 ```
 ## # A tibble: 9,725 x 9
-##    timepoints replicate             stage    value           label
-##         <dbl>     <dbl>             <chr>    <dbl>           <chr>
-##  1       4334         1 proxy.bt.sb.sampY 27.72916 (4) +Aliasing Y
-##  2       4527         1 proxy.bt.sb.sampY 27.69545 (4) +Aliasing Y
-##  3       4576         1 proxy.bt.sb.sampY 27.71834 (4) +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY 27.68866 (4) +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY 27.72985 (4) +Aliasing Y
-##  6       4994         1 proxy.bt.sb.sampY 27.63903 (4) +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY 27.63409 (4) +Aliasing Y
-##  8       5156         1 proxy.bt.sb.sampY 27.61887 (4) +Aliasing Y
-##  9       5254         1 proxy.bt.sb.sampY 27.69607 (4) +Aliasing Y
-## 10       5318         1 proxy.bt.sb.sampY 27.62952 (4) +Aliasing Y
-## # ... with 9,715 more rows, and 4 more variables: description <chr>,
-## #   plot.order <dbl>, plotting.colour <chr>, plotting.alpha <dbl>
+##    timepoints replicate stage   value label  description        plot.order
+##         <dbl>     <dbl> <chr>   <dbl> <chr>  <chr>                   <dbl>
+##  1       4334      1.00 proxy.…  27.7 (4) +… Climate signal af…       7.00
+##  2       4527      1.00 proxy.…  27.7 (4) +… Climate signal af…       7.00
+##  3       4576      1.00 proxy.…  27.7 (4) +… Climate signal af…       7.00
+##  4       4721      1.00 proxy.…  27.7 (4) +… Climate signal af…       7.00
+##  5       4914      1.00 proxy.…  27.7 (4) +… Climate signal af…       7.00
+##  6       4994      1.00 proxy.…  27.6 (4) +… Climate signal af…       7.00
+##  7       5092      1.00 proxy.…  27.6 (4) +… Climate signal af…       7.00
+##  8       5156      1.00 proxy.…  27.6 (4) +… Climate signal af…       7.00
+##  9       5254      1.00 proxy.…  27.7 (4) +… Climate signal af…       7.00
+## 10       5318      1.00 proxy.…  27.6 (4) +… Climate signal af…       7.00
+## # ... with 9,715 more rows, and 2 more variables: plotting.colour <chr>,
+## #   plotting.alpha <dbl>
 ```
 
 **Simple plotting**
@@ -227,6 +230,8 @@ PFM$everything %>%
 
 
 ## Literature cited
+
+Dolman, A. M. and Laepple, T.: Sedproxy: a forward model for sediment archived climate proxies, Clim. Past Discuss., https://doi.org/10.5194/cp-2018-13, in review, 2018.
 
 Fraile, I., Schulz, M., Mulitza, S., & Kucera, M. (2008): Predicting the global distribution of planktonic foraminifera using a dynamic ecosystem model. Biogeosciences, 5: 891–911.
 

@@ -798,10 +798,11 @@ ui <- fluidPage(
   titlePanel("sedproxy"),
   p(
     em("sedproxy"),
-    "is a forward model for sediment archived climate proxies.
-    It is based on work described in Laepple and Huybers (2013).
-    A manuscript is in preparation, Dolman and Laepple (in prep.),
-    which will more fully describe the forward model and its applications.
+    "provides a forward model for sediment archived climate proxies. It is based
+    on work described in Laepple and Huybers (2013). A manuscript is in review
+    at Climate of the Past Discussions, which more fully describes the forward
+    model and its applications", a("(Dolman and Laepple, in review).",
+    href = "https://www.clim-past-discuss.net/cp-2018-13/", target = "_blank"),"
     Please contact Dr Andrew Dolman <andrew.dolman@awi.de>,
     or Dr Thomas Laepple <tlaepple@awi.de>, at the Alfred-Wegener-Institute,
     Helmholtz Centre for Polar and Marine Research,
