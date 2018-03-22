@@ -10,7 +10,7 @@ LazyData: true
 RoxygenNote: 6.0.1
 Depends:
     R (>= 3.2.1)
-Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny
+Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny, readr
 Suggests:
     testthat,
     knitr,
