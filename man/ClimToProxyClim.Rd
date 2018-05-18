@@ -8,8 +8,9 @@ climate signal.}
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
   smoothed.signal.res = 100, proxy.prod.weights = rep(1/ncol(clim.signal),
-  ncol(clim.signal)), bio.depth = 10, sed.acc.rate = 50, layer.width = 1,
-  meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
+  ncol(clim.signal)), proxy.prod.args = NULL, bio.depth = 10,
+  sed.acc.rate = 50, layer.width = 1, meas.noise = 0, meas.bias = 0,
+  n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
@@ -29,10 +30,14 @@ averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.}
 
-\item{proxy.prod.weights}{The seasonal pattern of productivity for the
-organism(s) archived in the proxy. A vector of values with length =
-ncols(clim.signal). i.e. 1 weight for each month x habitat combination.
-Defaults to a vector of equal weights.}
+\item{proxy.prod.weights}{Either the seasonal pattern of productivity for the
+organism(s) recording / producing the proxy as a vector of values with length =
+ncols(clim.signal), i.e. 1 weight for each month x habitat combination,
+or a function that produces an index of productivity as a function of temperature.
+Defaults to a vector of equal weights.as a vector of 12 values.}
+
+\item{proxy.prod.args}{A named list of parameters to be passed to a function
+named in proxy.prod.weights}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
 bio.depth == 0, each timepoint samples from a single year of the
