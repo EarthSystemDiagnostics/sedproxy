@@ -57,7 +57,7 @@
 #'   averaged) version of the input climate signal returned for plotting. This
 #'   does not affect what the proxy model uses as input. If set to NA, no
 #'   smoothed climate output is generated, this can speed up some simulations.
-#' @param proxy.prod.weights Either the seasonal pattern of productivity for the 
+#' @param proxy.prod.weights Either the seasonal pattern of productivity for the
 #' organism(s) recording / producing the proxy as a vector of values with length =
 #'   ncols(clim.signal), i.e. 1 weight for each month x habitat combination,
 #'   or a function that produces an index of productivity as a function of temperature.
@@ -74,7 +74,8 @@
 #'   taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
 #'   Defaults to 1 cm.
 #' @param meas.noise The amount of noise to add to each simulated proxy value.
-#'   Defined as the standard deviation of a normal distribution with mean = 0
+#'   Defined as the standard deviation of a normal distribution with mean = 0.
+#'   Can be a single value or a vector of values, one for each timepoint.
 #' @param meas.bias The amount of bias to add to each simulated proxy
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
@@ -156,7 +157,7 @@ ClimToProxyClim <- function(clim.signal,
                                smoothed.signal.res = 100,
                                proxy.prod.weights = rep(1/ncol(clim.signal),
                                                ncol(clim.signal)),
-			       proxy.prod.args = NULL,
+                            proxy.prod.args = NULL,
                                bio.depth = 10,
                                sed.acc.rate = 50,
                                layer.width = 1,
@@ -171,6 +172,10 @@ ClimToProxyClim <- function(clim.signal,
     stop("n.sample must be either a single value, or a vector the same
          length as timepoints")
 
+  if((length(meas.noise) == 1 | length(meas.noise)==n.timepoints)==FALSE)
+    stop("meas.noise must be either a single value, or a vector the same
+         length as timepoints")
+
   if (all(is.finite(n.samples))==FALSE & all(is.infinite(n.samples))==FALSE)
     stop("n.samples cannot be a mix of finite and infinite")
 
@@ -183,11 +188,11 @@ ClimToProxyClim <- function(clim.signal,
   if (any(is.function(proxy.prod.weights),
           (is.vector(proxy.prod.weights)&length(proxy.prod.weights) == ncol(clim.signal)),
           (is.matrix(proxy.prod.weights)&dim(proxy.prod.weights) == dim(clim.signal))) == FALSE)
-    stop("proxy.prod.weights must be either a vector of weights with length = ncol(clim.signal), 
+    stop("proxy.prod.weights must be either a vector of weights with length = ncol(clim.signal),
           a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
-  
+
 
   # Ensure seasonal productivities are weights
   proxy.prod.weights <- proxy.prod.weights / sum(proxy.prod.weights)
@@ -203,6 +208,10 @@ ClimToProxyClim <- function(clim.signal,
   # Replicate n.samples if not vector
   if (length(n.samples) == 1) {
     n.samples <- rep(n.samples, n.timepoints)
+  }
+
+  if (length(meas.noise) == 1) {
+    meas.noise <- rep(meas.noise, n.timepoints)
   }
 
   # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
@@ -240,6 +249,7 @@ ClimToProxyClim <- function(clim.signal,
   # Remove timepoints that exceed clim.signal ------
   sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
   n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
+  meas.noise <- meas.noise[max.ind == FALSE & min.ind == FALSE]
   max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
 
   # Generate productivity weights from function if supplied
@@ -256,8 +266,8 @@ ClimToProxyClim <- function(clim.signal,
                               nrow = nrow(clim.signal), byrow = TRUE)
   }
 
-  
-  
+
+
   # Convert to proxy units if requested --------
   proxy.calibration.type <- match.arg(proxy.calibration.type)
 
@@ -363,7 +373,7 @@ ClimToProxyClim <- function(clim.signal,
       proxy.bt.sb.sampYM <- colMeans(samp)
 
       # Get without seasonal aliasing (bioturbation aliasing only)
-      
+
       clim.sig.window.ann <- rowSums(clim.sig.window * proxy.prod.weights)
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
@@ -403,11 +413,11 @@ ClimToProxyClim <- function(clim.signal,
   } else{
     bias <- rep(0, n.replicates)
   }
-  if (meas.noise != 0) {
+ # if (meas.noise != 0) {
     noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
-  }else{
-    noise <- rep(0, n.replicates)
-  }
+ # }else{
+  #  noise <- rep(0, n.replicates)
+  #}
 
   out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
   out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise

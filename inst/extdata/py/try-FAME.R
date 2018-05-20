@@ -6,9 +6,9 @@ PlotWeights <- function(weights){
   df$time <- time(weights)
   df <- gather(df, habitat, value, -time)
   df$habitat <- factor(df$habitat, levels = colnames(weights), ordered = TRUE)
-  
+
   df$value[df$value == 0] <- NA
-  
+
   p <- ggplot(df, aes(x = habitat, y = time, fill = value))
   p <- p + geom_raster()
   p <- p + viridis::scale_fill_viridis(
@@ -51,7 +51,7 @@ growth_rate_l09_array("ruber", c(280, 281))
 #   colnames(m2) <- c.names
 #   return(m2)
 # }
-# 
+#
 # system.time(
 #   wts.fame <- FAME(clim.in[, ], "sacculifer")
 #   )
@@ -59,15 +59,20 @@ growth_rate_l09_array("ruber", c(280, 281))
 wts.fame <- growth_rate_l09_array("ruber", clim.in + 273.15)
 colnames(wts.fame) <- colnames(clim.in)
 
+wts.fame.R <- growth_rate_l09_R("ruber", clim.in + 273.15)
+
+table(wts.fame - wts.fame.R == 0)
+
 PlotWeights(wts.plafom)
 PlotWeights(wts.norm)
 PlotWeights((wts.fame))
+PlotWeights((wts.fame.R))
 
 
 
 
 # The input climate signal should be a time series object
-# The Trace simulation runs to the year 1990 AD, therefore the start time for 
+# The Trace simulation runs to the year 1990 AD, therefore the start time for
 # the input climate is -39 years BP
 
 PFM <- ClimToProxyClim(clim.signal = clim.in,
@@ -75,30 +80,11 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        proxy.calibration.type = "identity",
                        proxy.prod.weights = wts.fame,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       meas.noise = 0.46, n.samples = 30,
+                       meas.noise = c(rep(0.46, length(round(N41.proxy$Published.age))/2),
+                                      rep(0, length(round(N41.proxy$Published.age))/2)),
+                       n.samples = 30,
                        n.replicates = 10)
 
 
-PFM$everything %>% 
+PFM$everything %>%
   PlotPFMs(max.replicates = 1)
-
-
-
-df <- proxy.prod.weights.weights %>%
-  as.data.frame() %>% 
-  gather() %>% 
-  dplyr::mutate(key = as.numeric(key))
-
-colnames(df)
-
-df$time <- 1:22040
-
-df %>%
-  gather(habitat, value, -time)
-  
-
-
-math <- reticulate::import("math")
-
-math$exp(2)
-exp(2)

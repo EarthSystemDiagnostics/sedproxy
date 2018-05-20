@@ -52,7 +52,8 @@ taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
 Defaults to 1 cm.}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
-Defined as the standard deviation of a normal distribution with mean = 0}
+Defined as the standard deviation of a normal distribution with mean = 0.
+Can be a single value or a vector of values, one for each timepoint.}
 
 \item{meas.bias}{The amount of bias to add to each simulated proxy
 time-series. Each replicate proxy time-series has a constant bias added,
