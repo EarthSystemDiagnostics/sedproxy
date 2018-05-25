@@ -777,7 +777,7 @@ BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio
       (z >= -C & z <= C) * (lam*(1/lam-exp(-lam*C-lam*z)/lam))/(2*C)  +
       (z > C) * (lam*(exp(lam*C-lam*z)/lam-exp(-lam*C-lam*z)/lam))/(2*C)
   }
-
+  fz <- fz / sum(fz)
   return(fz)
 }
 # Objects
