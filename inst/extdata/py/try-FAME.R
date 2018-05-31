@@ -27,7 +27,7 @@ wts.plafom <- matrix(rep(N41.G.ruber.seasonality, nrow(clim.in)),
                                      nrow = nrow(clim.in), byrow = TRUE)
 colnames(wts.plafom) <- colnames(clim.in)
 
-wts.norm <- dnorm(clim.in, mean = 27, sd = 1)
+wts.norm <- dnorm(clim.in, mean = 27, sd = 5)
 
 
 ## With FAME 1.0
@@ -65,7 +65,7 @@ table(wts.fame - wts.fame.R == 0)
 
 PlotWeights(wts.plafom)
 PlotWeights(wts.norm)
-PlotWeights((wts.fame))
+#PlotWeights((wts.fame))
 PlotWeights((wts.fame.R))
 
 
@@ -75,16 +75,31 @@ PlotWeights((wts.fame.R))
 # The Trace simulation runs to the year 1990 AD, therefore the start time for
 # the input climate is -39 years BP
 
-PFM <- ClimToProxyClim(clim.signal = clim.in,
+PLAFOM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       proxy.prod.weights = wts.fame,
+                       proxy.prod.weights = wts.plafom,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       meas.noise = c(rep(0.46, length(round(N41.proxy$Published.age))/2),
-                                      rep(0, length(round(N41.proxy$Published.age))/2)),
+                       meas.noise = 0.46,
+                       n.samples = 30,
+                       n.replicates = 10)
+
+FAME <- ClimToProxyClim(clim.signal = clim.in,
+                       timepoints = round(N41.proxy$Published.age),
+                       proxy.calibration.type = "identity",
+                       proxy.prod.weights = wts.fame.R,
+                       sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
+                       meas.noise = 0.46,
                        n.samples = 30,
                        n.replicates = 10)
 
 
-PFM$everything %>%
-  PlotPFMs(max.replicates = 1)
+PFM <- bind_rows(PLAFOM = PLAFOM$everything, FAME = FAME$everything, .id = "weights")
+
+
+p.wts <- PFM %>% mutate(timepoints = timepoints/1000) %>%
+  PlotPFMs(max.replicates = 1) +
+  facet_wrap(~weights) +
+  scale_x_continuous("Age [ka BP]")
+
+ggsave("p.wts.png", p.wts, width = 6, height = 4, dpi = 300, units = "in")
