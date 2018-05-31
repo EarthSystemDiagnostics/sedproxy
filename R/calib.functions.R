@@ -149,16 +149,16 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 #'
 #'
 #' ## Back-transformation with same calibration
-#' CalibMgCa(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sample = "point"))
+#' CalibMgCa(proxy.value = as.vector(CalibMgCa(temperature = c(21, 22), point.or.sample = "point"))
 #'            , point.or.sample = "point")
 #'
 #' ## Back-transformation with random calibration
-#' CalibMgCa(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sample = "point"))
+#' CalibMgCa(proxy.value = as.vector(CalibMgCa(temperature = c(21, 22), point.or.sample = "point"))
 #'            , n = 5, point.or.sample = "sample")
 #'
 #' ## Incompatible arguments
 #' \dontrun{
-#' CalibUK37(temperature = 1, proxy.value = 1)
+#' CalibMgCa(temperature = 1, proxy.value = 1)
 #' }
 CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
                       point.or.sample = c("point", "sample"), n = 1){
