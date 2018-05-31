@@ -272,7 +272,6 @@ ClimToProxyClim <- function(clim.signal,
   proxy.calibration.type <- match.arg(proxy.calibration.type)
 
   if (proxy.calibration.type != "identity") {
-    mean.temperature <-  mean(as.vector(clim.signal))
     proxy.clim.signal <-
       matrix(
         ProxyConversion(
@@ -284,6 +283,9 @@ ClimToProxyClim <- function(clim.signal,
         ncol = ncol(clim.signal),
         byrow = FALSE
       )
+
+    # get a "mean" temperature for each timepoint
+    mean.temperature <-  rep(mean(as.vector(clim.signal)), n.timepoints)
     meas.noise <- as.vector(ProxyConversion(temperature = mean.temperature + meas.noise,
                                             proxy.calibration.type = proxy.calibration.type) -
                               ProxyConversion(temperature = mean.temperature,
@@ -322,7 +324,7 @@ ClimToProxyClim <- function(clim.signal,
     # clim.sig.window <- stats:::window.ts(proxy.clim.signal,
     #                           start = first.tp,
     #                           end = last.tp)
-    clim.sig.window <-  clim.signal[first.tp:last.tp - min.clim.signal.i+1, ]
+    clim.sig.window <-  proxy.clim.signal[first.tp:last.tp - min.clim.signal.i+1, ]
 
     # this is estimating mean deviation MD, (not MAD or SD)
     # no need to estimate this from the psuedo data
@@ -330,7 +332,7 @@ ClimToProxyClim <- function(clim.signal,
     # smoothing.width = sum(bioturb.weights*abs(bioturb.window))
 
     # Get bioturbation X no-seasonality weights matrix ---------
-    biot.sig.weights <- bioturb.weights %o% rep(1, ncol(clim.signal))
+    biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
 
