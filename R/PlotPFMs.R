@@ -119,7 +119,7 @@ PlotPFMs <- function(PFMs,
                                  override.aes = list(alpha = 1))) +
     labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +
-    scale_linetype_manual(values = rep(1, 13), guide = FALSE)+
+    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = FALSE)+
     scale_alpha_manual(guide = FALSE)
 
   if (is.null(colr.palette) == FALSE)
