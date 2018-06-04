@@ -7,10 +7,13 @@ climate signal.}
 \usage{
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, proxy.prod.weights = rep(1/ncol(clim.signal),
-  ncol(clim.signal)), proxy.prod.args = NULL, bio.depth = 10,
-  sed.acc.rate = 50, layer.width = 1, meas.noise = 0, meas.bias = 0,
-  n.samples = Inf, n.replicates = 1)
+  noise.type = switch(proxy.calibration.type, identity = "additive", UK37 =
+  "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
+  proxy.prod.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
+  proxy.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
+  layer.width = 1, meas.noise = 0, meas.bias = 0,
+  scale.noise = switch(proxy.calibration.type, identity = FALSE, UK37 = TRUE,
+  MgCa = TRUE), n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
@@ -24,6 +27,13 @@ recent timepoint first" order.}
 \item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
 is simulated}
+
+\item{noise.type}{Determines whether additive or multiplicative measurement
+noise is added. The appropriate type depends on the units of the proxy.
+Defaults to multiplicative for MgCa, additive for Uk'37 and identity calibration
+types. Can be overidden with a string, "additive" or "multiplicative" in the case
+that pre-converted climate signal and measurement noise values are used in combination
+with an "identity" calibration type.}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed (block
 averaged) version of the input climate signal returned for plotting. This

@@ -53,6 +53,12 @@
 #' @param proxy.calibration.type Type of proxy, e.g. Uk'37 or MgCa, to which the
 #'   clim.signal is converted before the archiving and measurement of the proxy
 #'   is simulated
+#' @param noise.type Determines whether additive or multiplicative measurement
+#' noise is added. The appropriate type depends on the units of the proxy.
+#' Defaults to multiplicative for MgCa, additive for Uk'37 and identity calibration
+#' types. Can be overidden with a string, "additive" or "multiplicative" in the case
+#' that pre-converted climate signal and measurement noise values are used in combination
+#' with an "identity" calibration type.
 #' @param smoothed.signal.res The resolution, in years, of the smoothed (block
 #'   averaged) version of the input climate signal returned for plotting. This
 #'   does not affect what the proxy model uses as input. If set to NA, no
@@ -152,19 +158,27 @@
 #' PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
 #'
 ClimToProxyClim <- function(clim.signal,
-                               timepoints,
-                               proxy.calibration.type = c("identity", "UK37", "MgCa"),
-                               smoothed.signal.res = 100,
-                               proxy.prod.weights = rep(1/ncol(clim.signal),
-                                               ncol(clim.signal)),
+                            timepoints,
+                            proxy.calibration.type = c("identity", "UK37", "MgCa"),
+                            noise.type = switch(proxy.calibration.type,
+                                                 identity = "additive",
+                                                 UK37 = "additive",
+                                                 MgCa = "multiplicative"),
+                            smoothed.signal.res = 100,
+                            proxy.prod.weights = rep(1/ncol(clim.signal),
+                                                     ncol(clim.signal)),
                             proxy.prod.args = NULL,
-                               bio.depth = 10,
-                               sed.acc.rate = 50,
-                               layer.width = 1,
-                               meas.noise = 0,
-                               meas.bias = 0,
-                               n.samples = Inf,
-                               n.replicates = 1) {
+                            bio.depth = 10,
+                            sed.acc.rate = 50,
+                            layer.width = 1,
+                            meas.noise = 0,
+                            meas.bias = 0,
+                            scale.noise = switch(proxy.calibration.type,
+                                                 identity = FALSE,
+                                                 UK37 = TRUE,
+                                                 MgCa = TRUE),
+                            n.samples = Inf,
+                            n.replicates = 1) {
   # Check inputs --------
   n.timepoints <- length(timepoints)
 
@@ -287,6 +301,7 @@ ClimToProxyClim <- function(clim.signal,
     proxy.clim.signal <- clim.signal
   }
 
+ 
   # Create smoothed climate signal --------
   if (is.na(smoothed.signal.res)) {
     timepoints.smoothed <- NA
@@ -403,49 +418,94 @@ ClimToProxyClim <- function(clim.signal,
   #print(out$proxy.bt.sb.sampYM)
 
 
-# Add bias and noise to infinite sample --------
+# Add bias and noise --------
 
   ## Rescale noise if using a calibration
-  if (proxy.calibration.type != "identity") {
-
-    # get a "mean" temperature for each timepoint
-    mean.temperature <-  out$proxy.bt
+  if (scale.noise != FALSE) {
+    print("Rescaling noise")
+    
+    # If cal type is identity re-scaling still required
+    pct <- if (proxy.calibration.type == "identity"){scale.noise}else{proxy.calibration.type}
+    
+    mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
+                                         proxy.calibration.type = pct))
+    print(mean.temperature)
 
     meas.noise <- ProxyConversion(temperature = mean.temperature + meas.noise,
-                                  proxy.calibration.type = proxy.calibration.type) -
+                                  proxy.calibration.type = pct) -
       ProxyConversion(temperature = mean.temperature,
-                      proxy.calibration.type = proxy.calibration.type)
+                      proxy.calibration.type = pct)
     meas.noise <- as.vector(meas.noise)
+    
+    if (noise.type == "multiplicative"){
+      meas.noise <- meas.noise / out$proxy.bt
+    }
+    
+    print((meas.noise))
   }
+  
 
-  if (meas.bias != 0) {
-    bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
-  } else{
-    bias <- rep(0, n.replicates)
-  }
- # if (meas.noise != 0) {
+  print(paste0("noise type = ", noise.type))
+  print(paste0("Scale noise = ", scale.noise))
+  
+  if (noise.type == "additive") {
     noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
- # }else{
-  #  noise <- rep(0, n.replicates)
-  #}
-
-  out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
-  out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
-
-  if (all(is.finite(n.samples))){
-    out$proxy.bt.sb.inf.b[,] <- NA
-    out$proxy.bt.sb.inf.b.n[,] <- NA
+    
+    if (meas.bias != 0) {
+      bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
+    } else{
+      bias <- rep(0, n.replicates)
+    }
+    
+    # Add bias and noise to infinite sample --------
+    
+    out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
+    out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
+    
+    if (all(is.finite(n.samples))){
+      out$proxy.bt.sb.inf.b[,] <- NA
+      out$proxy.bt.sb.inf.b.n[,] <- NA
+    }
+    
+    # Add bias and noise to finite sample --------
+    out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
+    out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
+    
+    # set intermediate bias stages to NA if no bias modelled
+    if (meas.bias == 0) {
+      out$proxy.bt.sb.inf.b[,] <- NA
+      out$proxy.bt.sb.sampYM.b[,] <- NA
+    }
+  }else if (noise.type == "multiplicative"){
+    noise <- exp(stats::rnorm(n.replicates * n.timepoints, 0, meas.noise))
+    
+    if (meas.bias != 0) {
+      bias <- exp(stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias))
+    } else{
+      bias <- rep(1, n.replicates)
+    }
+    
+    # Add bias and noise to infinite sample --------
+    out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "*")
+    out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b * noise
+    
+    if (all(is.finite(n.samples))){
+      out$proxy.bt.sb.inf.b[,] <- NA
+      out$proxy.bt.sb.inf.b.n[,] <- NA
+    }
+    
+    # Add bias and noise to finite sample --------
+    out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM * bias
+    out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b * noise
+    
+    # set intermediate bias stages to NA if no bias modelled
+    if (meas.bias == 0) {
+      out$proxy.bt.sb.inf.b[,] <- NA
+      out$proxy.bt.sb.sampYM.b[,] <- NA
+    }
   }
+ 
 
-  # Add bias and noise to finite sample --------
-  out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
-  out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
-
-  # set intermediate bias stages to NA if no bias modelled
-  if (meas.bias == 0) {
-    out$proxy.bt.sb.inf.b[,] <- NA
-    out$proxy.bt.sb.sampYM.b[,] <- NA
-  }
 
   # Calculate chunked climate at timepoints
 
