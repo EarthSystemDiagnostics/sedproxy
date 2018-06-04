@@ -283,14 +283,7 @@ ClimToProxyClim <- function(clim.signal,
         ncol = ncol(clim.signal),
         byrow = FALSE
       )
-
-    # get a "mean" temperature for each timepoint
-    mean.temperature <-  rep(mean(as.vector(clim.signal)), n.timepoints)
-    meas.noise <- as.vector(ProxyConversion(temperature = mean.temperature + meas.noise,
-                                            proxy.calibration.type = proxy.calibration.type) -
-                              ProxyConversion(temperature = mean.temperature,
-                                              proxy.calibration.type = proxy.calibration.type))
-  } else{
+    } else{
     proxy.clim.signal <- clim.signal
   }
 
@@ -409,7 +402,22 @@ ClimToProxyClim <- function(clim.signal,
   out$proxy.bt.sb.sampY <- t(out$proxy.bt.sb.sampY)
   #print(out$proxy.bt.sb.sampYM)
 
-  # Add bias and noise to infinite sample --------
+
+# Add bias and noise to infinite sample --------
+
+  ## Rescale noise if using a calibration
+  if (proxy.calibration.type != "identity") {
+
+    # get a "mean" temperature for each timepoint
+    mean.temperature <-  out$proxy.bt
+
+    meas.noise <- ProxyConversion(temperature = mean.temperature + meas.noise,
+                                  proxy.calibration.type = proxy.calibration.type) -
+      ProxyConversion(temperature = mean.temperature,
+                      proxy.calibration.type = proxy.calibration.type)
+    meas.noise <- as.vector(meas.noise)
+  }
+
   if (meas.bias != 0) {
     bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
   } else{
