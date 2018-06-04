@@ -242,7 +242,6 @@ ClimToProxyClim <- function(clim.signal,
 
   colnames(max.min.windows) <- c("max", "min")
 
-  #print(max.min.windows)
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
   min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
 
@@ -409,27 +408,25 @@ ClimToProxyClim <- function(clim.signal,
   attr(out, "split_type") <- NULL
   attr(out, "split_labels") <- NULL
 
-  #print(out$proxy.bt.sb.sampYM)
   if (n.replicates == 1) out$proxy.bt.sb.sampYM <- matrix(out$proxy.bt.sb.sampYM, nrow = 1)
   out$proxy.bt.sb.sampYM <- t(out$proxy.bt.sb.sampYM)
 
   if (n.replicates == 1) out$proxy.bt.sb.sampY <- matrix(out$proxy.bt.sb.sampY, nrow = 1)
   out$proxy.bt.sb.sampY <- t(out$proxy.bt.sb.sampY)
-  #print(out$proxy.bt.sb.sampYM)
 
 
 # Add bias and noise --------
 
   ## Rescale noise if using a calibration
   if (scale.noise != FALSE) {
-    print("Rescaling noise")
+    message("Rescaling noise")
     
     # If cal type is identity re-scaling still required
     pct <- if (proxy.calibration.type == "identity"){scale.noise}else{proxy.calibration.type}
     
     mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
                                          proxy.calibration.type = pct))
-    print(mean.temperature)
+    
 
     meas.noise <- ProxyConversion(temperature = mean.temperature + meas.noise,
                                   proxy.calibration.type = pct) -
@@ -441,13 +438,10 @@ ClimToProxyClim <- function(clim.signal,
       meas.noise <- meas.noise / out$proxy.bt
     }
     
-    print((meas.noise))
+    
   }
   
 
-  print(paste0("noise type = ", noise.type))
-  print(paste0("Scale noise = ", scale.noise))
-  
   if (noise.type == "additive") {
     noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
     
@@ -576,11 +570,8 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
   if (is.ts(climate.matrix)) {
      sapply(timepoints, function(tp){
       rel.wind <- 1:width -round(width/2)
-      #if(tp == 10000) print(rel.wind)
       inds <- rel.wind + tp - start(climate.matrix)[1] + 1
-      #if(tp == 10000) print(inds)
       inds <- inds[inds > 0 & inds < nrow(climate.matrix)]
-      #if(tp == 10000) print(inds)
       m <- climate.matrix[inds, , drop = FALSE]
       mean(m)
     })}else{
@@ -601,7 +592,6 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 
       stopifnot(avg.window.i > 0)
       stopifnot(max.clim.signal.i > max(avg.window.i))
-      #if(tp == 10000) print(avg.window.i)
       mean(climate.matrix[avg.window.i, , drop = FALSE])
     })}
 }
