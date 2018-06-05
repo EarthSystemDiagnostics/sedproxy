@@ -42,43 +42,42 @@
 #'   simulated proxy as well as several intermediate stages (see section
 #'   **Value** below).
 #'
-#'
 #' @param clim.signal The "assumed true" climate signal, e.g. climate model
 #'   output or instrumental record. A \code{\link{ts}} object consisting of a
 #'   years x 12 (months) x n habitats (e.g. depths) matrix of temperatures. The
 #'   time series should be at annual resolution and in reverse, i.e. "most
 #'   recent timepoint first" order.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
-
 #' @param proxy.calibration.type Type of proxy, e.g. Uk'37 or MgCa, to which the
 #'   clim.signal is converted before the archiving and measurement of the proxy
-#'   is simulated
+#'   is simulated. Defaults to "identity" which means no conversion takes place.
 #' @param noise.type Determines whether additive or multiplicative measurement
-#' noise is added. The appropriate type depends on the units of the proxy.
-#' Defaults to multiplicative for MgCa, additive for Uk'37 and identity calibration
-#' types. Can be overidden with a string, "additive" or "multiplicative" in the case
-#' that pre-converted climate signal and measurement noise values are used in combination
-#' with an "identity" calibration type.
+#'   noise is added. The appropriate type depends on the units of the proxy.
+#'   Defaults to multiplicative for MgCa, additive for Uk'37 and identity (none)
+#'   calibration types. Can be overidden with a string, "additive" or
+#'   "multiplicative" in the case that pre-converted climate signal and
+#'   measurement noise values are used in combination with an "identity"
+#'   calibration type.
 #' @param smoothed.signal.res The resolution, in years, of the smoothed (block
 #'   averaged) version of the input climate signal returned for plotting. This
 #'   does not affect what the proxy model uses as input. If set to NA, no
 #'   smoothed climate output is generated, this can speed up some simulations.
-#' @param proxy.prod.weights Either the seasonal pattern of productivity for the
-#' organism(s) recording / producing the proxy as a vector of values with length =
-#'   ncols(clim.signal), i.e. 1 weight for each month x habitat combination,
-#'   or a function that produces an index of productivity as a function of temperature.
-#'   Defaults to a vector of equal weights.as a vector of 12 values.
-#' @param proxy.prod.args A named list of parameters to be passed to a function
-#'   named in proxy.prod.weights
-#' @param bio.depth Depth of the bioturbated layer in cm, defaults to 10 cm. If
-#'   bio.depth == 0, each timepoint samples from a single year of the
-#'   clim.signal, equivalent to sampling a laminated sediment core.
+#' @param proxy.prod.weights Production weights for the proxy / proxy-carrier
+#' either as a vector of values with length = ncol(clim.signal), i.e. 1 weight
+#' for each month x habitat combination, or a function that produces an index of
+#' productivity as a function of temperature.
+#' Defaults to a vector of length = ncol(clim.signal) of equal weights.
+#' @param proxy.prod.args A named list of parameter values to be passed to
+#' a function named in proxy.prod.weights.
+#' @param bio.depth Depth of the bioturbated layer in cm, defaults to 10 cm.
+#' @param layer.width the width of the sediment layer from which samples were
+#'   taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
+#'   Defaults to 1 cm. If bio.depth and layer.width are both set to zero,
+#'   each timepoint samples from a single year of the clim.signal, equivalent to
+#'   sampling an annually laminated sediment core.
 #' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
 #'   to 50 cm per ka. Either a single value, or vector of same length as
 #'   "timepoints"
-#' @param layer.width the width of the sediment layer from which samples were
-#'   taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
-#'   Defaults to 1 cm.
 #' @param meas.noise The amount of noise to add to each simulated proxy value.
 #'   Defined as the standard deviation of a normal distribution with mean = 0.
 #'   Can be a single value or a vector of values, one for each timepoint.
@@ -300,7 +299,7 @@ ClimToProxyClim <- function(clim.signal,
     proxy.clim.signal <- clim.signal
   }
 
- 
+
   # Create smoothed climate signal --------
   if (is.na(smoothed.signal.res)) {
     timepoints.smoothed <- NA
@@ -416,55 +415,61 @@ ClimToProxyClim <- function(clim.signal,
 
 
 # Add bias and noise --------
-
-  ## Rescale noise if using a calibration
+    # Rescale noise if using a calibration -----
   if (scale.noise != FALSE) {
+    # scale.noise will either be TRUE because a non-identity calibration is being used
+    # or it will be a string to identify the correct calibration if the input time-series
+    # has already been converted.
     message("Rescaling noise")
-    
+
     # If cal type is identity re-scaling still required
-    pct <- if (proxy.calibration.type == "identity"){scale.noise}else{proxy.calibration.type}
-    
+    pct <- if (proxy.calibration.type == "identity") {
+      scale.noise
+    } else{
+      proxy.calibration.type
+    }
+
+    # mean temperature in temperature units at each timepoint - use bioturbated signal
     mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
                                          proxy.calibration.type = pct))
-    
+
 
     meas.noise <- ProxyConversion(temperature = mean.temperature + meas.noise,
                                   proxy.calibration.type = pct) -
       ProxyConversion(temperature = mean.temperature,
                       proxy.calibration.type = pct)
     meas.noise <- as.vector(meas.noise)
-    
+
     if (noise.type == "multiplicative"){
+      # noise SD needs to be divided by the mean temperature in proxy units in
+      # order to maintain a consistent SD in temperature units.
       meas.noise <- meas.noise / out$proxy.bt
     }
-    
-    
   }
-  
 
   if (noise.type == "additive") {
     noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
-    
+
     if (meas.bias != 0) {
       bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
     } else{
       bias <- rep(0, n.replicates)
     }
-    
+
     # Add bias and noise to infinite sample --------
-    
+
     out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
     out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
-    
+
     if (all(is.finite(n.samples))){
       out$proxy.bt.sb.inf.b[,] <- NA
       out$proxy.bt.sb.inf.b.n[,] <- NA
     }
-    
+
     # Add bias and noise to finite sample --------
     out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
     out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
-    
+
     # set intermediate bias stages to NA if no bias modelled
     if (meas.bias == 0) {
       out$proxy.bt.sb.inf.b[,] <- NA
@@ -472,38 +477,35 @@ ClimToProxyClim <- function(clim.signal,
     }
   }else if (noise.type == "multiplicative"){
     noise <- exp(stats::rnorm(n.replicates * n.timepoints, 0, meas.noise))
-    
+
     if (meas.bias != 0) {
       bias <- exp(stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias))
     } else{
       bias <- rep(1, n.replicates)
     }
-    
+
     # Add bias and noise to infinite sample --------
     out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "*")
     out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b * noise
-    
+
     if (all(is.finite(n.samples))){
       out$proxy.bt.sb.inf.b[,] <- NA
       out$proxy.bt.sb.inf.b.n[,] <- NA
     }
-    
+
     # Add bias and noise to finite sample --------
     out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM * bias
     out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b * noise
-    
+
     # set intermediate bias stages to NA if no bias modelled
     if (meas.bias == 0) {
       out$proxy.bt.sb.inf.b[,] <- NA
       out$proxy.bt.sb.sampYM.b[,] <- NA
     }
   }
- 
 
 
-  # Calculate chunked climate at timepoints
-
-  # Create smoothed climate signal
+  # Create smoothed climate signal -----
   if (is.na(smoothed.signal.res)) {
     out$clim.timepoints.ssr <- NA
 

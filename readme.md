@@ -174,16 +174,16 @@ PFM$everything
 ## # A tibble: 9,725 x 9
 ##    timepoints replicate stage    value label description        plot.order
 ##         <dbl>     <dbl> <chr>    <dbl> <chr> <chr>                   <dbl>
-##  1      4334.        1. proxy.~ 0.0251 (4) ~ Climate signal af~         7.
-##  2      4527.        1. proxy.~ 0.0251 (4) ~ Climate signal af~         7.
-##  3      4576.        1. proxy.~ 0.0251 (4) ~ Climate signal af~         7.
-##  4      4721.        1. proxy.~ 0.0251 (4) ~ Climate signal af~         7.
-##  5      4914.        1. proxy.~ 0.0251 (4) ~ Climate signal af~         7.
-##  6      4994.        1. proxy.~ 0.0250 (4) ~ Climate signal af~         7.
-##  7      5092.        1. proxy.~ 0.0250 (4) ~ Climate signal af~         7.
-##  8      5156.        1. proxy.~ 0.0249 (4) ~ Climate signal af~         7.
-##  9      5254.        1. proxy.~ 0.0250 (4) ~ Climate signal af~         7.
-## 10      5318.        1. proxy.~ 0.0250 (4) ~ Climate signal af~         7.
+##  1       4334      1.00 proxy.… 0.0251 (4) … Climate signal af…       7.00
+##  2       4527      1.00 proxy.… 0.0251 (4) … Climate signal af…       7.00
+##  3       4576      1.00 proxy.… 0.0251 (4) … Climate signal af…       7.00
+##  4       4721      1.00 proxy.… 0.0251 (4) … Climate signal af…       7.00
+##  5       4914      1.00 proxy.… 0.0251 (4) … Climate signal af…       7.00
+##  6       4994      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
+##  7       5092      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
+##  8       5156      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
+##  9       5254      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
+## 10       5318      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
 ## # ... with 9,715 more rows, and 2 more variables: plotting.colour <chr>,
 ## #   plotting.alpha <dbl>
 ```

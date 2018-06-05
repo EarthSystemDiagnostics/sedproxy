@@ -21,7 +21,7 @@ recent timepoint first" order.}
 
 \item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
-is simulated}
+is simulated. Defaults to "identity" which means no conversion takes place.}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed (block
 averaged) version of the input climate signal returned for plotting. This
@@ -35,9 +35,7 @@ Defaults to a uniform seasonal distribution.}
 
 \item{proxy.prod.args}{A named list of parameters to be passed to a function named in proxy.prod.weights}
 
-\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
-bio.depth == 0, each timepoint samples from a single year of the
-clim.signal, equivalent to sampling a laminated sediment core.}
+\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
 to 50 cm per ka. Either a single value, or vector of same length as

@@ -81,7 +81,7 @@ PlotPFMs <- function(PFMs,
 
   if (plot.stages[1] == "default") {
     plotting.levels <- c(
-      "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
+      "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
       "proxy.bt.sb.sampYM",  "simulated.proxy", "observed.proxy"
       )
   } else if (plot.stages == "all") {

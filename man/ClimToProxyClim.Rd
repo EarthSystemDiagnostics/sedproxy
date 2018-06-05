@@ -26,32 +26,31 @@ recent timepoint first" order.}
 
 \item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
-is simulated}
+is simulated. Defaults to "identity" which means no conversion takes place.}
 
 \item{noise.type}{Determines whether additive or multiplicative measurement
 noise is added. The appropriate type depends on the units of the proxy.
-Defaults to multiplicative for MgCa, additive for Uk'37 and identity calibration
-types. Can be overidden with a string, "additive" or "multiplicative" in the case
-that pre-converted climate signal and measurement noise values are used in combination
-with an "identity" calibration type.}
+Defaults to multiplicative for MgCa, additive for Uk'37 and identity (none)
+calibration types. Can be overidden with a string, "additive" or
+"multiplicative" in the case that pre-converted climate signal and
+measurement noise values are used in combination with an "identity"
+calibration type.}
 
 \item{smoothed.signal.res}{The resolution, in years, of the smoothed (block
 averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.}
 
-\item{proxy.prod.weights}{Either the seasonal pattern of productivity for the
-organism(s) recording / producing the proxy as a vector of values with length =
-ncols(clim.signal), i.e. 1 weight for each month x habitat combination,
-or a function that produces an index of productivity as a function of temperature.
-Defaults to a vector of equal weights.as a vector of 12 values.}
+\item{proxy.prod.weights}{Production weights for the proxy / proxy-carrier
+either as a vector of values with length = ncol(clim.signal), i.e. 1 weight
+for each month x habitat combination, or a function that produces an index of
+productivity as a function of temperature.
+Defaults to a vector of length = ncol(clim.signal) of equal weights.}
 
-\item{proxy.prod.args}{A named list of parameters to be passed to a function
-named in proxy.prod.weights}
+\item{proxy.prod.args}{A named list of parameter values to be passed to
+a function named in proxy.prod.weights.}
 
-\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm. If
-bio.depth == 0, each timepoint samples from a single year of the
-clim.signal, equivalent to sampling a laminated sediment core.}
+\item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm.}
 
 \item{sed.acc.rate}{Sediment accumulation rate in cm per 1000 years. Defaults
 to 50 cm per ka. Either a single value, or vector of same length as
@@ -59,7 +58,9 @@ to 50 cm per ka. Either a single value, or vector of same length as
 
 \item{layer.width}{the width of the sediment layer from which samples were
 taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
-Defaults to 1 cm.}
+Defaults to 1 cm. If bio.depth and layer.width are both set to zero,
+each timepoint samples from a single year of the clim.signal, equivalent to
+sampling an annually laminated sediment core.}
 
 \item{meas.noise}{The amount of noise to add to each simulated proxy value.
 Defined as the standard deviation of a normal distribution with mean = 0.
