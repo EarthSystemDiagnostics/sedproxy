@@ -27,8 +27,9 @@ BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio
   scale <- match.arg(scale)
 
   if (scale == "time"){
-    lwy <- (layer.width / sed.acc.rate)
-    mdy <- (bio.depth / sed.acc.rate)
+    lwy <- ceiling(layer.width / sed.acc.rate)
+    lwy[lwy < 1] <- 1
+    mdy <- ceiling(bio.depth / sed.acc.rate)
   }else{
     lwy <- (layer.width)
     mdy <- (bio.depth)
@@ -50,6 +51,6 @@ BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio
       (z >= -C & z <= C) * (lam*(1/lam-exp(-lam*C-lam*z)/lam))/(2*C)  +
       (z > C) * (lam*(exp(lam*C-lam*z)/lam-exp(-lam*C-lam*z)/lam))/(2*C)
   }
-  fz <- fz / sum(fz)
+  fz <- fz / sum(fz, na.rm = T)
   return(fz)
 }
