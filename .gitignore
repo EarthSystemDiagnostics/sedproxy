@@ -10,6 +10,7 @@ vignettes/*.html
 vignettes/*.R
 
 inst/sedproxy-shiny/rsconnect/*
+inst/sedproxy-shiny/app.R
 
 docs
 
