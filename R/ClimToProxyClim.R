@@ -558,6 +558,16 @@ ClimToProxyClim <- function(clim.signal,
                                    value = clim.signal.smoothed)
 
   smoothed.signal$Stage <- "clim.signal.smoothed"
+  
+  if (proxy.calibration.type != "identity"){
+    str(out$simulated.proxy)
+    out$reconstructed.climate <- apply(out$simulated.proxy, 2, function(x)
+      ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
+                      point.or.sample = "sample", n = 1))
+  }else{
+    out$reconstructed.climate <- out$simulated.proxy
+  }
+  
 
   everything <- MakePFMDataframe(out)
 
@@ -615,6 +625,7 @@ MakePFMDataframe <- function(PFM){
     proxy.bt.sb.inf.b.n = as.vector(PFM$proxy.bt.sb.inf.b.n),
     proxy.bt.sb.sampYM.b.n = as.vector(PFM$proxy.bt.sb.sampYM.b.n),
     simulated.proxy = as.vector(PFM$simulated.proxy),
+    reconstructed.climate = as.vector(PFM$reconstructed.climate),
     stringsAsFactors = FALSE)
 
   df$timepoints <- PFM$timepoints
