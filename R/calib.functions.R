@@ -170,23 +170,37 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 
   type <- match.arg(point.or.sample)
 
-  cfs.anand <- matrix(c(0.09, 0.38),
-                        ncol = 2, byrow = TRUE, dimnames = list(NULL, c("A", "B")))
+  cfs.anand <- matrix(c(0.0958964702727252, -1.08117546459042),
+                        ncol = 2, byrow = TRUE)
 
   # Need the covariance between A and B
+  # > dput(colMeans(sma.boot[,c("slope", "elevation")]))
+  # structure(c(0.0958964702727252, -1.08117546459042), .Names = c("slope",
+  # "elevation")) > dput(var(sma.boot[,c("slope", "elevation")]))
+  # structure(c(9.87197167306858e-06, -0.000219581347799779,
+  # -0.000219581347799779, 0.00501539679249436), .Dim = c(2L, 2L), .Dimnames =
+  # list(c("slope", "elevation"), c("slope", "elevation")))
+  # "slope"), c("elevation", "slope")))
+  
+   vcov.anand <- structure(c(9.87197167306858e-06, -0.000219581347799779, -0.000219581347799779, 
+                             0.00501539679249436), .Dim = c(2L, 2L),
+                           .Dimnames = list(c("A", "B"), c("A", "B")))  
+  
+  
   if (type == "sample"){
-    cfs.anand <- matrix(c(stats::rnorm(n, 0.09, 0.003), stats::rnorm(n, 0.38, 0.02)),
-                        ncol = 2, byrow = FALSE, dimnames = list(NULL, c("A", "B")))
+    cfs.anand <- mvtnorm::rmvnorm(n=n, mean=cfs.anand, sigma=vcov.anand)
   }
+  
+  cfs.anand[,2] <- exp(cfs.anand[,2])
 
   # convert from temperature to MgCa
   if (is.null(proxy.value)){
-    out <- t(cfs.anand[, "B"] * exp(outer(cfs.anand[, "A"], temperature, FUN = "*")))
+    out <- t(cfs.anand[, 2] * exp(outer(cfs.anand[, 1], temperature, FUN = "*")))
   }
 
   # convert from MgCa to temperature
   if (is.null(temperature)){
-    out <- t(t(log(outer(proxy.value, cfs.anand[, "B"], FUN = "/"))) / cfs.anand[, "A"])
+    out <- t(t(log(outer(proxy.value, cfs.anand[, 2], FUN = "/"))) / cfs.anand[, 1])
   }
 
   return(out)
