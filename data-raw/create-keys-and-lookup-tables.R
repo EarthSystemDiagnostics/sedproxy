@@ -14,6 +14,7 @@ stages.key <- dplyr::tibble(
     "proxy.bt.sb.sampYM.b",
     "proxy.bt.sb.sampYM.b.n",
     "simulated.proxy",
+    "reconstructed.climate",
     "observed.proxy"
   ),
   label = c(
@@ -30,6 +31,7 @@ stages.key <- dplyr::tibble(
     "(.) +Calibration bias",
     "(5) +Measurement error",
     "(5) Simulated proxy",
+    "(6) Reconstructed climate",
     "(*) Observed proxy"
   ),
   description = c(
@@ -46,16 +48,18 @@ stages.key <- dplyr::tibble(
     "Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias",
     "Climate signal after bioturbation, production bias, aliasing, and measurement error",
     "Final simulated pseudo-proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite",
-    "True observed proxy (when supplied)"
+    "True observed proxy (when supplied)",
+    "Final pseudo-proxy calibrated to temperature"
   ),
-  plot.order = c(1, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12, 13),
+  plot.order = c(1, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12, 13, 14),
   plotting.colour = c("Black", "#018571", "#018571","#018571",
                       "Green", "Gold",
                       "Pink", "#7570b3",
                       "#d95f02", "#d95f02",
                       "Pink", "#7570b3", "#7570b3",
+                      "Blue",
                       "Red"),
-  plotting.alpha = c(1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+  plotting.alpha = c(1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
   #plotting.alpha = rep(1, 13)
 )
 

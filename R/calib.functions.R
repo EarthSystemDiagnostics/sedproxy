@@ -91,7 +91,8 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #'
 #' lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
 #'
-#' summary(lm.uk37, correlation = TRUE)
+#' vcov(lm.uk37)
+#'
 #' }
 CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
                       point.or.sample = c("point", "sample"), n = 1){
@@ -109,10 +110,7 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
   vcov.mueller <-
     structure(c(6.06536807458765e-05, -2.80815422746781e-06,
                 -2.80815422746781e-06, 1.46053818728255e-07),
-              .Dim = c(2L, 2L),
-              .Dimnames = list(
-                c("(Intercept)", "`SST (1-12) [C]`"),
-                c("(Intercept)", "`SST (1-12) [C]`")))
+              .Dim = c(2L, 2L))
 
   if (type == "sample"){
     cfs.mueller <- mvtnorm::rmvnorm(n=n, mean=cfs.mueller, sigma=vcov.mueller)
@@ -181,16 +179,16 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   # -0.000219581347799779, 0.00501539679249436), .Dim = c(2L, 2L), .Dimnames =
   # list(c("slope", "elevation"), c("slope", "elevation")))
   # "slope"), c("elevation", "slope")))
-  
-   vcov.anand <- structure(c(9.87197167306858e-06, -0.000219581347799779, -0.000219581347799779, 
-                             0.00501539679249436), .Dim = c(2L, 2L),
-                           .Dimnames = list(c("A", "B"), c("A", "B")))  
-  
-  
+
+   vcov.anand <- structure(c(9.87197167306858e-06, -0.000219581347799779,
+                             -0.000219581347799779, 0.00501539679249436),
+                           .Dim = c(2L, 2L),
+                           .Dimnames = list(c("A", "B"), c("A", "B")))
+
   if (type == "sample"){
     cfs.anand <- mvtnorm::rmvnorm(n=n, mean=cfs.anand, sigma=vcov.anand)
   }
-  
+
   cfs.anand[,2] <- exp(cfs.anand[,2])
 
   # convert from temperature to MgCa

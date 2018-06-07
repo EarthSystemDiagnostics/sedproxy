@@ -30,7 +30,8 @@ uk37.dat <- ecusdata::mueller.uk37.sst
 
 lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
 
-summary(lm.uk37, correlation = TRUE)
+vcov(lm.uk37)
+
 }
 }
 \examples{

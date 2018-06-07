@@ -558,16 +558,28 @@ ClimToProxyClim <- function(clim.signal,
                                    value = clim.signal.smoothed)
 
   smoothed.signal$Stage <- "clim.signal.smoothed"
-  
+
+
+  # Add calibration uncertainty -------
+  # If n.replicates > 1
+  # First convert back to temperature units with fixed parameters
+  # Then re-convert to proxy units with random parameters
   if (proxy.calibration.type != "identity"){
-    str(out$simulated.proxy)
+    out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
+      ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
+                      point.or.sample = "point", n = 1))
+
+    out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
+      ProxyConversion(temperature = x, proxy.calibration.type = proxy.calibration.type,
+                      point.or.sample = "sample", n = 1))
+
     out$reconstructed.climate <- apply(out$simulated.proxy, 2, function(x)
       ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
-                      point.or.sample = "sample", n = 1))
+                      point.or.sample = "point", n = 1))
+
   }else{
     out$reconstructed.climate <- out$simulated.proxy
   }
-  
 
   everything <- MakePFMDataframe(out)
 
