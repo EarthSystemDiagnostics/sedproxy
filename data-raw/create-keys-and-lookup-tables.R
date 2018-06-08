@@ -83,3 +83,13 @@ cat(sinew::tabular(tb))
 
 # or like this
 cat("#' \\describe{\n", paste0("#'    \\item{", tb$Variable, "}{", tb$Description, "}\n"),"#' }")
+
+
+
+# calibration parameters
+
+MgCa.foram.pars <- climproxycalibration::MgCa.foram.pars
+devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
+
+
+

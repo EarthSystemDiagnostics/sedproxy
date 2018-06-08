@@ -5,7 +5,14 @@
 \title{Convert between MgCa and Temperature in degrees C}
 \usage{
 CalibMgCa(temperature = NULL, proxy.value = NULL,
-  point.or.sample = c("point", "sample"), n = 1)
+  point.or.sample = c("point", "sample"), n = 1,
+  taxon = c("10 Foram Taxa", "G. aequilateralis_350-500",
+  "G. aequilateralis_500-1000", "G. conglobatus_350-500", "G. hirsuta_350-500",
+  "G. inflata_350-500", "G. ruber pink_250-350", "G. ruber pink_350-500",
+  "G. ruber white_250-350", "G. ruber white_350-500",
+  "G. sacculifer with sac_350-500", "G. sacculifer without sac_350-500",
+  "G. truncatulinoides_350-500", "G. truncatulinoides_500-1000",
+  "N. dutertrei_350-500", "O. univesa_350-500", "P. obliquiloculata_350-500"))
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}
@@ -26,10 +33,10 @@ Convert between MgCa and Temperature in degrees C
 \examples{
 # From temperature to MgCa
 ## With fixed calibration
-CalibMgCa(temperature = c(1, 2), point.or.sample = "point")
+CalibMgCa(temperature = c(20, 25), point.or.sample = "point")
 
 ## With random calibration, 5 replicates
-CalibMgCa(temperature = c(1, 2), n = 5, point.or.sample = "sample")
+CalibMgCa(temperature = c(20, 25), n = 5, point.or.sample = "sample")
 
 
 ## Back-transformation with same calibration

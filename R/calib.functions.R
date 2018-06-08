@@ -37,7 +37,7 @@
 #' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                             proxy.calibration.type = c("MgCa", "UK37"),
-                            point.or.sample = c("point", "sample"), n = 1){
+                            point.or.sample = c("point", "sample"), n = 1, ...){
 
   if (is.null(temperature) & is.null(proxy.value) |
       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
@@ -48,9 +48,9 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   out <- switch(proxy.calibration.type,
                 MgCa = CalibMgCa(temperature = temperature, proxy.value = proxy.value,
-                                  point.or.sample = point.or.sample, n = n),
+                                  point.or.sample = point.or.sample, n = n, ...),
                 UK37 = CalibUK37(temperature = temperature, proxy.value = proxy.value,
-                                  point.or.sample = point.or.sample, n = n)
+                                  point.or.sample = point.or.sample, n = n, ...)
                 )
   return(out)
 }
@@ -140,10 +140,10 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 #' @examples
 #' # From temperature to MgCa
 #' ## With fixed calibration
-#' CalibMgCa(temperature = c(1, 2), point.or.sample = "point")
+#' CalibMgCa(temperature = c(20, 25), point.or.sample = "point")
 #'
 #' ## With random calibration, 5 replicates
-#' CalibMgCa(temperature = c(1, 2), n = 5, point.or.sample = "sample")
+#' CalibMgCa(temperature = c(20, 25), n = 5, point.or.sample = "sample")
 #'
 #'
 #' ## Back-transformation with same calibration
@@ -159,7 +159,14 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 #' CalibMgCa(temperature = 1, proxy.value = 1)
 #' }
 CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
-                      point.or.sample = c("point", "sample"), n = 1){
+                      point.or.sample = c("point", "sample"), n = 1,
+                      taxon = c("10 Foram Taxa", "G. aequilateralis_350-500", "G. aequilateralis_500-1000",
+                                "G. conglobatus_350-500", "G. hirsuta_350-500", "G. inflata_350-500",
+                                "G. ruber pink_250-350", "G. ruber pink_350-500", "G. ruber white_250-350",
+                                "G. ruber white_350-500", "G. sacculifer with sac_350-500", "G. sacculifer without sac_350-500",
+                                "G. truncatulinoides_350-500", "G. truncatulinoides_500-1000",
+                                "N. dutertrei_350-500", "O. univesa_350-500", "P. obliquiloculata_350-500")
+                      ){
 
   if (is.null(temperature) & is.null(proxy.value) |
       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
@@ -167,9 +174,10 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   }
 
   type <- match.arg(point.or.sample)
+  taxon <- match.arg(taxon)
 
-  cfs.anand <- matrix(c(0.0958964702727252, -1.08117546459042),
-                        ncol = 2, byrow = TRUE)
+  cfs.anand <- MgCa.foram.pars[[taxon]]$means[c("slope", "elevation")]
+  cfs.anand <-  matrix(cfs.anand, ncol = 2, byrow = TRUE)
 
   # Need the covariance between A and B
   # > dput(colMeans(sma.boot[,c("slope", "elevation")]))
@@ -180,10 +188,14 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   # list(c("slope", "elevation"), c("slope", "elevation")))
   # "slope"), c("elevation", "slope")))
 
-   vcov.anand <- structure(c(9.87197167306858e-06, -0.000219581347799779,
-                             -0.000219581347799779, 0.00501539679249436),
-                           .Dim = c(2L, 2L),
-                           .Dimnames = list(c("A", "B"), c("A", "B")))
+   # vcov.anand <- structure(c(9.87197167306858e-06, -0.000219581347799779,
+   #                           -0.000219581347799779, 0.00501539679249436),
+   #                         .Dim = c(2L, 2L),
+   #                         .Dimnames = list(c("A", "B"), c("A", "B")))
+
+
+  vcov.anand <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "elevation"), c("slope", "elevation")]
+
 
   if (type == "sample"){
     cfs.anand <- mvtnorm::rmvnorm(n=n, mean=cfs.anand, sigma=vcov.anand)
