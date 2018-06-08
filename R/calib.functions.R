@@ -8,7 +8,6 @@
 #' @param point.or.sample Use the "best estimate" calibration parameters,
 #' or parameters sampled from the fitted calibration model
 #' @param n the number of replicate conversions to make in the case of sampled calibration parameters
-#'
 #' @return a vector of temperatures or proxy values
 #' @export
 #' @importFrom mvtnorm rmvnorm
@@ -178,21 +177,6 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 
   cfs.anand <- MgCa.foram.pars[[taxon]]$means[c("slope", "elevation")]
   cfs.anand <-  matrix(cfs.anand, ncol = 2, byrow = TRUE)
-
-  # Need the covariance between A and B
-  # > dput(colMeans(sma.boot[,c("slope", "elevation")]))
-  # structure(c(0.0958964702727252, -1.08117546459042), .Names = c("slope",
-  # "elevation")) > dput(var(sma.boot[,c("slope", "elevation")]))
-  # structure(c(9.87197167306858e-06, -0.000219581347799779,
-  # -0.000219581347799779, 0.00501539679249436), .Dim = c(2L, 2L), .Dimnames =
-  # list(c("slope", "elevation"), c("slope", "elevation")))
-  # "slope"), c("elevation", "slope")))
-
-   # vcov.anand <- structure(c(9.87197167306858e-06, -0.000219581347799779,
-   #                           -0.000219581347799779, 0.00501539679249436),
-   #                         .Dim = c(2L, 2L),
-   #                         .Dimnames = list(c("A", "B"), c("A", "B")))
-
 
   vcov.anand <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "elevation"), c("slope", "elevation")]
 
