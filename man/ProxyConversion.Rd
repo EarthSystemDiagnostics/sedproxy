@@ -5,8 +5,8 @@
 \title{Convert between Temperature in Degrees C and Proxy Units}
 \usage{
 ProxyConversion(temperature = NULL, proxy.value = NULL,
-  proxy.calibration.type = c("MgCa", "UK37"), point.or.sample = c("point",
-  "sample"), n = 1, ...)
+  proxy.calibration.type = c("MgCa", "UK37"), taxon = NULL,
+  point.or.sample = c("point", "sample"), n = 1)
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}

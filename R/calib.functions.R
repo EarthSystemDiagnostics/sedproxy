@@ -36,7 +36,8 @@
 #' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                             proxy.calibration.type = c("MgCa", "UK37"),
-                            point.or.sample = c("point", "sample"), n = 1, ...){
+                            taxon = NULL,
+                            point.or.sample = c("point", "sample"), n = 1){
 
   if (is.null(temperature) & is.null(proxy.value) |
       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
@@ -47,9 +48,10 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   out <- switch(proxy.calibration.type,
                 MgCa = CalibMgCa(temperature = temperature, proxy.value = proxy.value,
-                                  point.or.sample = point.or.sample, n = n, ...),
+                                  point.or.sample = point.or.sample, n = n,
+                                 taxon = taxon),
                 UK37 = CalibUK37(temperature = temperature, proxy.value = proxy.value,
-                                  point.or.sample = point.or.sample, n = n, ...)
+                                  point.or.sample = point.or.sample, n = n)
                 )
   return(out)
 }
@@ -173,12 +175,12 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   }
 
   type <- match.arg(point.or.sample)
-  taxon <- match.arg(taxon)
+  taxon <- if (is.null(taxon)) {"10 Foram Taxa"} else {match.arg(taxon)}
 
-  cfs.anand <- MgCa.foram.pars[[taxon]]$means[c("slope", "elevation")]
+  cfs.anand <- MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
   cfs.anand <-  matrix(cfs.anand, ncol = 2, byrow = TRUE)
 
-  vcov.anand <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "elevation"), c("slope", "elevation")]
+  vcov.anand <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
 
 
   if (type == "sample"){
