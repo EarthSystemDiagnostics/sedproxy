@@ -7,6 +7,7 @@ climate signal.}
 \usage{
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"), taxon = NULL,
+  slp.int.means = NULL, slp.int.vcov = NULL,
   noise.type = switch(proxy.calibration.type, identity = "additive", UK37 =
   "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
   proxy.prod.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
@@ -27,6 +28,15 @@ recent timepoint first" order.}
 \item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
 is simulated. Defaults to "identity" which means no conversion takes place.}
+
+\item{taxon}{The name of a specific taxon for which calibration parameters
+are provided by sedproxy. Currently applies only to proxy.calibration.type MgCa.}
+
+\item{slp.int.means}{Optional user supplied vector of values for the slope
+and intercept of the calibration function. Overides the defaults.}
+
+\item{slp.int.vcov}{Optional user supplied variance covariance matrix
+calibration parameters. Overides the defaults.}
 
 \item{noise.type}{Determines whether additive or multiplicative measurement
 noise is added. The appropriate type depends on the units of the proxy.

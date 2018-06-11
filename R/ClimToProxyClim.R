@@ -89,6 +89,7 @@
 #'   be either a single number, or a vector of length = timepoints
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
+#' @inheritParams ProxyConversion
 #'
 #' @return \code{ClimToProxyClim} returns a list with three elements:
 #'
@@ -160,6 +161,7 @@ ClimToProxyClim <- function(clim.signal,
                             timepoints,
                             proxy.calibration.type = c("identity", "UK37", "MgCa"),
                             taxon = NULL,
+                            slp.int.means = NULL, slp.int.vcov = NULL,
                             noise.type = switch(proxy.calibration.type,
                                                  identity = "additive",
                                                  UK37 = "additive",
@@ -284,7 +286,7 @@ ClimToProxyClim <- function(clim.signal,
 
   # Convert to proxy units if requested --------
   proxy.calibration.type <- match.arg(proxy.calibration.type)
-  
+
   if (proxy.calibration.type != "identity") {
     proxy.clim.signal <-
       matrix(
@@ -292,6 +294,7 @@ ClimToProxyClim <- function(clim.signal,
           temperature = as.vector(clim.signal),
           proxy.calibration.type = proxy.calibration.type,
           taxon = taxon,
+          slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov,
           point.or.sample = "point",
           n = 1
         )[, 1],
@@ -434,13 +437,16 @@ ClimToProxyClim <- function(clim.signal,
 
     # mean temperature in temperature units at each timepoint - use bioturbated signal
     mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
-                                         proxy.calibration.type = pct, taxon = taxon))
+                                         proxy.calibration.type = pct, taxon = taxon,
+                                         slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
 
     meas.noise <- ProxyConversion(temperature = mean.temperature + meas.noise,
-                                  proxy.calibration.type = pct, taxon = taxon) -
+                                  proxy.calibration.type = pct, taxon = taxon,
+                                  slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov) -
       ProxyConversion(temperature = mean.temperature,
-                      proxy.calibration.type = pct, taxon = taxon)
+                      proxy.calibration.type = pct, taxon = taxon,
+                      slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
     meas.noise <- as.vector(meas.noise)
 
     if (noise.type == "multiplicative"){
@@ -571,17 +577,20 @@ ClimToProxyClim <- function(clim.signal,
     out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
       ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
                       taxon = taxon,
-                      point.or.sample = "point", n = 1))
+                      point.or.sample = "point", n = 1,
+                      slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
     out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
       ProxyConversion(temperature = x, proxy.calibration.type = proxy.calibration.type,
                       taxon = taxon,
-                      point.or.sample = "sample", n = 1))
+                      point.or.sample = "sample", n = 1,
+                      slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
     out$reconstructed.climate <- apply(out$simulated.proxy, 2, function(x)
       ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
                       taxon = taxon,
-                      point.or.sample = "point", n = 1))
+                      point.or.sample = "point", n = 1,
+                      slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
   }else{
     out$reconstructed.climate <- out$simulated.proxy

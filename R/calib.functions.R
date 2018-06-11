@@ -5,9 +5,23 @@
 #' @param temperature Temperature in degrees C
 #' @param proxy.value Temperature in proxy units
 #' @param proxy.calibration.type Type of proxy, e.g. UK37 or MgCa
-#' @param point.or.sample Use the "best estimate" calibration parameters,
-#' or parameters sampled from the fitted calibration model
-#' @param n the number of replicate conversions to make in the case of sampled calibration parameters
+#' @param point.or.sample Use the "best estimate" calibration parameters, or
+#'   parameters sampled from the fitted calibration model
+#' @param n the number of replicate conversions to make in the case of sampled
+#'   calibration parameters
+#' @param taxon The name of a specific taxon for which calibration parameters
+#'   are provided by sedproxy. Currently applies only to proxy.calibration.type MgCa.
+#' @param slp.int.means Optional user supplied vector of values for the slope
+#'   and intercept of the calibration function. Overides the defaults.
+#' @param slp.int.vcov Optional user supplied variance covariance matrix
+#'   calibration parameters. Overides the defaults.
+#' @details Valid entries for taxon are: "10 Foram Taxa", "G. aequilateralis_350-500", "G.
+#'   aequilateralis_500-1000", "G. conglobatus_350-500", "G. hirsuta_350-500",
+#'   "G. inflata_350-500", "G. ruber pink_250-350", "G. ruber pink_350-500", "G.
+#'   ruber white_250-350", "G. ruber white_350-500", "G. sacculifer with
+#'   sac_350-500", "G. sacculifer without sac_350-500", "G.
+#'   truncatulinoides_350-500", "G. truncatulinoides_500-1000", "N.
+#'   dutertrei_350-500", "O. univesa_350-500", "P. obliquiloculata_350-500"
 #' @return a vector of temperatures or proxy values
 #' @export
 #' @importFrom mvtnorm rmvnorm
@@ -36,6 +50,7 @@
 #' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                             proxy.calibration.type = c("MgCa", "UK37"),
+                            slp.int.means = NULL, slp.int.vcov = NULL,
                             taxon = NULL,
                             point.or.sample = c("point", "sample"), n = 1){
 
@@ -49,9 +64,11 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
   out <- switch(proxy.calibration.type,
                 MgCa = CalibMgCa(temperature = temperature, proxy.value = proxy.value,
                                   point.or.sample = point.or.sample, n = n,
-                                 taxon = taxon),
+                                 taxon = taxon,
+                                 slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov),
                 UK37 = CalibUK37(temperature = temperature, proxy.value = proxy.value,
-                                  point.or.sample = point.or.sample, n = n)
+                                 point.or.sample = point.or.sample, n = n,
+                                 slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
                 )
   return(out)
 }
@@ -71,7 +88,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #' CalibUK37(temperature = c(1, 2), point.or.sample = "point")
 #'
 #' ## With random calibration, 5 replicates
-#' CalibUK37(temperature = c(1, 2), n = 5, point.or.sample = "sample")
+#' CalibUK37(temperature = c(20, 25), n = 5, point.or.sample = "sample")
 #'
 #'
 #' ## Back-transformation with same calibration
@@ -89,14 +106,15 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #' @details To get the UK'37 calibration parameters
 #' \preformatted{
 #' uk37.dat <- ecusdata::mueller.uk37.sst
-#'
-#' lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
-#'
-#' vcov(lm.uk37)
-#'
+#' lm.uk37 <- lm(`UK'37`~ 1 + `SST (1-12) [°C]`, data = uk37.dat)
+#' means.mueller <- coef(lm.uk37)[2:1]
+#' vcov.mueller <- vcov(lm.uk37)[2:1, 2:1]
 #' }
+#'
 CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
-                      point.or.sample = c("point", "sample"), n = 1){
+                      point.or.sample = c("point", "sample"), n = 1,
+                      slp.int.means = NULL, slp.int.vcov = NULL
+                      ){
 
   if (is.null(temperature) & is.null(proxy.value) |
       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
@@ -105,30 +123,42 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 
   type <- match.arg(point.or.sample)
 
-  cfs.mueller <- matrix(c(0.0686612340110185, 0.0328750614815548),
-                        ncol = 2, byrow = TRUE)
+  if (is.null(slp.int.means)){
+    cfs.mueller <- matrix(c(0.0328750614815548, 0.0686612340110185),
+                          ncol = 2, byrow = TRUE)
+    cfs <- cfs.mueller
+    }else{cfs <- matrix(slp.int.means, nrow = 1)}
 
-  vcov.mueller <-
-    structure(c(6.06536807458765e-05, -2.80815422746781e-06,
-                -2.80815422746781e-06, 1.46053818728255e-07),
-              .Dim = c(2L, 2L))
+  if (is.null(slp.int.vcov)){
+    vcov.mueller <-  structure(c(1.46053818728255e-07, -2.80815422746781e-06,
+                                 -2.80815422746781e-06, 6.06536807458765e-05),
+                               .Dim = c(2L, 2L))
+    vcov <- vcov.mueller
+  }else{
+      vcov <- slp.int.vcov
+    }
 
   if (type == "sample"){
-    cfs.mueller <- mvtnorm::rmvnorm(n=n, mean=cfs.mueller, sigma=vcov.mueller)
+
+    if (is.null(slp.int.means) == FALSE & is.null(slp.int.vcov))
+      warning("Sampling calibration parameters using user supplied values
+              for the mean slope and intercept but the variance covariance matrix for the
+              default or named taxon.")
+
+    cfs <- mvtnorm::rmvnorm(n=n, mean=cfs, sigma=vcov)
   }
 
   # convert from temperature to UK'37
   if (is.null(proxy.value)){
-    out <- t(cfs.mueller[, 1] + (outer(cfs.mueller[, 2], temperature, FUN = "*")))
+    out <- t(cfs[, 2] + (outer(cfs[, 1], temperature, FUN = "*")))
   }
 
   # convert from UK'37 to temperature
   if (is.null(temperature)){
-    out <- t(t(outer(proxy.value, cfs.mueller[, 1], FUN = "-")) / cfs.mueller[, 2])
+    out <- t(t(outer(proxy.value, cfs[, 2], FUN = "-")) / cfs[, 1])
   }
   return(out)
 }
-
 
 #' Convert between MgCa and Temperature in degrees C
 #'
@@ -161,6 +191,7 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
 #' }
 CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
                       point.or.sample = c("point", "sample"), n = 1,
+                      slp.int.means = NULL, slp.int.vcov = NULL,
                       taxon = c("10 Foram Taxa", "G. aequilateralis_350-500", "G. aequilateralis_500-1000",
                                 "G. conglobatus_350-500", "G. hirsuta_350-500", "G. inflata_350-500",
                                 "G. ruber pink_250-350", "G. ruber pink_350-500", "G. ruber white_250-350",
@@ -177,26 +208,37 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   type <- match.arg(point.or.sample)
   taxon <- if (is.null(taxon)) {"10 Foram Taxa"} else {match.arg(taxon)}
 
-  cfs.anand <- MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
-  cfs.anand <-  matrix(cfs.anand, ncol = 2, byrow = TRUE)
+  if (is.null(slp.int.means)){
+    cfs <- MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
+    cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
+  }else{cfs <- matrix(slp.int.means, nrow = 1)}
 
-  vcov.anand <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
-
+  if (is.null(slp.int.vcov)){
+    vcov <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
+    }else{
+      vcov <- slp.int.vcov
+      }
 
   if (type == "sample"){
-    cfs.anand <- mvtnorm::rmvnorm(n=n, mean=cfs.anand, sigma=vcov.anand)
+
+    if (is.null(slp.int.means) == FALSE & is.null(slp.int.vcov))
+      warning("Sampling calibration parameters using user supplied values
+              for the mean slope and intercept but the variance covariance matrix for the
+              default or named taxon.")
+
+    cfs <- mvtnorm::rmvnorm(n=n, mean=cfs, sigma=vcov)
   }
 
-  cfs.anand[,2] <- exp(cfs.anand[,2])
+  cfs[,2] <- exp(cfs[,2])
 
   # convert from temperature to MgCa
   if (is.null(proxy.value)){
-    out <- t(cfs.anand[, 2] * exp(outer(cfs.anand[, 1], temperature, FUN = "*")))
+    out <- t(cfs[, 2] * exp(outer(cfs[, 1], temperature, FUN = "*")))
   }
 
   # convert from MgCa to temperature
   if (is.null(temperature)){
-    out <- t(t(log(outer(proxy.value, cfs.anand[, 2], FUN = "/"))) / cfs.anand[, 1])
+    out <- t(t(log(outer(proxy.value, cfs[, 2], FUN = "/"))) / cfs[, 1])
   }
 
   return(out)

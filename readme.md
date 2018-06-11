@@ -171,7 +171,7 @@ PFM$everything
 ```
 
 ```
-## # A tibble: 9,725 x 9
+## # A tibble: 11,885 x 9
 ##    timepoints replicate stage    value label description        plot.order
 ##         <dbl>     <dbl> <chr>    <dbl> <chr> <chr>                   <dbl>
 ##  1       4334      1.00 proxy.… 0.0251 (4) … Climate signal af…       7.00
@@ -184,7 +184,7 @@ PFM$everything
 ##  8       5156      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
 ##  9       5254      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
 ## 10       5318      1.00 proxy.… 0.0250 (4) … Climate signal af…       7.00
-## # ... with 9,715 more rows, and 2 more variables: plotting.colour <chr>,
+## # ... with 11,875 more rows, and 2 more variables: plotting.colour <chr>,
 ## #   plotting.alpha <dbl>
 ```
 

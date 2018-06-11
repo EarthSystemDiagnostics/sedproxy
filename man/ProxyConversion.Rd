@@ -5,8 +5,9 @@
 \title{Convert between Temperature in Degrees C and Proxy Units}
 \usage{
 ProxyConversion(temperature = NULL, proxy.value = NULL,
-  proxy.calibration.type = c("MgCa", "UK37"), taxon = NULL,
-  point.or.sample = c("point", "sample"), n = 1)
+  proxy.calibration.type = c("MgCa", "UK37"), slp.int.means = NULL,
+  slp.int.vcov = NULL, taxon = NULL, point.or.sample = c("point",
+  "sample"), n = 1)
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}
@@ -15,16 +16,35 @@ ProxyConversion(temperature = NULL, proxy.value = NULL,
 
 \item{proxy.calibration.type}{Type of proxy, e.g. UK37 or MgCa}
 
-\item{point.or.sample}{Use the "best estimate" calibration parameters,
-or parameters sampled from the fitted calibration model}
+\item{slp.int.means}{Optional user supplied vector of values for the slope
+and intercept of the calibration function. Overides the defaults.}
 
-\item{n}{the number of replicate conversions to make in the case of sampled calibration parameters}
+\item{slp.int.vcov}{Optional user supplied variance covariance matrix
+calibration parameters. Overides the defaults.}
+
+\item{taxon}{The name of a specific taxon for which calibration parameters
+are provided by sedproxy. Currently applies only to proxy.calibration.type MgCa.}
+
+\item{point.or.sample}{Use the "best estimate" calibration parameters, or
+parameters sampled from the fitted calibration model}
+
+\item{n}{the number of replicate conversions to make in the case of sampled
+calibration parameters}
 }
 \value{
 a vector of temperatures or proxy values
 }
 \description{
 A wrapper function for accessing proxy - temperature conversion functions
+}
+\details{
+Valid entries for taxon are: "10 Foram Taxa", "G. aequilateralis_350-500", "G.
+  aequilateralis_500-1000", "G. conglobatus_350-500", "G. hirsuta_350-500",
+  "G. inflata_350-500", "G. ruber pink_250-350", "G. ruber pink_350-500", "G.
+  ruber white_250-350", "G. ruber white_350-500", "G. sacculifer with
+  sac_350-500", "G. sacculifer without sac_350-500", "G.
+  truncatulinoides_350-500", "G. truncatulinoides_500-1000", "N.
+  dutertrei_350-500", "O. univesa_350-500", "P. obliquiloculata_350-500"
 }
 \examples{
 # From temperature to UK'37

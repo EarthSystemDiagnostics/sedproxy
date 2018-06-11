@@ -5,17 +5,25 @@
 \title{Convert between UK'37 and Temperature in degrees C}
 \usage{
 CalibUK37(temperature = NULL, proxy.value = NULL,
-  point.or.sample = c("point", "sample"), n = 1)
+  point.or.sample = c("point", "sample"), n = 1, slp.int.means = NULL,
+  slp.int.vcov = NULL)
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}
 
 \item{proxy.value}{Temperature in proxy units}
 
-\item{point.or.sample}{Use the "best estimate" calibration parameters,
-or parameters sampled from the fitted calibration model}
+\item{point.or.sample}{Use the "best estimate" calibration parameters, or
+parameters sampled from the fitted calibration model}
 
-\item{n}{the number of replicate conversions to make in the case of sampled calibration parameters}
+\item{n}{the number of replicate conversions to make in the case of sampled
+calibration parameters}
+
+\item{slp.int.means}{Optional user supplied vector of values for the slope
+and intercept of the calibration function. Overides the defaults.}
+
+\item{slp.int.vcov}{Optional user supplied variance covariance matrix
+calibration parameters. Overides the defaults.}
 }
 \value{
 a vector of temperatures or proxy values
@@ -27,11 +35,9 @@ Convert between UK'37 and Temperature in degrees C
 To get the UK'37 calibration parameters
 \preformatted{
 uk37.dat <- ecusdata::mueller.uk37.sst
-
-lm.uk37 <- lm(`UK'37`~`SST (1-12) [°C]`, data = uk37.dat)
-
-vcov(lm.uk37)
-
+lm.uk37 <- lm(`UK'37`~ 1 + `SST (1-12) [°C]`, data = uk37.dat)
+means.mueller <- coef(lm.uk37)[2:1]
+vcov.mueller <- vcov(lm.uk37)[2:1, 2:1]
 }
 }
 \examples{
@@ -40,7 +46,7 @@ vcov(lm.uk37)
 CalibUK37(temperature = c(1, 2), point.or.sample = "point")
 
 ## With random calibration, 5 replicates
-CalibUK37(temperature = c(1, 2), n = 5, point.or.sample = "sample")
+CalibUK37(temperature = c(20, 25), n = 5, point.or.sample = "sample")
 
 
 ## Back-transformation with same calibration
