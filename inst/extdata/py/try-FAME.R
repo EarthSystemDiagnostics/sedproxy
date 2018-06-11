@@ -82,7 +82,8 @@ PLAFOM <- ClimToProxyClim(clim.signal = clim.in,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        meas.noise = 0.46,
                        n.samples = 30,
-                       n.replicates = 10)
+                       n.replicates = 10)$everything %>%
+  mutate(weights = "PLAFOM (modern static)")
 
 FAME <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
@@ -91,10 +92,11 @@ FAME <- ClimToProxyClim(clim.signal = clim.in,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        meas.noise = 0.46,
                        n.samples = 30,
-                       n.replicates = 10)
+                       n.replicates = 10)$everything %>%
+  mutate(weights = "FAME (dynamic)")
 
 
-PFM <- bind_rows(PLAFOM = PLAFOM$everything, FAME = FAME$everything, .id = "weights")
+PFM <- bind_rows(PLAFOM = PLAFOM, FAME = FAME)
 
 
 p.wts <- PFM %>% mutate(timepoints = timepoints/1000) %>%
