@@ -86,13 +86,13 @@ climate resolution and column "value" giving the values.
 \item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = smoothed.signal.res}
 \item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res}
 \item{proxy.bt}{Climate signal after bioturbation}
-\item{proxy.bt.sb}{Climate signal after bioturbation and production bias}
-\item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, production bias, and calibration bias}
-\item{proxy.bt.sb.inf.b.n}{Climate signal after bioturbation, production bias, and measurement error}
-\item{proxy.bt.sb.sampY}{Climate signal after bioturbation, production bias, and aliasing of inter-annual variation}
-\item{proxy.bt.sb.sampYM}{Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats}
-\item{proxy.bt.sb.sampYM.b}{Climate signal after bioturbation, production bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias}
-\item{proxy.bt.sb.sampYM.b.n}{Climate signal after bioturbation, production bias, aliasing, and measurement error}
+\item{proxy.bt.sb}{Climate signal after bioturbation and habitat bias}
+\item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, habitat bias, and calibration bias}
+\item{proxy.bt.sb.inf.b.n}{Climate signal after bioturbation, habitat bias, and measurement error}
+\item{proxy.bt.sb.sampY}{Climate signal after bioturbation, habitat bias, and aliasing of inter-annual variation}
+\item{proxy.bt.sb.sampYM}{Climate signal after bioturbation, habitat bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats}
+\item{proxy.bt.sb.sampYM.b}{Climate signal after bioturbation, habitat bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias}
+\item{proxy.bt.sb.sampYM.b.n}{Climate signal after bioturbation, habitat bias, aliasing, and measurement error}
 \item{simulated.proxy}{Final simulated pseudo-proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite}
 \item{observed.proxy}{True observed proxy (when supplied)}
 }
