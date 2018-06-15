@@ -313,7 +313,7 @@ ClimToProxyClim <- function(clim.signal,
   } else{
     timepoints.smoothed <- seq(min.clim.signal.i, max.clim.signal.i, by = smoothed.signal.res)
     clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res,
-                                        proxy.clim.signal)
+                                        clim.signal)
   }
 
 
@@ -519,12 +519,12 @@ ClimToProxyClim <- function(clim.signal,
     out$clim.timepoints.ssr <- NA
 
   } else{
-    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, proxy.clim.signal)
+    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, clim.signal)
   }
 
   # Add items to output list -----------
   out$timepoints = timepoints
-  out$clim.signal.ann = rowSums(proxy.clim.signal[timepoints,  , drop = FALSE]) / ncol(proxy.clim.signal)
+  out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
   #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
@@ -574,18 +574,21 @@ ClimToProxyClim <- function(clim.signal,
   # First convert back to temperature units with fixed parameters
   # Then re-convert to proxy units with random parameters
   if (proxy.calibration.type != "identity"){
-    out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
-      ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
-                      taxon = taxon,
-                      point.or.sample = "point", n = 1,
-                      slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
-    out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
-      ProxyConversion(temperature = x, proxy.calibration.type = proxy.calibration.type,
-                      taxon = taxon,
-                      point.or.sample = "sample", n = 1,
-                      slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
+    if (n.replicates > 1){
+      out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
+        ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
+                        taxon = taxon,
+                        point.or.sample = "point", n = 1,
+                        slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
+      out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
+        ProxyConversion(temperature = x, proxy.calibration.type = proxy.calibration.type,
+                        taxon = taxon,
+                        point.or.sample = "sample", n = 1,
+                        slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
+    }
+    # Do this in all cases, not just if n.replicates == 1
     out$reconstructed.climate <- apply(out$simulated.proxy, 2, function(x)
       ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
                       taxon = taxon,
@@ -596,11 +599,29 @@ ClimToProxyClim <- function(clim.signal,
     out$reconstructed.climate <- out$simulated.proxy
   }
 
+  simulated.proxy$reconstructed.climate <- out$reconstructed.climate[, 1, drop = TRUE]
+
   everything <- MakePFMDataframe(out)
+
+  slp.int.means <- if (is.null(slp.int.means)) {
+    taxon <- if (proxy.calibration.type == "MgCa" & is.null(taxon)) {
+      "10 Foram Taxa"
+      } else {match.arg(taxon)}
+    switch(proxy.calibration.type,
+           MgCa = MgCa.foram.pars[[taxon]][["means"]],
+           UK37 = UK37.pars[["mueller.uk37"]][["means"]])
+  } else{
+    slp.int.means
+  }
+
+  calibration.pars <- list(proxy.calibration.type = proxy.calibration.type,
+                           taxon = taxon,
+                           slp.int.means = slp.int.means)
 
   return(list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
-              everything = everything))
+              everything = everything,
+              calibration.pars = calibration.pars))
   #return(everything)
 }
 
