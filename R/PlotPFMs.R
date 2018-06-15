@@ -82,7 +82,7 @@ PlotPFMs <- function(PFMs,
   if (plot.stages[1] == "default") {
     plotting.levels <- c(
       "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
-      "proxy.bt.sb.sampYM",  "simulated.proxy", "reconstructed.climate", "observed.proxy"
+      "proxy.bt.sb.sampYM",  "simulated.proxy",  "simulated.proxy.cal.err", "reconstructed.climate", "observed.proxy"
       )
   } else if (plot.stages == "all") {
     plotting.levels <- stages.key$stage
@@ -96,7 +96,7 @@ PlotPFMs <- function(PFMs,
 
 
   # match scaling flag
-  PFMs <- left_join(PFMs, stages.key[, c("stage", "scale")])
+  PFMs <- dplyr::left_join(PFMs, stages.key[, c("stage", "scale")])
 
   #set factor level ordering for stages
   stage.order <- match.arg(stage.order)
@@ -117,10 +117,15 @@ PlotPFMs <- function(PFMs,
     #geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
     geom_line() +
     theme_bw() +
-    theme(legend.position = "top", panel.grid.minor = element_blank()) +
-    guides(colour = guide_legend(label.position = "top",
-                                 label.hjust = 1,
-                                 nrow = 1,
+    theme(panel.grid.minor = element_blank(), legend.position = "top") +
+    # guides(colour = guide_legend(label.position = "top",
+    #                              label.hjust = 1,
+    #                              nrow = 1, byrow = TRUE,
+    #                              override.aes = list(alpha = 1))) +
+    guides(colour = guide_legend(#label.position = "top",
+                                 #label.hjust = 1,
+                                 ncol = 2,
+                                 #byrow = TRUE,
                                  override.aes = list(alpha = 1))) +
     labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +

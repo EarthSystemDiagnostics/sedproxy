@@ -576,18 +576,21 @@ ClimToProxyClim <- function(clim.signal,
   if (proxy.calibration.type != "identity"){
 
     if (n.replicates > 1){
-      out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
+      out$simulated.proxy.cal.err <- apply(out$simulated.proxy, 2, function(x)
         ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
                         taxon = taxon,
                         point.or.sample = "point", n = 1,
                         slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
-      out$simulated.proxy <- apply(out$simulated.proxy, 2, function(x)
+      out$simulated.proxy.cal.err <- apply(out$simulated.proxy.cal.err, 2, function(x)
         ProxyConversion(temperature = x, proxy.calibration.type = proxy.calibration.type,
                         taxon = taxon,
                         point.or.sample = "sample", n = 1,
                         slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
+    }else{
+      out$simulated.proxy.cal.err <- out$simulated.proxy
     }
+
     # Do this in all cases, not just if n.replicates == 1
     out$reconstructed.climate <- apply(out$simulated.proxy, 2, function(x)
       ProxyConversion(proxy.value = x, proxy.calibration.type = proxy.calibration.type,
@@ -596,9 +599,11 @@ ClimToProxyClim <- function(clim.signal,
                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
   }else{
+    out$simulated.proxy.cal.err <- out$simulated.proxy
     out$reconstructed.climate <- out$simulated.proxy
   }
 
+  simulated.proxy$simulated.proxy.cal.err <- out$simulated.proxy.cal.err[, 1, drop = TRUE]
   simulated.proxy$reconstructed.climate <- out$reconstructed.climate[, 1, drop = TRUE]
 
   everything <- MakePFMDataframe(out)
@@ -606,7 +611,7 @@ ClimToProxyClim <- function(clim.signal,
   slp.int.means <- if (is.null(slp.int.means)) {
     taxon <- if (proxy.calibration.type == "MgCa" & is.null(taxon)) {
       "10 Foram Taxa"
-      } else {match.arg(taxon)}
+      } else {taxon}
     switch(proxy.calibration.type,
            MgCa = MgCa.foram.pars[[taxon]][["means"]],
            UK37 = UK37.pars[["mueller.uk37"]][["means"]])
@@ -673,6 +678,7 @@ MakePFMDataframe <- function(PFM){
     proxy.bt.sb.inf.b.n = as.vector(PFM$proxy.bt.sb.inf.b.n),
     proxy.bt.sb.sampYM.b.n = as.vector(PFM$proxy.bt.sb.sampYM.b.n),
     simulated.proxy = as.vector(PFM$simulated.proxy),
+    simulated.proxy.cal.err = as.vector(PFM$simulated.proxy.cal.err),
     reconstructed.climate = as.vector(PFM$reconstructed.climate),
     stringsAsFactors = FALSE)
 
