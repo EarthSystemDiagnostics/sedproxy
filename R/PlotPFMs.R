@@ -82,7 +82,7 @@ PlotPFMs <- function(PFMs,
   if (plot.stages[1] == "default") {
     plotting.levels <- c(
       "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
-      "proxy.bt.sb.sampYM",  "simulated.proxy", "observed.proxy"
+      "proxy.bt.sb.sampYM",  "simulated.proxy", "reconstructed.climate", "observed.proxy"
       )
   } else if (plot.stages == "all") {
     plotting.levels <- stages.key$stage
@@ -93,6 +93,11 @@ PlotPFMs <- function(PFMs,
 
   PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
                         replicate <= max.replicates)
+
+
+  # match scaling flag
+  PFMs <- left_join(PFMs, stages.key[, c("stage", "scale")])
+
   #set factor level ordering for stages
   stage.order <- match.arg(stage.order)
   switch(stage.order,
@@ -129,6 +134,8 @@ PlotPFMs <- function(PFMs,
   if (is.null(alpha.palette) == FALSE)
     p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
+
+  p <- p + facet_wrap(~scale, scales = "free_y")
 
   return(p)
 }

@@ -51,13 +51,14 @@ stages.key <- dplyr::tibble(
     "True observed proxy (when supplied)",
     "Final pseudo-proxy calibrated to temperature"
   ),
+  scale = c("time", rep("climate", 3), rep("proxy", 9), "climate", NA),
   plot.order = c(1, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12, 13, 14),
   plotting.colour = c("Black", "#018571", "#018571","#018571",
                       "Green", "Gold",
                       "Pink", "#7570b3",
                       "#d95f02", "#d95f02",
                       "Pink", "#7570b3", "#7570b3",
-                      "Blue",
+                      "Darkblue",
                       "Red"),
   plotting.alpha = c(1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
   #plotting.alpha = rep(1, 13)
@@ -91,5 +92,20 @@ cat("#' \\describe{\n", paste0("#'    \\item{", tb$Variable, "}{", tb$Descriptio
 MgCa.foram.pars <- climproxycalibration::MgCa.foram.pars
 devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
 
+UK37.pars <- list(mueller.uk37 = structure(list(
+  means = structure(
+    c(0.0328750614815548, 0.0686612340110185),
+    .Names = c("intercept", "slope")
+  ),
+  vcov = structure(
+    structure(c(1.46053818728255e-07, -2.80815422746781e-06,
+                -2.80815422746781e-06, 6.06536807458765e-05),
+              .Dim = c(2L, 2L)),
+    .Dimnames = list(c("intercept", "slope"),
+                     c("intercept", "slope"))
+  )
+),
+.Names = c("means", "vcov")))
 
+devtools::use_data(UK37.pars, overwrite == TRUE)
 

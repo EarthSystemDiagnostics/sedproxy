@@ -124,16 +124,12 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
   type <- match.arg(point.or.sample)
 
   if (is.null(slp.int.means)){
-    cfs.mueller <- matrix(c(0.0328750614815548, 0.0686612340110185),
-                          ncol = 2, byrow = TRUE)
-    cfs <- cfs.mueller
+    cfs <- UK37.pars$mueller.uk37$means
+    cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
     }else{cfs <- matrix(slp.int.means, nrow = 1)}
 
   if (is.null(slp.int.vcov)){
-    vcov.mueller <-  structure(c(1.46053818728255e-07, -2.80815422746781e-06,
-                                 -2.80815422746781e-06, 6.06536807458765e-05),
-                               .Dim = c(2L, 2L))
-    vcov <- vcov.mueller
+    vcov <- UK37.pars$mueller.uk37$vcov
   }else{
       vcov <- slp.int.vcov
     }
