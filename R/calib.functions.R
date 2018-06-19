@@ -239,3 +239,32 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 
   return(out)
 }
+
+
+
+#' Calibration Uncertainty
+#'
+#' @description Calculates the calibration uncertainty at a given temperature
+#'   from the variance-covariance matrix of the coefficients of a fitted
+#'   calibration regression equation. Also returns the mean proxy value at the a
+#'   given temperature.
+#' @param temperature temperature at which to evaluate proxy uncertainty in
+#'   degrees celsius
+#' @param means intercept and slope of fitted calibration regression
+#' @param vcov variance-covariance matrix of slope and intercept from fitted
+#'   calibration regression
+#'
+#' @return a tibble (dataframe) with temperature, mean proxy unit and 1 x sigma
+#'   proxy unit
+#' @export
+#'
+#' @examples
+CalibrationUncertainty <- function(temperature, means, vcov){
+  mm <- cbind(1, temperature)
+  vars <- mm %*% vcov %*% t(mm)
+  sds <- sqrt(diag(vars))
+  mu <- as.vector(mm %*% means)
+  return(tibble::tibble(temperature, mu=mu, sigma=sds))
+}
+
+

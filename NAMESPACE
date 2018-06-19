@@ -3,6 +3,7 @@
 export(BioturbationWeights)
 export(CalibMgCa)
 export(CalibUK37)
+export(CalibrationUncertainty)
 export(ClimToProxyClim)
 export(ClimToProxyClim.dev)
 export(ImpulseResponse)

@@ -53,7 +53,8 @@ smoothed climate output is generated, this can speed up some simulations.}
 
 \item{proxy.prod.weights}{Production weights for the proxy / proxy-carrier
 either as a vector of values with length = ncol(clim.signal), i.e. 1 weight
-for each month x habitat combination, or a function that produces an index of
+for each month x habitat combination, a matrix of the same dimensions as the
+input climate signal matrix, or a function that produces an index of
 productivity as a function of temperature.
 Defaults to a vector of length = ncol(clim.signal) of equal weights.}
 
