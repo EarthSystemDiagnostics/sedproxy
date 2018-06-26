@@ -210,7 +210,7 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   }else{cfs <- matrix(slp.int.means, nrow = 1)}
 
   if (is.null(slp.int.vcov)){
-    vcov <- MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
+    vcov <- sedproxy::MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
     }else{
       vcov <- slp.int.vcov
       }

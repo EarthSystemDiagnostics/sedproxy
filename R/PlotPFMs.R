@@ -23,7 +23,9 @@
 #'                        proxy.calibration.type = "identity",
 #'                        proxy.prod.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-#'                        meas.noise = 0.46, n.samples = Inf,
+#'                        sigma.measurement = 0.45,
+#'                        sigma.individual = 0,
+#'                        n.samples = Inf,
 #'                        smoothed.signal.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
 #'

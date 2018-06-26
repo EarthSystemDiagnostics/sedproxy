@@ -16,6 +16,7 @@ stages.key <-
         "proxy.bt.sb.sampYM.b",
         "proxy.bt.sb.sampYM.b.n",
         "simulated.proxy",
+        "simulated.proxy.cal.err",
         "reconstructed.climate",
         "observed.proxy"
       ),
@@ -26,14 +27,15 @@ stages.key <-
         "(1) Input climate",
         "(2) +Bioturbation",
         "(3) +Habitat bias",
-        "(.) +Calibration bias",
-        "(5) +Measurement error",
+        "(.) +Bias",
+        "(5) +Ind. error",
         "(4) +Aliasing Y",
         "(4) +Aliasing YM",
-        "(.) +Calibration bias",
-        "(5) +Measurement error",
-        "(5) Simulated proxy",
-        "(6) Reconstructed climate",
+        "(.) +Bias",
+        "(5) +Ind. error",
+        "(5) +Ind. error",
+        "(6) +Calibration uncertainty",
+        "(7) Reconstructed climate",
         "(*) Observed proxy"
       ),
       description = c(
@@ -43,18 +45,37 @@ stages.key <-
         "Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res",
         "Climate signal after bioturbation",
         "Climate signal after bioturbation and habitat bias",
-        "Climate signal after bioturbation, habitat bias, and calibration bias",
+        "Climate signal after bioturbation, habitat bias, and bias",
         "Climate signal after bioturbation, habitat bias, and measurement error",
         "Climate signal after bioturbation, habitat bias, and aliasing of inter-annual variation",
         "Climate signal after bioturbation, habitat bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats",
-        "Climate signal after bioturbation, habitat bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and calibration bias",
+        "Climate signal after bioturbation, habitat bias, and aliasing of inter-annual and intra-annual variation such as monthly temperatures or depth habitats, and bias",
         "Climate signal after bioturbation, habitat bias, aliasing, and measurement error",
         "Final simulated pseudo-proxy, this will be same as proxy.bt.sb.inf.b.n when n.samples = Inf, and proxy.bt.sb.sampYM.b.n when n.samples is finite",
-        "True observed proxy (when supplied)",
-        "Final pseudo-proxy calibrated to temperature"
+        "Final simulated pseudo-proxy + uncertainty in true relationship to the climate variable (calibration error)",
+        "Final pseudo-proxy calibrated to temperature",
+        "True observed proxy (when supplied)"
       ),
-      plot.order = c(1, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12, 13,
-                     14),
+      scale = c(
+        "time",
+        "climate",
+        "climate",
+        "climate",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "proxy",
+        "climate",
+        NA
+      ),
+      plot.order = c(1, 1, 2, 3,
+                     4, 5, 10, 6, 7, 8, 9, 11, 12, 13, 14, 15),
       plotting.colour = c(
         "Black",
         "#018571",
@@ -69,22 +90,14 @@ stages.key <-
         "Pink",
         "#7570b3",
         "#7570b3",
+        "Red",
         "Blue",
         "Red"
       ),
-      plotting.alpha = c(1, 1,
-                         1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
-    ),
-    .Names = c(
-      "stage",
-      "label",
-      "description",
-      "plot.order",
-      "plotting.colour",
-      "plotting.alpha"
-    ), row.names = c(NA, -15L), class = c("tbl_df", "tbl", "data.frame"
-                                                                                                                                                                                                 ))                                                                                                            "#d95f02", "#d95f02", "Pink", "#7570b3", "#7570b3", "Red"), plotting.alpha = c(1,
-
+      plotting.alpha = c(1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5,
+                         0.5, 0.5, 1, 1, 0.5, 0.5)), .Names = c("stage", "label", "description",
+                                                                                                                                                                                                            "scale", "plot.order", "plotting.colour", "plotting.alpha"), row.names = c(NA,
+                                                                                                                                                                                                                                                                                   -16L), class = c("tbl_df", "tbl", "data.frame"))
 # Functions
 SimPowerlaw <- function(beta, N)
 {
@@ -276,7 +289,7 @@ ui <- fluidPage(
         column(
           6,
           numericInput(
-            "meas.noise",
+            "sigma.measurement",
             h5("Measurement noise"),
             value = 0.46,
             step = 0.01,
@@ -284,6 +297,18 @@ ui <- fluidPage(
             max = 1
           )
         ),
+        column(
+          6,
+          numericInput(
+            "sigma.individual",
+            h5("Individual noise"),
+            value = 0,
+            step = 0.1,
+            min = 0,
+            max = 2
+          )
+        )),
+        fluidRow(
         column(
           6,
           numericInput(
@@ -382,7 +407,8 @@ server <- function(input, output) {
       proxy.prod.weights = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
-      meas.noise = input$meas.noise,
+      sigma.measurement = input$sigma.measurement,
+      sigma.individual = input$sigma.individual,
       meas.bias = input$meas.bias
     )
   }, ignoreNULL = FALSE)

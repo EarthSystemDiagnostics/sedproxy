@@ -110,7 +110,9 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        proxy.calibration.type = "identity",
                        proxy.prod.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       meas.noise = 0.46, n.samples = 30,
+                       sigma.measurement = 0.45,
+                       sigma.individual = 0,
+                       n.samples = 30,
                        n.replicates = 10)
 ```
 
@@ -147,7 +149,9 @@ PFM_2 <- ClimToProxyClim(clim.signal = clim.in,
                          proxy.calibration.type = "MgCa",
                          proxy.prod.weights = N41.G.ruber.seasonality,
                          sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                         meas.noise = 0.46, n.samples = 30,
+                         sigma.measurement = 0.46,
+                         sigma.individual = 0,
+                         n.samples = 30,
                          n.replicates = 1)
 ```
 

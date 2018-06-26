@@ -41,10 +41,6 @@ Defaults to a uniform seasonal distribution.}
 to 50 cm per ka. Either a single value, or vector of same length as
 "timepoints"}
 
-\item{meas.noise}{The amount of noise to add to each simulated proxy value.
-Defined as the standard deviation of a normal distribution with mean = 0.
-Can be a single value or a vector of values, one for each timepoint.}
-
 \item{meas.bias}{The amount of bias to add to each simulated proxy
 time-series. Each replicate proxy time-series has a constant bias added,
 drawn from a normal distribution with mean = 0, sd = meas.bias. Bias

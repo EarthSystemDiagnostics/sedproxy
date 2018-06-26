@@ -29,7 +29,8 @@
 #'   of the true mean climate.
 #'
 #'   4. Measurement noise/error is added as a pure Gaussian white noise process
-#'   with mean = 0, standard deviation = \code{meas.noise}.
+#'   with mean = 0, standard deviation =
+#'    \code{sqrt(sigma.measurement^2 + sigma.individual^2/n.samples)}.
 #'
 #'   5. Additionally, a random *bias* can be added to each realisation of a
 #'   proxy record. Bias is simulated as a Gaussian random variable with mean =
@@ -79,15 +80,19 @@
 #' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
 #'   to 50 cm per ka. Either a single value, or vector of same length as
 #'   "timepoints"
-#' @param meas.noise The amount of noise to add to each simulated proxy value.
-#'   Defined as the standard deviation of a normal distribution with mean = 0.
-#'   Can be a single value or a vector of values, one for each timepoint.
+#' @param sigma.measurement The standard deviation of the measurement error
+#' added to each simulated proxy value.
+#' @param sigma.individual The standard deviation of error between individuals
+#' (e.g. Forams) not otherwise modelled. This could included "vital effects" or
+#' aliasing of depth habitat variation not modelled via a depth resolved input
+#' climate signal and habitat weights. sigma.individual is scaled by n.samples
+#' before being combined with sigma.measurement.
+#' @param n.samples Number of e.g. Foraminifera sampled per timepoint, this can
+#'   be either a single number, or a vector of length = timepoints
 #' @param meas.bias The amount of bias to add to each simulated proxy
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 #'   defaults to zero.
-#' @param n.samples Number of e.g. Foraminifera sampled per timepoint, this can
-#'   be either a single number, or a vector of length = timepoints
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
 #' @inheritParams ProxyConversion
@@ -147,7 +152,8 @@
 #'                        proxy.prod.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
 #'                        layer.width = 1,
-#'                        meas.noise = 0.46, n.samples = Inf,
+#'                        sigma.measurement = 0.46,
+#'                        sigma.individual = 0, n.samples = Inf,
 #'                        smoothed.signal.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
 #'
@@ -174,7 +180,8 @@ ClimToProxyClim <- function(clim.signal,
                             bio.depth = 10,
                             sed.acc.rate = 50,
                             layer.width = 1,
-                            meas.noise = 0,
+                            sigma.measurement = 0,
+                            sigma.individual = 0,
                             meas.bias = 0,
                             scale.noise = switch(proxy.calibration.type,
                                                  identity = FALSE,
@@ -190,8 +197,8 @@ ClimToProxyClim <- function(clim.signal,
     stop("n.sample must be either a single value, or a vector the same
          length as timepoints")
 
-  if((length(meas.noise) == 1 | length(meas.noise)==n.timepoints)==FALSE)
-    stop("meas.noise must be either a single value, or a vector the same
+  if((length(sigma.measurement) == 1 | length(sigma.measurement)==n.timepoints)==FALSE)
+    stop("sigma.measurement must be either a single value, or a vector the same
          length as timepoints")
 
   if (all(is.finite(n.samples))==FALSE & all(is.infinite(n.samples))==FALSE)
@@ -228,8 +235,12 @@ ClimToProxyClim <- function(clim.signal,
     n.samples <- rep(n.samples, n.timepoints)
   }
 
-  if (length(meas.noise) == 1) {
-    meas.noise <- rep(meas.noise, n.timepoints)
+  if (length(sigma.measurement) == 1) {
+    sigma.measurement <- rep(sigma.measurement, n.timepoints)
+   }
+
+  if (length(sigma.individual) == 1) {
+    sigma.individual <- rep(sigma.individual, n.timepoints)
   }
 
   # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
@@ -266,8 +277,19 @@ ClimToProxyClim <- function(clim.signal,
   # Remove timepoints that exceed clim.signal ------
   sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
   n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
-  meas.noise <- meas.noise[max.ind == FALSE & min.ind == FALSE]
+
+  sigma.measurement <- sigma.measurement[max.ind == FALSE & min.ind == FALSE]
+  sigma.individual <- sigma.individual[max.ind == FALSE & min.ind == FALSE]
+
   max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
+
+
+  # Scale sigma.individual by n.samples and create combined error term
+  sigma.ind.scl <- ifelse(is.finite(n.samples),
+                          sigma.individual / sqrt(n.samples), 0)
+
+  sigma.meas.ind <- sqrt(sigma.measurement^2 + sigma.ind.scl^2)
+
 
   # Generate productivity weights from function if supplied
   if (is.function(proxy.prod.weights)){
@@ -442,23 +464,23 @@ ClimToProxyClim <- function(clim.signal,
                                          slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
 
-    meas.noise <- ProxyConversion(temperature = mean.temperature + meas.noise,
+    sigma.meas.ind <- ProxyConversion(temperature = mean.temperature + sigma.meas.ind,
                                   proxy.calibration.type = pct, taxon = taxon,
                                   slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov) -
       ProxyConversion(temperature = mean.temperature,
                       proxy.calibration.type = pct, taxon = taxon,
                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
-    meas.noise <- as.vector(meas.noise)
+    sigma.meas.ind <- as.vector(sigma.meas.ind)
 
     if (noise.type == "multiplicative"){
       # noise SD needs to be divided by the mean temperature in proxy units in
       # order to maintain a consistent SD in temperature units.
-      meas.noise <- meas.noise / out$proxy.bt
+      sigma.meas.ind <- sigma.meas.ind / out$proxy.bt
     }
   }
 
   if (noise.type == "additive") {
-    noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = meas.noise)
+    noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = sigma.meas.ind)
 
     if (meas.bias != 0) {
       bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
@@ -486,7 +508,7 @@ ClimToProxyClim <- function(clim.signal,
       out$proxy.bt.sb.sampYM.b[,] <- NA
     }
   }else if (noise.type == "multiplicative"){
-    noise <- exp(stats::rnorm(n.replicates * n.timepoints, 0, meas.noise))
+    noise <- exp(stats::rnorm(n.replicates * n.timepoints, 0, sigma.meas.ind))
 
     if (meas.bias != 0) {
       bias <- exp(stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias))

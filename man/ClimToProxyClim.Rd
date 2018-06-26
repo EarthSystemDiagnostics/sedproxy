@@ -12,9 +12,9 @@ ClimToProxyClim(clim.signal, timepoints,
   "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
   proxy.prod.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
   proxy.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
-  layer.width = 1, meas.noise = 0, meas.bias = 0,
-  scale.noise = switch(proxy.calibration.type, identity = FALSE, UK37 = TRUE,
-  MgCa = TRUE), n.samples = Inf, n.replicates = 1, ...)
+  layer.width = 1, sigma.measurement = 0, sigma.individual = 0,
+  meas.bias = 0, scale.noise = switch(proxy.calibration.type, identity =
+  FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf, n.replicates = 1, ...)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
@@ -73,9 +73,14 @@ Defaults to 1 cm. If bio.depth and layer.width are both set to zero,
 each timepoint samples from a single year of the clim.signal, equivalent to
 sampling an annually laminated sediment core.}
 
-\item{meas.noise}{The amount of noise to add to each simulated proxy value.
-Defined as the standard deviation of a normal distribution with mean = 0.
-Can be a single value or a vector of values, one for each timepoint.}
+\item{sigma.measurement}{The standard deviation of the measurement error
+added to each simulated proxy value.}
+
+\item{sigma.individual}{The standard deviation of error between individuals
+(e.g. Forams) not otherwise modelled. This could included "vital effects" or
+aliasing of depth habitat variation not modelled via a depth resolved input
+climate signal and habitat weights. sigma.individual is scaled by n.samples
+before being combined with sigma.measurement.}
 
 \item{meas.bias}{The amount of bias to add to each simulated proxy
 time-series. Each replicate proxy time-series has a constant bias added,
@@ -155,7 +160,8 @@ temperature from a single month. If Mg/Ca is measured on e.g.
 30 distinct monthly mean temperatures and will thus be a stochastic sample
 of the true mean climate.
 \item Measurement noise/error is added as a pure Gaussian white noise process
-with mean = 0, standard deviation = \code{meas.noise}.
+with mean = 0, standard deviation =
+\code{sqrt(sigma.measurement^2 + sigma.individual^2/n.samples)}.
 \item Additionally, a random \emph{bias} can be added to each realisation of a
 proxy record. Bias is simulated as a Gaussian random variable with mean =
 0, standard deviation = \code{meas.bias}. The same randomly generated bias
@@ -179,7 +185,8 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        proxy.prod.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        layer.width = 1,
-                       meas.noise = 0.46, n.samples = Inf,
+                       sigma.measurement = 0.46,
+                       sigma.individual = 0, n.samples = Inf,
                        smoothed.signal.res = 10, meas.bias = 1,
                        n.replicates = 10)
 
