@@ -124,12 +124,12 @@ CalibUK37 <- function(temperature = NULL, proxy.value = NULL,
   type <- match.arg(point.or.sample)
 
   if (is.null(slp.int.means)){
-    cfs <- UK37.pars$mueller.uk37$means
+    cfs <- sedproxy::UK37.pars$mueller.uk37$means[c("slope", "intercept")]
     cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
     }else{cfs <- matrix(slp.int.means, nrow = 1)}
 
   if (is.null(slp.int.vcov)){
-    vcov <- UK37.pars$mueller.uk37$vcov
+    vcov <- sedproxy::UK37.pars$mueller.uk37$vcov[c("slope", "intercept"), c("slope", "intercept")]
   }else{
       vcov <- slp.int.vcov
     }
@@ -205,7 +205,7 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
   taxon <- if (is.null(taxon)) {"10 Foram Taxa"} else {match.arg(taxon)}
 
   if (is.null(slp.int.means)){
-    cfs <- MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
+    cfs <- sedproxy::MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
     cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
   }else{cfs <- matrix(slp.int.means, nrow = 1)}
 

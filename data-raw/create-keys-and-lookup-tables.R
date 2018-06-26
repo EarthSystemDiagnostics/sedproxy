@@ -90,7 +90,6 @@ cat(sinew::tabular(tb))
 cat("#' \\describe{\n", paste0("#'    \\item{", tb$Variable, "}{", tb$Description, "}\n"),"#' }")
 
 
-
 # calibration parameters
 
 MgCa.foram.pars <- climproxycalibration::MgCa.foram.pars
@@ -98,12 +97,12 @@ devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
 
 UK37.pars <- list(mueller.uk37 = structure(list(
   means = structure(
-    c(0.0328750614815548, 0.0686612340110185),
+    c(0.0686612340110185, 0.0328750614815548),
     .Names = c("intercept", "slope")
   ),
   vcov = structure(
-    structure(c(1.46053818728255e-07, -2.80815422746781e-06,
-                -2.80815422746781e-06, 6.06536807458765e-05),
+    structure(c(6.06536807458765e-05, -2.80815422746781e-06,
+                -2.80815422746781e-06, 1.46053818728255e-07),
               .Dim = c(2L, 2L)),
     .Dimnames = list(c("intercept", "slope"),
                      c("intercept", "slope"))
