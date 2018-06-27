@@ -188,8 +188,7 @@ ClimToProxyClim <- function(clim.signal,
                                                  UK37 = TRUE,
                                                  MgCa = TRUE),
                             n.samples = Inf,
-                            n.replicates = 1,
-                            ...) {
+                            n.replicates = 1) {
   # Check inputs --------
   n.timepoints <- length(timepoints)
 

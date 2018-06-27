@@ -14,7 +14,7 @@ ClimToProxyClim(clim.signal, timepoints,
   proxy.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
   layer.width = 1, sigma.measurement = 0, sigma.individual = 0,
   meas.bias = 0, scale.noise = switch(proxy.calibration.type, identity =
-  FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf, n.replicates = 1, ...)
+  FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
