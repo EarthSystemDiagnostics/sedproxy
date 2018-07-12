@@ -22,6 +22,6 @@ a tibble (dataframe) with temperature, mean proxy unit and 1 x sigma
 \description{
 Calculates the calibration uncertainty at a given temperature
   from the variance-covariance matrix of the coefficients of a fitted
-  calibration regression equation. Also returns the mean proxy value at the a
+  calibration regression equation. Also returns the mean proxy value at the
   given temperature.
 }

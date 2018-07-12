@@ -49,7 +49,7 @@ Valid entries for taxon are: "10 Foram Taxa", "G. aequilateralis_350-500", "G.
 \examples{
 # From temperature to UK'37
 ## With fixed calibration
-ProxyConversion(temperature = c(1, 2), point.or.sample = "point", proxy.calibration.type = "UK37")
+ProxyConversion(temperature = c(10, 20), point.or.sample = "point", proxy.calibration.type = "UK37")
 
 ## With random calibration, 5 replicates
 ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")

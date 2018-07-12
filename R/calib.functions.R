@@ -30,7 +30,7 @@
 #' @examples
 #' # From temperature to UK'37
 #' ## With fixed calibration
-#' ProxyConversion(temperature = c(1, 2), point.or.sample = "point", proxy.calibration.type = "UK37")
+#' ProxyConversion(temperature = c(10, 20), point.or.sample = "point", proxy.calibration.type = "UK37")
 #'
 #' ## With random calibration, 5 replicates
 #' ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")
@@ -49,7 +49,7 @@
 #' CalibUK37(temperature = 1, proxy.value = 1)
 #' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
-                            proxy.calibration.type = c("MgCa", "UK37"),
+                            proxy.calibration.type,
                             slp.int.means = NULL, slp.int.vcov = NULL,
                             taxon = NULL,
                             point.or.sample = c("point", "sample"), n = 1){
@@ -59,7 +59,8 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
     stop("One and only one of temperature or proxy.value must be supplied")
   }
 
-  proxy.calibration.type <- match.arg(proxy.calibration.type)
+  proxy.calibration.type <- match.arg(proxy.calibration.type,
+                                      choices = c("MgCa", "UK37"))
 
   out <- switch(proxy.calibration.type,
                 MgCa = CalibMgCa(temperature = temperature, proxy.value = proxy.value,
@@ -246,7 +247,7 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 #'
 #' @description Calculates the calibration uncertainty at a given temperature
 #'   from the variance-covariance matrix of the coefficients of a fitted
-#'   calibration regression equation. Also returns the mean proxy value at the a
+#'   calibration regression equation. Also returns the mean proxy value at the
 #'   given temperature.
 #' @param temperature temperature at which to evaluate proxy uncertainty in
 #'   degrees celsius
@@ -259,12 +260,143 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 #' @export
 #'
 #' @examples
+
+# Temp <- 1:30
+#
+# C.U <- CalibrationUncertainty(Temp, means = UK37.pars$mueller.uk37$means,
+#                        vcov = UK37.pars$mueller.uk37$vcov)
+#
+# C.U %>%
+#   ggplot(aes(x = temperature, y = mu)) +
+#   geom_ribbon(aes(ymax = mu + sigma, ymin = mu - sigma,
+#                   colour = "1 SD", fill = "1 SD")) +
+#   geom_line(aes(colour = "Mean", fill = "Mean")) +
+#   scale_fill_discrete("") +
+#   scale_color_discrete("")
+#
+#
+# # For Mg/Ca the proxy units need exonentiating
+# C.U <- CalibrationUncertainty(10:28, means = MgCa.foram.pars$`G. aequilateralis_350-500`$means,
+#                               vcov = MgCa.foram.pars$`G. aequilateralis_350-500`$vcov) %>%
+#   mutate(Temp2 = as.vector(ProxyConversion(proxy.value = exp(mu), proxy.calibration.type = "MgCa")),
+#          T.upr = as.vector(ProxyConversion(proxy.value = exp(mu+sigma), proxy.calibration.type = "MgCa")),
+#          T.lwr = as.vector(ProxyConversion(proxy.value = exp(mu-sigma), proxy.calibration.type = "MgCa")))
+#
+#
+# C.U %>%
+#   ggplot(aes(x = temperature, y = exp(mu))) +
+#   geom_ribbon(aes(ymax = exp(mu + sigma), ymin = exp(mu - sigma),
+#                   colour = "1 SD", fill = "1 SD")) +
+#   geom_line(aes(colour = "Mean", fill = "Mean")) +
+#   scale_fill_discrete("") +
+#   scale_color_discrete("")
+#
+# C.U %>%
+#   ggplot(aes(x = temperature, y = Temp2)) +
+#   geom_ribbon(aes(ymax = T.upr, ymin = T.lwr,
+#                   colour = "1 SD", fill = "1 SD")) +
+#   geom_line(aes(colour = "Mean", fill = "Mean")) +
+#   scale_fill_discrete("") +
+#   scale_color_discrete("")
+#
+# C.U %>%
+#   ggplot(aes(x = exp(mu), y = Temp2)) +
+#   geom_ribbon(aes(ymax = T.upr, ymin = T.lwr,
+#                   colour = "1 SD", fill = "1 SD")) +
+#   geom_line(aes(colour = "Mean", fill = "Mean")) +
+#   scale_fill_discrete("") +
+#   scale_color_discrete("")
+
+#
+# C.U %>%
+#   ggplot(aes(x = temperature, y = Temp2)) +
+#   geom_line(aes(colour = "Mean", fill = "Mean")) +
+#   scale_fill_discrete("") +
+#   scale_color_discrete("")
+
+# ProxyConversion(proxy.value = as.vector(CalibMgCa(temperature = c(21, 22), point.or.sample = "point"))
+#                             , point.or.sample = "point", proxy.calibration.type = "MgCa")
+
+
 CalibrationUncertainty <- function(temperature, means, vcov){
-  mm <- cbind(1, temperature)
+  mm <- cbind(temperature, 1)
   vars <- mm %*% vcov %*% t(mm)
   sds <- sqrt(diag(vars))
   mu <- as.vector(mm %*% means)
   return(tibble::tibble(temperature, mu=mu, sigma=sds))
 }
+
+
+# CalibrationUncertainty.2 <- function(temperature = NULL, proxy.value = NULL,
+#                                      proxy.calibration.type,
+#                                      slp.int.means = NULL, slp.int.vcov = NULL,
+#                                      taxon = NULL){
+#
+#   if (is.null(temperature) & is.null(proxy.value) |
+#       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
+#     stop("One and only one of temperature or proxy.value must be supplied")
+#   }
+#
+#   proxy.calibration.type <- match.arg(proxy.calibration.type,
+#                                       choices = c("MgCa", "UK37"))
+#
+#   if (proxy.calibration.type == "UK37"){
+#     if (is.null(slp.int.means)){
+#       slp.int.means <- sedproxy::UK37.pars$mueller.uk37$means[c("slope", "intercept")]
+#       #slp.int.means <- matrix(slp.int.means, ncol = 2, byrow = TRUE)
+#     }else{slp.int.means <- slp.int.means}
+#
+#     if (is.null(slp.int.vcov)){
+#       slp.int.vcov <- sedproxy::UK37.pars$mueller.uk37$vcov[c("slope", "intercept"), c("slope", "intercept")]
+#     }else{
+#       slp.int.vcov <- slp.int.vcov
+#     }
+#   }else if (proxy.calibration.type == "MgCa"){
+#     taxon <- if (is.null(taxon)) {"10 Foram Taxa"} else {match.arg(taxon)}
+#
+#     if (is.null(slp.int.means)){
+#       slp.int.means <- sedproxy::MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
+#
+#     }else{slp.int.means <- matrix(slp.int.means, nrow = 1)}
+#
+#     if (is.null(slp.int.vcov)){
+#       slp.int.vcov <- sedproxy::MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
+#     }else{
+#       slp.int.vcov <- slp.int.vcov
+#     }
+#   }
+#
+#
+#   mm <- cbind(temperature, 1)
+#   vars <- mm %*% slp.int.vcov %*% t(mm)
+#   sd.proxy <- sqrt(diag(vars))
+#   mu.proxy <- as.vector(mm %*% slp.int.means)
+#   if (proxy.calibration.type == "MgCa") {
+#     sd.proxy = exp(mu.proxy + sd.proxy) - exp(mu.proxy)
+#     mu.proxy = exp(mu.proxy)
+#     }
+#   mu.temperature <- as.vector(ProxyConversion(proxy.value = mu.proxy,
+#                                     proxy.calibration.type = proxy.calibration.type,
+#                                     slp.int.means = slp.int.means))
+#
+#   sd.temperature <- as.vector(ProxyConversion(proxy.value = mu.proxy + sd.proxy,
+#                                               proxy.calibration.type = proxy.calibration.type,
+#                                               slp.int.means = slp.int.means)) -
+#     as.vector(ProxyConversion(proxy.value = mu.proxy,
+#                               proxy.calibration.type = proxy.calibration.type,
+#                               slp.int.means = slp.int.means))
+#
+#   if (proxy.calibration.type == "MgCa"){
+#     # noise SD needs to be divided by the mean temperature in proxy units in
+#     # order to maintain a consistent SD in temperature units.
+#     sd.temperature <- sd.temperature
+#   }
+#
+#
+#   return(tibble::tibble(temperature, mu.proxy,
+#                         sigma.proxy = sd.proxy,
+#                         mu.temperature, sigma.temperature = sd.temperature))
+# }
+#
 
 
