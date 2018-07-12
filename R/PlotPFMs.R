@@ -44,6 +44,9 @@ PlotPFMs <- function(PFMs,
                      alpha.palette = "default",
                      levl.labels = "default"){
 
+  PFMs.in <- PFMs
+  if ("sedproxy.pfm" %in% class(PFMs.in)) PFMs <- PFMs.in$everything
+
   if(exists("replicate", where = PFMs)){
     rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "observed.proxy"),
                              replicate == 1)
@@ -82,11 +85,17 @@ PlotPFMs <- function(PFMs,
                 .Names = stages.key$stage)
 
   if (plot.stages[1] == "default") {
-    plotting.levels <- c(
-      "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
-      "proxy.bt.sb.sampYM",  "simulated.proxy",  "simulated.proxy.cal.err", "reconstructed.climate", "observed.proxy"
-      )
-  } else if (plot.stages == "all") {
+    if (PFMs.in$calibration.pars$proxy.calibration.type == "identity"){
+      plotting.levels <- c(
+        "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
+        "proxy.bt.sb.sampYM",  "simulated.proxy", "observed.proxy"
+      )}else{
+        plotting.levels <- c(
+          "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
+          "proxy.bt.sb.sampYM",  "simulated.proxy",  "simulated.proxy.cal.err", "reconstructed.climate", "observed.proxy"
+        )
+      }
+    } else if (plot.stages == "all") {
     plotting.levels <- stages.key$stage
     plotting.levels <- subset(plotting.levels, plotting.levels %in% c("clim.signal.ann", "clim.timepoints.ssr") == FALSE)
   } else{
@@ -142,7 +151,16 @@ PlotPFMs <- function(PFMs,
     p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
 
-  p <- p + facet_wrap(~scale, scales = "free_y")
+  if (PFMs.in$calibration.pars$proxy.calibration.type != "identity"){
+    p <- p + facet_wrap(~scale, scales = "free_y") +
+      facet_wrap( ~ scale, switch = 'y', scales = "free_y") +
+      theme(
+        # remove the default y-axis title, "wt"
+        axis.title.y = element_blank(),
+        # replace the strip backgrounds with transparent
+        strip.background = element_rect(fill = 'transparent', colour = 'transparent'),
+        strip.placement = 'outside')
+  }
 
   return(p)
 }

@@ -645,12 +645,16 @@ ClimToProxyClim <- function(clim.signal,
                            taxon = taxon,
                            slp.int.means = slp.int.means)
 
-  return(list(simulated.proxy=simulated.proxy,
+  out <- list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = everything,
-              calibration.pars = calibration.pars))
-  #return(everything)
-}
+              calibration.pars = calibration.pars)
+
+  class(out) <- "sedproxy.pfm"
+
+  return(out)
+
+  }
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
 
