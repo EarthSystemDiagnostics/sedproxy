@@ -243,6 +243,76 @@ CalibMgCa <- function(temperature = NULL, proxy.value = NULL,
 
 
 
+
+ScaleError <- function(mean.temperature = NULL,
+                       sd.temperature = NULL,
+                       mean.proxy.value = NULL,
+                       sd.proxy.value = NULL,
+                       proxy.calibration.type,
+                       slp.int.means = NULL,
+                       slp.int.vcov = NULL,
+                       taxon = NULL,
+                       point.or.sample = c("point", "sample")) {
+  
+  if (is.null(sd.temperature) & is.null(sd.proxy.value) |
+      is.null(sd.temperature) == FALSE &
+      is.null(sd.proxy.value) == FALSE) {
+    stop("One and only one of sd.temperature or sd.proxy.value must be supplied 
+         with corresponding mean value")
+  }
+  
+
+  if ((class(sd.temperature) == class(mean.temperature)) == FALSE |
+      (class(sd.proxy.value) == class(mean.proxy.value)) == FALSE) {
+    stop("Both mean and SD of either temperature or proxy value must be provided.")
+  }
+  
+  
+  proxy.calibration.type <- match.arg(proxy.calibration.type,
+                                      choices = c("MgCa", "UK37"))
+  
+  t.mean.plus.sd <- if(is.null(mean.temperature)){NULL} else {
+    mean.temperature + sd.temperature}
+  p.mean.plus.sd <- if(is.null(mean.proxy.value)){NULL} else {
+    mean.proxy.value + sd.proxy.value}
+  
+  out <- ProxyConversion(
+      temperature = t.mean.plus.sd,
+      proxy.value = p.mean.plus.sd,
+      point.or.sample = point.or.sample,
+      proxy.calibration.type = proxy.calibration.type,
+      taxon = taxon,
+      slp.int.means = slp.int.means,
+      slp.int.vcov = slp.int.vcov
+    ) -
+    ProxyConversion(
+      temperature = mean.temperature,
+      proxy.value = mean.proxy.value,
+      point.or.sample = point.or.sample,
+      proxy.calibration.type = proxy.calibration.type,
+      taxon = taxon,
+      slp.int.means = slp.int.means,
+      slp.int.vcov = slp.int.vcov
+    ) 
+  
+  return(as.vector(out))
+}
+
+# ScaleError(mean.temperature = c(20, 10), sd.temperature = 2,
+#            proxy.calibration.type = "MgCa")
+# 
+# ScaleError(mean.proxy.value = c(2, 4), sd.proxy.value = 0.1,
+#            proxy.calibration.type = "MgCa")
+# 
+# ScaleError(mean.temperature = c(20, 20), sd.temperature = c(2, 1),
+#            proxy.calibration.type = "UK37")
+# 
+# ScaleError(mean.temperature = c(10, 20), sd.temperature = c(2, 2),
+#            proxy.calibration.type = "UK37")
+# 
+# ScaleError(sd.temperature = c(2, 1),
+#            proxy.calibration.type = "UK37")
+
 #' Calibration Uncertainty
 #'
 #' @description Calculates the calibration uncertainty at a given temperature
