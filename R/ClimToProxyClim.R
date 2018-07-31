@@ -645,6 +645,9 @@ ClimToProxyClim <- function(clim.signal,
                            taxon = taxon,
                            slp.int.means = slp.int.means)
 
+  attr(simulated.proxy, "calibration.pars") <-  calibration.pars
+  attr(everything, "calibration.pars") <-  calibration.pars
+  
   out <- list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = everything,

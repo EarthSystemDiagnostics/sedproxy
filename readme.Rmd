@@ -124,7 +124,7 @@ PFM$everything
 **Simple plotting**
 
 ```{r default_plot, fig.width=6, fig.height=5.5}
-PFM$everything %>% 
+PFM %>% 
   PlotPFMs(max.replicates = 1)
 ```
 
@@ -132,9 +132,9 @@ PFM$everything %>%
 **Plot 5 replicates of the final simulated proxy**
 
 ```{r plot_reps, fig.width=6, fig.height=5.5}
-PFM$everything %>% 
-  filter(stage == "simulated.proxy") %>% 
-  PlotPFMs(., max.replicates = 5)
+PFM %>% 
+  #filter(stage == "simulated.proxy") %>% 
+  PlotPFMs(., max.replicates = 5, plot.stages = "simulated.proxy")
 ```
 
 
