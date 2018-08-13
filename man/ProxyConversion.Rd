@@ -5,7 +5,7 @@
 \title{Convert between Temperature in Degrees C and Proxy Units}
 \usage{
 ProxyConversion(temperature = NULL, proxy.value = NULL,
-  proxy.calibration.type = c("MgCa", "UK37"), slp.int.means = NULL,
+  proxy.calibration.type = "identity", slp.int.means = NULL,
   slp.int.vcov = NULL, taxon = NULL, point.or.sample = c("point",
   "sample"), n = 1)
 }
@@ -67,8 +67,4 @@ ProxyConversion(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point
 \dontrun{
 CalibUK37(temperature = 1, proxy.value = 1)
 }
-}
-\seealso{
-Other calib: \code{\link{CalibMgCa}},
-  \code{\link{CalibUK37}}
 }

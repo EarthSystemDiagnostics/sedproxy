@@ -93,7 +93,6 @@ cat("#' \\describe{\n", paste0("#'    \\item{", tb$Variable, "}{", tb$Descriptio
 # calibration parameters
 
 MgCa.foram.pars <- climproxycalibration::MgCa.foram.pars
-devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
 
 UK37.pars <- list(mueller.uk37 = structure(list(
   means = structure(
@@ -110,5 +109,30 @@ UK37.pars <- list(mueller.uk37 = structure(list(
 ),
 .Names = c("means", "vcov")))
 
-devtools::use_data(UK37.pars, overwrite == TRUE)
 
+CalibrationParameters <- list(MgCa = climproxycalibration::MgCa.foram.pars,
+                              UK37 = list(mueller.uk37 = structure(
+                                list(
+                                  means = structure(
+                                    c(0.0328750614815548, 0.0686612340110185),
+                                    .Names = c("slope", "intercept")
+                                  ),
+                                  vcov = structure(structure(
+                                    c(1.46053818728255e-07,
+                                      -2.80815422746781e-06,
+                                      -2.80815422746781e-06,
+                                      6.06536807458765e-05),
+                                    .Dim = c(2L, 2L)
+                                  ),
+                                  .Dimnames = list(
+                                    c("slope", "intercept"),
+                                    c("slope", "intercept")
+                                  ))
+                                ),
+                                .Names = c("means", "vcov")
+                              )))
+
+
+devtools::use_data(UK37.pars, overwrite == TRUE)
+devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
+devtools::use_data(CalibrationParameters, overwrite == TRUE)
