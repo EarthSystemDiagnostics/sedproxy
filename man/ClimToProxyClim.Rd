@@ -8,13 +8,14 @@ climate signal.}
 ClimToProxyClim(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"), taxon = NULL,
   slp.int.means = NULL, slp.int.vcov = NULL,
-  noise.type = switch(proxy.calibration.type, identity = "additive", UK37 =
-  "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
+  noise.type = switch(proxy.calibration.type, identity = "additive", UK37
+  = "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
   proxy.prod.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
   proxy.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
   layer.width = 1, sigma.measurement = 0, sigma.individual = 0,
-  meas.bias = 0, scale.noise = switch(proxy.calibration.type, identity =
-  FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf, n.replicates = 1)
+  meas.bias = 0, scale.noise = switch(proxy.calibration.type, identity
+  = FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf,
+  n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model

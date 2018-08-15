@@ -4,8 +4,8 @@
 \alias{BioturbationWeights}
 \title{Bioturbation weights}
 \usage{
-BioturbationWeights(z, focal.depth, layer.width = 1, sed.acc.rate, bio.depth,
-  scale = c("time", "depth"))
+BioturbationWeights(z, focal.depth, layer.width = 1, sed.acc.rate,
+  bio.depth, scale = c("time", "depth"))
 }
 \arguments{
 \item{z}{A vector of times or depths at which to evaluate the bioturbation weights}
