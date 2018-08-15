@@ -5,8 +5,8 @@
 \title{Convert between UK'37 and Temperature in degrees C}
 \usage{
 CalibUK37(temperature = NULL, proxy.value = NULL,
-  point.or.sample = c("point", "sample"), n = 1, slp.int.means = NULL,
-  slp.int.vcov = NULL)
+  point.or.sample = c("point", "sample"), n = 1,
+  slp.int.means = NULL, slp.int.vcov = NULL)
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}
@@ -66,3 +66,4 @@ CalibUK37(temperature = 1, proxy.value = 1)
 Other calib: \code{\link{CalibMgCa}},
   \code{\link{ProxyConversion}}
 }
+\concept{calib}
