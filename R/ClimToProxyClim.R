@@ -347,7 +347,7 @@ ClimToProxyClim <- function(clim.signal,
     bioturb.window <- first.tp:last.tp
 
     # Get bioturbation weights --------
-    bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.depth = timepoints[tp],
+    bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
                                            layer.width = layer.width, sed.acc.rate = sed.acc.rate[tp],
                                            bio.depth = bio.depth)
 
@@ -647,7 +647,7 @@ ClimToProxyClim <- function(clim.signal,
 
   attr(simulated.proxy, "calibration.pars") <-  calibration.pars
   attr(everything, "calibration.pars") <-  calibration.pars
-  
+
   out <- list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = everything,

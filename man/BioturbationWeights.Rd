@@ -4,13 +4,13 @@
 \alias{BioturbationWeights}
 \title{Bioturbation weights}
 \usage{
-BioturbationWeights(z, focal.depth, layer.width = 1, sed.acc.rate,
-  bio.depth, scale = c("time", "depth"))
+BioturbationWeights(z, focal.z, layer.width = 1, sed.acc.rate, bio.depth,
+  scale = c("time", "depth"))
 }
 \arguments{
 \item{z}{A vector of times or depths at which to evaluate the bioturbation weights}
 
-\item{focal.depth}{The depth (or time) for which source dates are wanted}
+\item{focal.z}{The depth (or time) for which source dates are wanted}
 
 \item{layer.width}{the width of the sediment layer from which samples were
 taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
@@ -24,8 +24,8 @@ to 50 cm per ka. Either a single value, or vector of same length as
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm.}
 
-\item{scale}{whether to scale depths by sediment accumulation rate to give
-positions in terms of time}
+\item{scale}{Whether to scale depths by sediment accumulation rate to give
+positions in terms of time. Defaults to time.}
 }
 \value{
 a vector of weights
@@ -41,7 +41,7 @@ were picked/extracted. It is a probability density function.
 }
 \examples{
 z <- 0:10000
-w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, bio.depth = 10)
+w <- BioturbationWeights(z, focal.z = 4000, layer.width = 1, sed.acc.rate = 5, bio.depth = 10)
 plot(z, w, "l")
 }
 \references{

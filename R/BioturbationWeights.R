@@ -8,9 +8,9 @@
 #' were picked/extracted. It is a probability density function.
 #' @inheritParams ClimToProxyClim
 #' @param z A vector of times or depths at which to evaluate the bioturbation weights
-#' @param focal.depth The depth (or time) for which source dates are wanted
-#' @param scale whether to scale depths by sediment accumulation rate to give
-#' positions in terms of time
+#' @param focal.z The depth (or time) for which source dates are wanted
+#' @param scale Whether to scale depths by sediment accumulation rate to give
+#' positions in terms of time. Defaults to time.
 #' @return a vector of weights
 #' @export
 #' @references Berger, W. H., & Heath, G. R. (1968).
@@ -18,29 +18,28 @@
 #' Journal of Marine Research, 26(2), 134–143.
 #' @examples
 #' z <- 0:10000
-#' w <- BioturbationWeights(z, focal.depth = 2000, layer.width = 1, sed.acc.rate = 5 / 1000, bio.depth = 10)
+#' w <- BioturbationWeights(z, focal.z = 4000, layer.width = 1, sed.acc.rate = 5, bio.depth = 10)
 #' plot(z, w, "l")
-BioturbationWeights <- function(z, focal.depth, layer.width=1, sed.acc.rate, bio.depth, scale = c("time", "depth")){
+BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.depth, scale = c("time", "depth")){
 
   sed.acc.rate <- sed.acc.rate / 1000
 
   scale <- match.arg(scale)
 
-  if (scale == "time"){
-    lwy <- ceiling(layer.width / sed.acc.rate)
-    lwy[lwy < 1] <- 1
-    mdy <- ceiling(bio.depth / sed.acc.rate)
-  }else{
-    lwy <- (layer.width)
-    mdy <- (bio.depth)
+  if (scale == "depth"){
+    z <- z / sed.acc.rate
+    focal.z <- focal.z / sed.acc.rate
   }
 
-  fd <- focal.depth
+  lwy <- ceiling(layer.width / sed.acc.rate)
+  lwy[lwy < 1] <- 1
+  mdy <- ceiling(bio.depth / sed.acc.rate)
+
 
   C <- lwy/2
   lam <- 1/mdy
 
-  z <- z - fd + mdy
+  z <- z - focal.z + mdy
 
   if (mdy <= 1){
     fz <- dunif(z, -C, C)
