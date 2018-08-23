@@ -158,7 +158,7 @@ clim.in <- ts(clim.in, start = -39)
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       proxy.prod.weights = N41.G.ruber.seasonality,
+                       habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        sigma.measurement = 0.45,
                        sigma.individual = 0,
@@ -174,18 +174,18 @@ PFM$everything
 
 ```
 ## # A tibble: 14,045 x 10
-##    timepoints replicate stage   value label description   scale plot.order
-##         <dbl>     <dbl> <chr>   <dbl> <chr> <chr>         <chr>      <dbl>
-##  1       4334         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  2       4527         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  3       4576         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  4       4721         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  5       4914         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  6       4994         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-##  7       5092         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-##  8       5156         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-##  9       5254         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-## 10       5318         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
+##    timepoints replicate stage  value label description scale plot.order
+##         <dbl>     <dbl> <chr>  <dbl> <chr> <chr>       <chr>      <dbl>
+##  1       4334         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  2       4527         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  3       4576         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  4       4721         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  5       4914         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  6       4994         1 prox… 0.0250 (4) … Climate si… Prox…          7
+##  7       5092         1 prox… 0.0250 (4) … Climate si… Prox…          7
+##  8       5156         1 prox… 0.0250 (4) … Climate si… Prox…          7
+##  9       5254         1 prox… 0.0250 (4) … Climate si… Prox…          7
+## 10       5318         1 prox… 0.0250 (4) … Climate si… Prox…          7
 ## # ... with 14,035 more rows, and 2 more variables: plotting.colour <chr>,
 ## #   plotting.alpha <dbl>
 ```

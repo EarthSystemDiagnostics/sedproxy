@@ -63,14 +63,14 @@
 #'   averaged) version of the input climate signal returned for plotting. This
 #'   does not affect what the proxy model uses as input. If set to NA, no
 #'   smoothed climate output is generated, this can speed up some simulations.
-#' @param proxy.prod.weights Production weights for the proxy / proxy-carrier
+#' @param habitat.weights Production weights for the proxy / proxy-carrier
 #' either as a vector of values with length = ncol(clim.signal), i.e. 1 weight
 #' for each month x habitat combination, a matrix of the same dimensions as the
 #' input climate signal matrix, or a function that produces an index of
 #' productivity as a function of temperature.
 #' Defaults to a vector of length = ncol(clim.signal) of equal weights.
-#' @param proxy.prod.args A named list of parameter values to be passed to
-#' a function named in proxy.prod.weights.
+#' @param habitat.wt.args A named list of parameter values to be passed to
+#' a function named in habitat.weights.
 #' @param bio.depth Depth of the bioturbated layer in cm, defaults to 10 cm.
 #' @param layer.width the width of the sediment layer from which samples were
 #'   taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
@@ -149,7 +149,7 @@
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
 #'                        proxy.calibration.type = "identity",
-#'                        proxy.prod.weights = N41.G.ruber.seasonality,
+#'                        habitat.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
 #'                        layer.width = 1,
 #'                        sigma.measurement = 0.46,
@@ -174,9 +174,9 @@ ClimToProxyClim <- function(clim.signal,
                                                 UK37 = "additive",
                                                 MgCa = "multiplicative"),
                             smoothed.signal.res = 100,
-                            proxy.prod.weights = rep(1/ncol(clim.signal),
+                            habitat.weights = rep(1/ncol(clim.signal),
                                                      ncol(clim.signal)),
-                            proxy.prod.args = NULL,
+                            habitat.wt.args = NULL,
                             bio.depth = 10,
                             sed.acc.rate = 50,
                             layer.width = 1,
@@ -209,17 +209,17 @@ ClimToProxyClim <- function(clim.signal,
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
 
-  if (any(is.function(proxy.prod.weights),
-          (is.vector(proxy.prod.weights)&length(proxy.prod.weights) == ncol(clim.signal)),
-          (is.matrix(proxy.prod.weights)&dim(proxy.prod.weights) == dim(clim.signal))) == FALSE)
-    stop("proxy.prod.weights must be either a vector of weights with length = ncol(clim.signal),
+  if (any(is.function(habitat.weights),
+          (is.vector(habitat.weights)&length(habitat.weights) == ncol(clim.signal)),
+          (is.matrix(habitat.weights)&dim(habitat.weights) == dim(clim.signal))) == FALSE)
+    stop("habitat.weights must be either a vector of weights with length = ncol(clim.signal),
          a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
 
 
   # Ensure seasonal productivities are weights
-  proxy.prod.weights <- proxy.prod.weights / sum(proxy.prod.weights)
+  habitat.weights <- habitat.weights / sum(habitat.weights)
 
   # Calculate timepoint invariant values ------
   max.clim.signal.i <- end(clim.signal)[1]
@@ -291,16 +291,16 @@ ClimToProxyClim <- function(clim.signal,
 
 
   # Generate productivity weights from function if supplied
-  if (is.function(proxy.prod.weights)){
-    FUN <- match.fun(proxy.prod.weights)
-    proxy.prod.weights <- do.call(FUN, args = c(list(x = clim.signal), proxy.prod.args))
-    proxy.prod.weights <- proxy.prod.weights / sum(proxy.prod.weights)
+  if (is.function(habitat.weights)){
+    FUN <- match.fun(habitat.weights)
+    habitat.weights <- do.call(FUN, args = c(list(x = clim.signal), habitat.wt.args))
+    habitat.weights <- habitat.weights / sum(habitat.weights)
   }
 
   # If vector ensure seasonal productivities are weights and matrix
-  if (is.vector(proxy.prod.weights)){
-    proxy.prod.weights <- proxy.prod.weights / sum(proxy.prod.weights)
-    proxy.prod.weights <- matrix(rep(proxy.prod.weights, nrow(clim.signal)),
+  if (is.vector(habitat.weights)){
+    habitat.weights <- habitat.weights / sum(habitat.weights)
+    habitat.weights <- matrix(rep(habitat.weights, nrow(clim.signal)),
                                  nrow = nrow(clim.signal), byrow = TRUE)
   }
 
@@ -371,9 +371,9 @@ ClimToProxyClim <- function(clim.signal,
 
 
     # Get bioturbation X seasonality weights matrix ---------
-    proxy.prod.weights <- proxy.prod.weights[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
-    proxy.prod.weights <- proxy.prod.weights / sum(proxy.prod.weights)
-    clim.sig.weights <- bioturb.weights * proxy.prod.weights
+    habitat.weights <- habitat.weights[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
+    habitat.weights <- habitat.weights / sum(habitat.weights)
+    clim.sig.weights <- bioturb.weights * habitat.weights
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
     # Check weights sum to 1, within tolerance
@@ -410,7 +410,7 @@ ClimToProxyClim <- function(clim.signal,
 
       # Get without seasonal aliasing (bioturbation aliasing only)
 
-      clim.sig.window.ann <- rowSums(clim.sig.window * proxy.prod.weights)
+      clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights)
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
       samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])

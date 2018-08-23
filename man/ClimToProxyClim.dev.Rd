@@ -6,8 +6,8 @@
 \usage{
 ClimToProxyClim.dev(clim.signal, timepoints,
   proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, proxy.prod.weights = rep(1, 12),
-  proxy.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
+  smoothed.signal.res = 100, habitat.weights = rep(1, 12),
+  habitat.wt.args = NULL, bio.depth = 10, sed.acc.rate = 50,
   meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
 }
 \arguments{
@@ -28,12 +28,12 @@ averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.}
 
-\item{proxy.prod.weights}{Either the seasonal pattern of productivity for the organism(s)
+\item{habitat.weights}{Either the seasonal pattern of productivity for the organism(s)
 recording / producing the proxy as a vector of 12 values, or a function that
 produces an index of productivity as a function of temperature.
 Defaults to a uniform seasonal distribution.}
 
-\item{proxy.prod.args}{A named list of parameters to be passed to a function named in proxy.prod.weights}
+\item{habitat.wt.args}{A named list of parameters to be passed to a function named in habitat.weights}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm.}
 

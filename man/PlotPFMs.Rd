@@ -36,7 +36,7 @@ clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       proxy.prod.weights = N41.G.ruber.seasonality,
+                       habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        sigma.measurement = 0.45,
                        sigma.individual = 0,

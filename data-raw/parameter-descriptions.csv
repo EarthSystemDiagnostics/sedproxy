@@ -1,13 +1,14 @@
 Function argument;Description;Possible sources;Default
 clim.signal;Input climate signal from which a pseudo-proxy will be forward modelled.;Climate model, instrumental record.;
 timepoints;Timepoints at which to generate pseudo-proxy values.;Arbitrary, or to match an existing proxy record.;
-proxy.prod.weights;Proxy production weights provide information on seasonal and habitat (e.g. depth) differences in the amount of proxy material produced. This allows seasonal and habitat biases in the recorded climate to be modelled. ;"Sediment trap data or dynamic population/biogeochemical model (Fraile et al., 2008; Uitz et al., 2010 )";equal for all
+proxy.calibration.type;"Type of proxy, e.g. Uk'37 or MgCa, to which the clim.signal is converted before the archiving and measurement of the proxy is simulated. Defaults to ""identity"" which means no conversion takes place.";;identity
+habitat.weights;habitat weights provide information on seasonal and habitat (e.g. depth) differences in the amount of proxy material produced. This allows seasonal and habitat biases in the recorded climate to be modelled. ;"Sediment trap data or dynamic population/biogeochemical model (Fraile et al., 2008; Uitz et al., 2010 )";equal for all
 bio.depth;Bioturbation depth in cm, the depth down to which the sediment is mixed by burrowing organisms.;Estimated from radiocarbon or from global distribution (Teal et al., 2010).;10
 sed.acc.rate;Sediment accumulation rate in cm ka^-1^.;Sediment core age model.;50
 layer.width;Width of the sediment layer in cm from which samples were taken, e.g. foraminifera were picked or alkenones were extracted.;Core sampling protocol;1
 n.samples;No. of e.g. foraminifera sampled per timepoint. A single number or a vector with one value for each timepoint.;Core sampling protocol;30
-sigma.measurement;Standard deviation of measurement error.;;
-sigma.individual;Standard deviation of individual variation.;;0
+sigma.measurement;Standard deviation of measurement error.;Reproducibility of measurements on real world material.;
+sigma.individual;Standard deviation of individual variation.;;
 meas.bias;Each replicate proxy time-series has a constant bias added drawn from a normal distribution with mean = 0, sd = meas.bias.;;0
 ;;;
 n.replicates;Number of replicate pseudo-proxy time-series to simulate from the climate signal.;;

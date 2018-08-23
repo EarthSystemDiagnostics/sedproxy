@@ -10,8 +10,8 @@ ClimToProxyClim(clim.signal, timepoints,
   slp.int.means = NULL, slp.int.vcov = NULL,
   noise.type = switch(proxy.calibration.type, identity = "additive", UK37
   = "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
-  proxy.prod.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
-  proxy.prod.args = NULL, bio.depth = 10, sed.acc.rate = 50,
+  habitat.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
+  habitat.wt.args = NULL, bio.depth = 10, sed.acc.rate = 50,
   layer.width = 1, sigma.measurement = 0, sigma.individual = 0,
   meas.bias = 0, scale.noise = switch(proxy.calibration.type, identity
   = FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf,
@@ -52,15 +52,15 @@ averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.}
 
-\item{proxy.prod.weights}{Production weights for the proxy / proxy-carrier
+\item{habitat.weights}{Production weights for the proxy / proxy-carrier
 either as a vector of values with length = ncol(clim.signal), i.e. 1 weight
 for each month x habitat combination, a matrix of the same dimensions as the
 input climate signal matrix, or a function that produces an index of
 productivity as a function of temperature.
 Defaults to a vector of length = ncol(clim.signal) of equal weights.}
 
-\item{proxy.prod.args}{A named list of parameter values to be passed to
-a function named in proxy.prod.weights.}
+\item{habitat.wt.args}{A named list of parameter values to be passed to
+a function named in habitat.weights.}
 
 \item{bio.depth}{Depth of the bioturbated layer in cm, defaults to 10 cm.}
 
@@ -183,7 +183,7 @@ clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, start = -39)
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       proxy.prod.weights = N41.G.ruber.seasonality,
+                       habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        layer.width = 1,
                        sigma.measurement = 0.46,

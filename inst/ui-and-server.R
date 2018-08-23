@@ -280,7 +280,7 @@ ui <- fluidPage(
                               "Modify the 12 monthly weights",
                               "1,1,1,1,1,1,1,1,1,1,1,1"
                             ),
-                            span(textOutput("proxy.prod.weights.check"), style = "color:red")
+                            span(textOutput("habitat.weights.check"), style = "color:red")
                           )
                         )
                       ))),
@@ -291,7 +291,7 @@ ui <- fluidPage(
           numericInput(
             "sigma.measurement",
             h5("Measurement noise"),
-            value = 0.46,
+            value = 0.26,
             step = 0.01,
             min = 0,
             max = 1
@@ -302,7 +302,7 @@ ui <- fluidPage(
           numericInput(
             "sigma.individual",
             h5("Individual noise"),
-            value = 0,
+            value = 2,
             step = 0.1,
             min = 0,
             max = 2
@@ -351,7 +351,7 @@ ui <- fluidPage(
              plotOutput("pfm.plot", height = "800px")),
     tabPanel("Numbers",
              dataTableOutput("pfm.str")),
-    tabPanel("Placeholder", textOutput("proxy.prod.weights"))
+    tabPanel("Placeholder", textOutput("habitat.weights"))
   ))
   )
 
@@ -389,7 +389,7 @@ server <- function(input, output) {
     }
     return(v)
   }, ignoreNULL = FALSE)
-  output$proxy.prod.weights.check <- renderText({
+  output$habitat.weights.check <- renderText({
     if (length(seasprod()) != 12)
     {
       paste0("You entered ",
@@ -404,7 +404,7 @@ server <- function(input, output) {
       smoothed.signal.res = 100,
       bio.depth = input$bio.depth,
       sed.acc.rate = input$sed.acc.rate,
-      proxy.prod.weights = seasprod(),
+      habitat.weights = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
       sigma.measurement = input$sigma.measurement,
@@ -414,7 +414,9 @@ server <- function(input, output) {
   }, ignoreNULL = FALSE)
   output$pfm.plot <- renderPlot({
     dat <- pfm()$everything
-    dat <- subset(dat, dat$stage %in% input$stages)
+    #cal.pars <- attr(dat, "calibration.pars")
+    #dat <- subset(dat, dat$stage %in% input$stages)
+    #attr(dat, "calibration.pars") <- cal.pars
     if (nrow(dat) > 0) {
       PlotPFMs(dat) +
         ggplot2::labs(x = "Age [years]")
