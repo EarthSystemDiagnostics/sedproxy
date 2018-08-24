@@ -26,12 +26,12 @@ stages.key <- dplyr::tibble(
     "(2) +Bioturbation",
     "(3) +Habitat bias",
     "(.) +Bias",
-    "(5) +Ind. error",
+    "(5) +Independent error",
     "(4) +Aliasing Y",
     "(4) +Aliasing YM",
     "(.) +Bias",
-    "(5) +Ind. error",
-    "(5) +Ind. error",
+    "(5) +Independent error",
+    "(5) +Independent error",
     "(6) +Calibration uncertainty",
     "(7) Reconstructed climate",
     "(*) Observed proxy"
@@ -64,7 +64,25 @@ stages.key <- dplyr::tibble(
                       "Red",
                       "Blue",
                       "Red"),
-  plotting.alpha = c(1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5, 0.5)
+  plotting.alpha = c(
+    "timepoints" = 1,
+    "clim.signal.ann" = 1,
+    "clim.signal.smoothed" = 1,
+    "clim.timepoints.ssr" = 1,
+    "proxy.bt" = 1,
+    "proxy.bt.sb" = 1,
+    "proxy.bt.sb.inf.b" = 0.5,
+    "proxy.bt.sb.inf.b.n" = 0.5,
+    "proxy.bt.sb.sampY" = 0.5,
+    "proxy.bt.sb.sampYM" = 1,
+    "proxy.bt.sb.sampYM.b" = 0.5,
+    "proxy.bt.sb.sampYM.b.n" = 0.5,
+    "simulated.proxy" = 1,
+    "simulated.proxy.cal.err" = 1,
+    "reconstructed.climate" = 0.5,
+    "observed.proxy" = 0.5
+    #1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5, 0.5
+    )
   #plotting.alpha = rep(1, 13)
 )
 
