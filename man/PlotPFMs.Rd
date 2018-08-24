@@ -4,9 +4,8 @@
 \alias{PlotPFMs}
 \title{Plot forward modelled sedimentary proxies}
 \usage{
-PlotPFMs(PFMs, stage.order = c("var", "seq"),
-  plot.stages = c("default"), max.replicates = 5,
-  colr.palette = "default", alpha.palette = "default",
+PlotPFMs(PFMs, stage.order = c("var", "seq"), plot.stages = c("default"),
+  max.replicates = 5, colr.palette = "default", alpha.palette = "default",
   levl.labels = "default")
 }
 \arguments{

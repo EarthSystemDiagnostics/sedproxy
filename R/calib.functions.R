@@ -59,6 +59,13 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
     stop("One and only one of temperature or proxy.value must be supplied")
   }
   
+  ## Check dimensions if matrix
+  if (any(is.matrix(temperature), is.matrix(proxy.value))){
+    if (point.or.sample == "sample" & max(ncol(temperature), ncol(proxy.value)) != n) {
+      stop("If input is matrix and point.or.sample == 'sample', n must equal ncol(input)")
+    }
+  }
+  
   pct <- match.arg(proxy.calibration.type,
                    choices = c("identity", "MgCa", "UK37"))
   
@@ -91,8 +98,8 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
       
       if (is.null(slp.int.means) == FALSE & is.null(slp.int.vcov))
         warning("Sampling calibration parameters using user supplied values
-              for the mean slope and intercept but the variance covariance matrix for the
-              default or named taxon.")
+                for the mean slope and intercept but the variance covariance matrix for the
+                default or named taxon.")
       
       cfs <- mvtnorm::rmvnorm(n=n, mean=cfs, sigma=vcov)
     }
@@ -100,81 +107,54 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
   
   # Do conversion
   
-  ## check if matrix input
-  if (any(is.matrix(temperature), is.matrix(proxy.value))){
-    if (point.or.sample == "sample" & max(ncol(temperature), ncol(proxy.value)) != n) {
-      stop("If input is matrix and point.or.sample == 'sample', n must equal ncol(input)")
-      }
-    switch(pct,
-           identity = {
-             out <- if (is.null(temperature)){
-               proxy.value
-             } else {
-               temperature
-             }},
-           #  
-           MgCa = {
-             cfs[,2] <- exp(cfs[,2])
-             
-             # convert from temperature to MgCa
-             out <- 
-               if (is.null(proxy.value)){
-                 t(cfs[, 2] * exp(t(temperature) * cfs[, 1]))
-               } else if (is.null(temperature)){
-                 # convert from MgCa to temperature
-                 t(log(t(proxy.value) / cfs[,2]) / cfs[,1])
-               }
-           },
-           
-           UK37 = {
-             # convert from temperature to UK'37
-             out <- if (is.null(proxy.value)){
-               t(cfs[, 2] + t(temperature) * cfs[, 1])
-             } else if (is.null(temperature)){
-               # convert from UK'37 to temperature
-               t((t(proxy.value) - cfs[, 2]) / cfs[, 1])
-             }
-           }
-           
-    )
-    ## Vector input
-  }else if (any(is.vector(temperature), is.vector(proxy.value))){
-    switch(pct,
-           
-           identity = {
-             out <- if (is.null(temperature)){
-               matrix(rep(proxy.value, n), ncol = n)
-             } else {
-               matrix(rep(temperature, n), ncol = n)
-             }},
-           #  
-           MgCa = {
-             cfs[,2] <- exp(cfs[,2])
-             
-             # convert from temperature to MgCa
-             out <- 
-               if (is.null(proxy.value)){
-                 
-                 t(cfs[, 2] * exp(outer(cfs[, 1], temperature, FUN = "*")))
-               } else if (is.null(temperature)){
-                 # convert from MgCa to temperature
-                 t(t(log(outer(proxy.value, cfs[, 2], FUN = "/"))) / cfs[, 1])
-               }
-           },
-           
-           UK37 = {
-             # convert from temperature to UK'37
-             out <- if (is.null(proxy.value)){
-               t(cfs[, 2] + (outer(cfs[, 1], temperature, FUN = "*")))
-             } else if (is.null(temperature)){
-               # convert from UK'37 to temperature
-               t(t(outer(proxy.value, cfs[, 2], FUN = "-")) / cfs[, 1])
-             }
-           }
-    )
+  ## check if vector input and convert to 1 column matrix
+  is.vec <- any(is.vector(temperature), is.vector(proxy.value))
+  
+  if (is.vec){
+    if (is.null(temperature)){
+      proxy.value <- matrix(proxy.value, ncol = 1)  
+    } else if (is.null(proxy.value)){
+      temperature <- matrix(temperature, ncol = 1)
+    }
   }
   
-
+  switch(pct,
+         identity = {
+           out <- if (is.null(temperature)){
+             proxy.value
+           } else {
+             temperature
+           }},
+         #  
+         MgCa = {
+           cfs[,2] <- exp(cfs[,2])
+           
+           # convert from temperature to MgCa
+           out <- 
+             if (is.null(proxy.value)){
+               t(cfs[, 2] * exp(t(temperature) * cfs[, 1]))
+             } else if (is.null(temperature)){
+               # convert from MgCa to temperature
+               t(log(t(proxy.value) / cfs[,2]) / cfs[,1])
+             }
+         },
+         
+         UK37 = {
+           # convert from temperature to UK'37
+           out <- if (is.null(proxy.value)){
+             t(cfs[, 2] + t(temperature) * cfs[, 1])
+           } else if (is.null(temperature)){
+             # convert from UK'37 to temperature
+             t((t(proxy.value) - cfs[, 2]) / cfs[, 1])
+           }
+         }
+  )
+  
+  # convert back to vector if vector input
+  if (is.vec){
+    out <- as.vector(out)
+  }
+  
   return(out)
 }
 
