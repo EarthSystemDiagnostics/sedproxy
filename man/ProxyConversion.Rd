@@ -65,6 +65,7 @@ ProxyConversion(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point
 
 ## Incompatible arguments
 \dontrun{
-CalibUK37(temperature = 1, proxy.value = 1)
+ProxyConversion(temperature = 1, proxy.value = 1)
 }
 }
+\concept{calib}

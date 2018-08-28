@@ -46,35 +46,35 @@
 #'
 #' ## Incompatible arguments
 #' \dontrun{
-#' CalibUK37(temperature = 1, proxy.value = 1)
+#' ProxyConversion(temperature = 1, proxy.value = 1)
 #' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                             proxy.calibration.type = "identity",
                             slp.int.means = NULL, slp.int.vcov = NULL,
                             taxon = NULL,
                             point.or.sample = c("point", "sample"), n = 1){
-  
+
   if (is.null(temperature) & is.null(proxy.value) |
       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
     stop("One and only one of temperature or proxy.value must be supplied")
   }
-  
+
   ## Check dimensions if matrix
   if (any(is.matrix(temperature), is.matrix(proxy.value))){
     if (point.or.sample == "sample" & max(ncol(temperature), ncol(proxy.value)) != n) {
       stop("If input is matrix and point.or.sample == 'sample', n must equal ncol(input)")
     }
   }
-  
+
   pct <- match.arg(proxy.calibration.type,
                    choices = c("identity", "MgCa", "UK37"))
-  
+
   point.or.sample <- match.arg(point.or.sample)
-  
+
   if (point.or.sample == "point" & n > 1){
     stop("Multiple replicates only returned if point.or.sample == 'sample'")}
-  
-  
+
+
   ## Get calibration parameters
   if (pct != "identity"){
     if (is.null(taxon)) taxon <- 1
@@ -84,80 +84,75 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
           "means"]][c("slope", "intercept")]
       cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
     }else{cfs <- matrix(slp.int.means, nrow = 1)}
-    
+
     if (is.null(slp.int.vcov)){
-      vcov <- 
+      vcov <-
         sedproxy::CalibrationParameters[[pct]][[taxon]][[
           "vcov"]][c("slope", "intercept"), c("slope", "intercept")]
-      
+
     }else{
       vcov <- slp.int.vcov
     }
-    
+
     if (point.or.sample == "sample"){
-      
+
       if (is.null(slp.int.means) == FALSE & is.null(slp.int.vcov))
         warning("Sampling calibration parameters using user supplied values
                 for the mean slope and intercept but the variance covariance matrix for the
                 default or named taxon.")
-      
+
       cfs <- mvtnorm::rmvnorm(n=n, mean=cfs, sigma=vcov)
     }
   }
-  
+
   # Do conversion
-  
   ## check if vector input and convert to 1 column matrix
   is.vec <- any(is.vector(temperature), is.vector(proxy.value))
-  
+
   if (is.vec){
     if (is.null(temperature)){
-      proxy.value <- matrix(proxy.value, ncol = 1)  
+      proxy.value <- matrix(proxy.value, ncol = 1)
     } else if (is.null(proxy.value)){
       temperature <- matrix(temperature, ncol = 1)
     }
   }
-  
+
+  LinearConvfun <- function(proxy.value, temperature, cfs){
+    out <- if (is.null(temperature) == FALSE){
+      # convert from temperature to proxy
+      t(cfs[, 2] + t(temperature) * cfs[, 1])
+    } else if (is.null(proxy.value) == FALSE){
+      # convert from proxy to temperature
+      t((t(proxy.value) - cfs[, 2]) / cfs[, 1])
+    }
+    return(out)
+  }
+
+
   switch(pct,
          identity = {
-           out <- if (is.null(temperature)){
-             proxy.value
-           } else {
+           out <- if (is.null(temperature)==FALSE){
              temperature
+           } else {
+             proxy.value
            }},
-         #  
          MgCa = {
-           cfs[,2] <- exp(cfs[,2])
-           
-           # convert from temperature to MgCa
-           out <- 
-             if (is.null(proxy.value)){
-               t(cfs[, 2] * exp(t(temperature) * cfs[, 1]))
-             } else if (is.null(temperature)){
-               # convert from MgCa to temperature
-               t(log(t(proxy.value) / cfs[,2]) / cfs[,1])
-             }
+           out <- LinearConvfun(proxy.value, temperature, cfs)
+           out <- exp(out)
          },
-         
+
          UK37 = {
-           # convert from temperature to UK'37
-           out <- if (is.null(proxy.value)){
-             t(cfs[, 2] + t(temperature) * cfs[, 1])
-           } else if (is.null(temperature)){
-             # convert from UK'37 to temperature
-             t((t(proxy.value) - cfs[, 2]) / cfs[, 1])
-           }
+           out <- LinearConvfun(proxy.value, temperature, cfs)
          }
   )
-  
+
   # convert back to vector if vector input
   if (is.vec){
     out <- as.vector(out)
   }
-  
+
   return(out)
 }
-
 
 ScaleError <- function(mean.temperature = NULL,
                        sd.temperature = NULL,
@@ -168,29 +163,29 @@ ScaleError <- function(mean.temperature = NULL,
                        slp.int.vcov = NULL,
                        taxon = NULL,
                        point.or.sample = c("point", "sample")) {
-  
+
   if (is.null(sd.temperature) & is.null(sd.proxy.value) |
       is.null(sd.temperature) == FALSE &
       is.null(sd.proxy.value) == FALSE) {
-    stop("One and only one of sd.temperature or sd.proxy.value must be supplied 
+    stop("One and only one of sd.temperature or sd.proxy.value must be supplied
          with corresponding mean value")
   }
-  
+
 
   if ((class(sd.temperature) == class(mean.temperature)) == FALSE |
       (class(sd.proxy.value) == class(mean.proxy.value)) == FALSE) {
     stop("Both mean and SD of either temperature or proxy value must be provided.")
   }
-  
-  
+
+
   proxy.calibration.type <- match.arg(proxy.calibration.type,
                                       choices = c("MgCa", "UK37"))
-  
+
   t.mean.plus.sd <- if(is.null(mean.temperature)){NULL} else {
     mean.temperature + sd.temperature}
   p.mean.plus.sd <- if(is.null(mean.proxy.value)){NULL} else {
     mean.proxy.value + sd.proxy.value}
-  
+
   out <- ProxyConversion(
       temperature = t.mean.plus.sd,
       proxy.value = p.mean.plus.sd,
@@ -208,23 +203,23 @@ ScaleError <- function(mean.temperature = NULL,
       taxon = taxon,
       slp.int.means = slp.int.means,
       slp.int.vcov = slp.int.vcov
-    ) 
-  
+    )
+
   return(as.vector(out))
 }
 
 # ScaleError(mean.temperature = c(20, 10), sd.temperature = 2,
 #            proxy.calibration.type = "MgCa")
-# 
+#
 # ScaleError(mean.proxy.value = c(2, 4), sd.proxy.value = 0.1,
 #            proxy.calibration.type = "MgCa")
-# 
+#
 # ScaleError(mean.temperature = c(20, 20), sd.temperature = c(2, 1),
 #            proxy.calibration.type = "UK37")
-# 
+#
 # ScaleError(mean.temperature = c(10, 20), sd.temperature = c(2, 2),
 #            proxy.calibration.type = "UK37")
-# 
+#
 # ScaleError(sd.temperature = c(2, 1),
 #            proxy.calibration.type = "UK37")
 
