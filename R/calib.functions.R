@@ -106,6 +106,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
   }
 
   # Do conversion
+
   ## check if vector input and convert to 1 column matrix
   is.vec <- any(is.vector(temperature), is.vector(proxy.value))
 
@@ -117,32 +118,35 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
     }
   }
 
-  LinearConvfun <- function(proxy.value, temperature, cfs){
-    out <- if (is.null(temperature) == FALSE){
-      # convert from temperature to proxy
-      t(cfs[, 2] + t(temperature) * cfs[, 1])
-    } else if (is.null(proxy.value) == FALSE){
-      # convert from proxy to temperature
-      t((t(proxy.value) - cfs[, 2]) / cfs[, 1])
-    }
-    return(out)
-  }
-
-
   switch(pct,
          identity = {
-           out <- if (is.null(temperature)==FALSE){
-             temperature
-           } else {
+           out <- if (is.null(temperature)){
              proxy.value
+           } else {
+             temperature
            }},
+         #
          MgCa = {
-           out <- LinearConvfun(proxy.value, temperature, cfs)
-           out <- exp(out)
+           cfs[,2] <- exp(cfs[,2])
+
+           # convert from temperature to MgCa
+           out <-
+             if (is.null(proxy.value)){
+               t(cfs[, 2] * exp(t(temperature) * cfs[, 1]))
+             } else if (is.null(temperature)){
+               # convert from MgCa to temperature
+               t(log(t(proxy.value) / cfs[,2]) / cfs[,1])
+             }
          },
 
          UK37 = {
-           out <- LinearConvfun(proxy.value, temperature, cfs)
+           # convert from temperature to UK'37
+           out <- if (is.null(proxy.value)){
+             t(cfs[, 2] + t(temperature) * cfs[, 1])
+           } else if (is.null(temperature)){
+             # convert from UK'37 to temperature
+             t((t(proxy.value) - cfs[, 2]) / cfs[, 1])
+           }
          }
   )
 
@@ -153,6 +157,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   return(out)
 }
+
 
 ScaleError <- function(mean.temperature = NULL,
                        sd.temperature = NULL,

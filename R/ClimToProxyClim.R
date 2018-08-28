@@ -459,21 +459,14 @@ ClimToProxyClim <- function(clim.signal,
                                                    proxy.calibration.type = pct, taxon = taxon,
                                                    slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
-    print(mean.temperature[1:10])
-
-
-    sigma.meas.ind <- ProxyConversion(temperature = mean.temperature + sigma.meas.ind,
+     sigma.meas.ind <- ProxyConversion(temperature = mean.temperature + sigma.meas.ind,
                                       proxy.calibration.type = pct, taxon = taxon,
                                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov) -
       ProxyConversion(temperature = mean.temperature,
                       proxy.calibration.type = pct, taxon = taxon,
                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
 
-    print(sigma.meas.ind)
-
     sigma.meas.ind <- as.vector(sigma.meas.ind)
-
-    print(sigma.meas.ind)
 
     if (noise.type == "multiplicative"){
       # noise SD needs to be divided by the mean temperature in proxy units in

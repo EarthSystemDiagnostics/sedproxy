@@ -160,8 +160,8 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        proxy.calibration.type = "identity",
                        habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       sigma.measurement = 0.45,
-                       sigma.individual = 0,
+                       sigma.measurement = 0.23,
+                       sigma.individual = 2,
                        n.samples = 30,
                        n.replicates = 10)
 ```
