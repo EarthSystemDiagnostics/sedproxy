@@ -311,18 +311,14 @@ ClimToProxyClim <- function(clim.signal,
 
   if (proxy.calibration.type != "identity") {
     proxy.clim.signal <-
-      matrix(
         ProxyConversion(
-          temperature = as.vector(clim.signal),
+          temperature = clim.signal,
           proxy.calibration.type = proxy.calibration.type,
           taxon = taxon,
           slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov,
           point.or.sample = "point",
           n = 1
-        )[, 1],
-        ncol = ncol(clim.signal),
-        byrow = FALSE
-      )
+        )
   } else{
     proxy.clim.signal <- clim.signal
   }
@@ -458,9 +454,12 @@ ClimToProxyClim <- function(clim.signal,
     }
 
     # mean temperature in temperature units at each timepoint - use bioturbated signal
+    print(out$proxy.bt)
     mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
                                                    proxy.calibration.type = pct, taxon = taxon,
                                                    slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
+
+    print(mean.temperature[1:10])
 
 
     sigma.meas.ind <- ProxyConversion(temperature = mean.temperature + sigma.meas.ind,
@@ -469,7 +468,12 @@ ClimToProxyClim <- function(clim.signal,
       ProxyConversion(temperature = mean.temperature,
                       proxy.calibration.type = pct, taxon = taxon,
                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
+
+    print(sigma.meas.ind)
+
     sigma.meas.ind <- as.vector(sigma.meas.ind)
+
+    print(sigma.meas.ind)
 
     if (noise.type == "multiplicative"){
       # noise SD needs to be divided by the mean temperature in proxy units in
