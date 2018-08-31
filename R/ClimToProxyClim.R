@@ -454,7 +454,6 @@ ClimToProxyClim <- function(clim.signal,
     }
 
     # mean temperature in temperature units at each timepoint - use bioturbated signal
-    print(out$proxy.bt)
     mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
                                                    proxy.calibration.type = pct, taxon = taxon,
                                                    slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
