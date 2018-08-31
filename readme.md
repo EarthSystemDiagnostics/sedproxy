@@ -129,14 +129,14 @@ kable(head(N41.proxy), format = "markdown")
 
 
 
-| Published.age| Published.temperature| Sed.acc.rate.cm.ka|
-|-------------:|---------------------:|------------------:|
-|      4334.286|                 28.92|              36.79|
-|      4527.429|                 29.20|              36.75|
-|      4575.714|                 29.15|              36.77|
-|      4720.571|                 28.55|              36.77|
-|      4913.714|                 28.33|              36.70|
-|      4994.400|                 29.44|              36.67|
+| Published.age| Published.temperature| Sed.acc.rate.cm.ka| Proxy.value|
+|-------------:|---------------------:|------------------:|-----------:|
+|      4334.286|                 28.92|              36.79|       4.346|
+|      4527.429|                 29.20|              36.75|       4.460|
+|      4575.714|                 29.15|              36.77|       4.442|
+|      4720.571|                 28.55|              36.77|       4.195|
+|      4913.714|                 28.33|              36.70|       4.109|
+|      4994.400|                 29.44|              36.67|       4.564|
 
 *******
 
@@ -158,10 +158,10 @@ clim.in <- ts(clim.in, start = -39)
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       proxy.prod.weights = N41.G.ruber.seasonality,
+                       habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       sigma.measurement = 0.45,
-                       sigma.individual = 0,
+                       sigma.measurement = 0.23,
+                       sigma.individual = 2,
                        n.samples = 30,
                        n.replicates = 10)
 ```
@@ -174,18 +174,18 @@ PFM$everything
 
 ```
 ## # A tibble: 14,045 x 10
-##    timepoints replicate stage   value label description   scale plot.order
-##         <dbl>     <dbl> <chr>   <dbl> <chr> <chr>         <chr>      <dbl>
-##  1       4334         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  2       4527         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  3       4576         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  4       4721         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  5       4914         1 proxy~ 0.0251 (4) ~ Climate sign~ Prox~          7
-##  6       4994         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-##  7       5092         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-##  8       5156         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-##  9       5254         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
-## 10       5318         1 proxy~ 0.0250 (4) ~ Climate sign~ Prox~          7
+##    timepoints replicate stage  value label description scale plot.order
+##         <dbl>     <dbl> <chr>  <dbl> <chr> <chr>       <chr>      <dbl>
+##  1       4334         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  2       4527         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  3       4576         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  4       4721         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  5       4914         1 prox… 0.0251 (4) … Climate si… Prox…          7
+##  6       4994         1 prox… 0.0250 (4) … Climate si… Prox…          7
+##  7       5092         1 prox… 0.0250 (4) … Climate si… Prox…          7
+##  8       5156         1 prox… 0.0250 (4) … Climate si… Prox…          7
+##  9       5254         1 prox… 0.0250 (4) … Climate si… Prox…          7
+## 10       5318         1 prox… 0.0250 (4) … Climate si… Prox…          7
 ## # ... with 14,035 more rows, and 2 more variables: plotting.colour <chr>,
 ## #   plotting.alpha <dbl>
 ```

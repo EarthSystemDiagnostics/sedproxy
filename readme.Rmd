@@ -108,10 +108,10 @@ clim.in <- ts(clim.in, start = -39)
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
                        proxy.calibration.type = "identity",
-                       proxy.prod.weights = N41.G.ruber.seasonality,
+                       habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       sigma.measurement = 0.45,
-                       sigma.individual = 0,
+                       sigma.measurement = 0.23,
+                       sigma.individual = 2,
                        n.samples = 30,
                        n.replicates = 10)
 ```
@@ -147,7 +147,7 @@ set.seed(26052017)
 PFM_2 <- ClimToProxyClim(clim.signal = clim.in, 
                          timepoints = round(N41.proxy$Published.age),
                          proxy.calibration.type = "MgCa",
-                         proxy.prod.weights = N41.G.ruber.seasonality,
+                         habitat.weights = N41.G.ruber.seasonality,
                          sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                          sigma.measurement = 0.46,
                          sigma.individual = 0,
