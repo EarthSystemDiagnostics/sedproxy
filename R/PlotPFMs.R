@@ -154,7 +154,7 @@ PlotPFMs <- function(PFMs,
                                 labels = levl.labels)
 
   if (cali.attr$proxy.calibration.type != "identity"){
-    p <- p + facet_wrap(~scale, scales = "free_y") +
+    p <- p + #facet_wrap(~scale, scales = "free_y") +
       facet_wrap( ~ scale, strip.position = "left", scales = "free_y") +
       theme(
         # remove the default y-axis title, "wt"
