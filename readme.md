@@ -173,21 +173,20 @@ PFM$everything
 ```
 
 ```
-## # A tibble: 14,045 x 10
-##    timepoints replicate stage  value label description scale plot.order
-##         <dbl>     <dbl> <chr>  <dbl> <chr> <chr>       <chr>      <dbl>
-##  1       4334         1 prox… 0.0251 (4) … Climate si… Prox…          7
-##  2       4527         1 prox… 0.0251 (4) … Climate si… Prox…          7
-##  3       4576         1 prox… 0.0251 (4) … Climate si… Prox…          7
-##  4       4721         1 prox… 0.0251 (4) … Climate si… Prox…          7
-##  5       4914         1 prox… 0.0251 (4) … Climate si… Prox…          7
-##  6       4994         1 prox… 0.0250 (4) … Climate si… Prox…          7
-##  7       5092         1 prox… 0.0250 (4) … Climate si… Prox…          7
-##  8       5156         1 prox… 0.0250 (4) … Climate si… Prox…          7
-##  9       5254         1 prox… 0.0250 (4) … Climate si… Prox…          7
-## 10       5318         1 prox… 0.0250 (4) … Climate si… Prox…          7
-## # ... with 14,035 more rows, and 2 more variables: plotting.colour <chr>,
-## #   plotting.alpha <dbl>
+## # A tibble: 14,045 x 6
+##    timepoints replicate stage              value scale      label         
+##         <dbl>     <dbl> <chr>              <dbl> <chr>      <chr>         
+##  1       4334         1 proxy.bt.sb.sampY 0.0251 Proxy uni… (4) +Aliasing…
+##  2       4527         1 proxy.bt.sb.sampY 0.0251 Proxy uni… (4) +Aliasing…
+##  3       4576         1 proxy.bt.sb.sampY 0.0251 Proxy uni… (4) +Aliasing…
+##  4       4721         1 proxy.bt.sb.sampY 0.0251 Proxy uni… (4) +Aliasing…
+##  5       4914         1 proxy.bt.sb.sampY 0.0251 Proxy uni… (4) +Aliasing…
+##  6       4994         1 proxy.bt.sb.sampY 0.0250 Proxy uni… (4) +Aliasing…
+##  7       5092         1 proxy.bt.sb.sampY 0.0250 Proxy uni… (4) +Aliasing…
+##  8       5156         1 proxy.bt.sb.sampY 0.0250 Proxy uni… (4) +Aliasing…
+##  9       5254         1 proxy.bt.sb.sampY 0.0250 Proxy uni… (4) +Aliasing…
+## 10       5318         1 proxy.bt.sb.sampY 0.0250 Proxy uni… (4) +Aliasing…
+## # ... with 14,035 more rows
 ```
 
 **Simple plotting**

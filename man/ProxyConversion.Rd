@@ -6,8 +6,9 @@
 \usage{
 ProxyConversion(temperature = NULL, proxy.value = NULL,
   proxy.calibration.type = "identity", slp.int.means = NULL,
-  slp.int.vcov = NULL, taxon = NULL, point.or.sample = c("point",
-  "sample"), n = 1)
+  slp.int.vcov = NULL, taxon = switch(proxy.calibration.type, identity
+  = NA, UK37 = "Mueller global", MgCa = "Ten planktonic species_350-500"),
+  point.or.sample = c("point", "sample"), n = 1)
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}

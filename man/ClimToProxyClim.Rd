@@ -6,7 +6,9 @@
 climate signal.}
 \usage{
 ClimToProxyClim(clim.signal, timepoints,
-  proxy.calibration.type = c("identity", "UK37", "MgCa"), taxon = NULL,
+  proxy.calibration.type = c("identity", "UK37", "MgCa"),
+  taxon = switch(proxy.calibration.type, identity = NA, UK37 =
+  "Mueller global", MgCa = "Ten planktonic species_350-500"),
   slp.int.means = NULL, slp.int.vcov = NULL,
   noise.type = switch(proxy.calibration.type, identity = "additive", UK37
   = "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,

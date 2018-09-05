@@ -108,13 +108,55 @@ cat(sinew::tabular(tb))
 cat("#' \\describe{\n", paste0("#'    \\item{", tb$Variable, "}{", tb$Description, "}\n"),"#' }")
 
 
-# calibration parameters
+# Calibration parameters
+
+## MgCa
+### Create table combining estimates vcov matrices with publishd parameters from Anand et al. 2003
 
 MgCa.foram.pars <- climproxycalibration::MgCa.foram.pars
+tbl3 <- climproxycalibration::anand.table.3
+
+
+MgCa.foram.pars.df <- plyr::ldply(MgCa.foram.pars, function(x) {
+  data.frame(slope =  x$means[1],
+             intercept = x$means[2],
+             vcov = I(list(x$vcov)))}
+  , .id = "Species") %>%
+  mutate(Species = as.character(Species))
+
+
+MgCa.foram.pars.df[1, "Species"] <- "Ten planktonic species_350-500"
+
+MgCa.foram.pars.Anand <- left_join(MgCa.foram.pars.df, tbl3[c(1, 22:36),], by = "Species") %>%
+  tbl_df() %>%
+  rename(calibration = Species) %>%
+  mutate(calibration.type = "MgCa") %>%
+  mutate(slope = ifelse(is.na(A), slope, A),
+         intercept = ifelse(is.na(B), intercept, log(B))) %>%
+  select(calibration.type, calibration, slope, intercept, vcov, Notes)
+
+
+
+UK37.pars.df <- tibble(
+  calibration.type = "UK37",
+  calibration = "Mueller global",
+  slope = 0.033,
+  intercept = 0.044,
+  vcov = list(structure(
+    structure(c(1.46053818728255e-07, -2.80815422746781e-06,
+                -2.80815422746781e-06,  6.06536807458765e-05),
+              .Dim = c(2L, 2L)),
+    .Dimnames = list(c("slope", "intercept"),
+                     c("slope", "intercept"))
+    )))
+
+calibration.parameters <- bind_rows(MgCa.foram.pars.Anand, UK37.pars.df)
+
 
 UK37.pars <- list(mueller.uk37 = structure(list(
   means = structure(
-    c(0.0328750614815548, 0.0686612340110185),
+    # Set to Eq. 30, Table 1. Müller et al (1998)
+    c(0.033, 0.044),
     .Names = c("slope", "intercept")
   ),
   vcov = structure(
@@ -129,28 +171,10 @@ UK37.pars <- list(mueller.uk37 = structure(list(
 
 
 CalibrationParameters <- list(MgCa = climproxycalibration::MgCa.foram.pars,
-                              UK37 = list(mueller.uk37 = structure(
-                                list(
-                                  means = structure(
-                                    c(0.0328750614815548, 0.0686612340110185),
-                                    .Names = c("slope", "intercept")
-                                  ),
-                                  vcov = structure(structure(
-                                    c(1.46053818728255e-07,
-                                      -2.80815422746781e-06,
-                                      -2.80815422746781e-06,
-                                      6.06536807458765e-05),
-                                    .Dim = c(2L, 2L)
-                                  ),
-                                  .Dimnames = list(
-                                    c("slope", "intercept"),
-                                    c("slope", "intercept")
-                                  ))
-                                ),
-                                .Names = c("means", "vcov")
-                              )))
+                              UK37 = UK37.pars)
 
 
 devtools::use_data(UK37.pars, overwrite == TRUE)
 devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
 devtools::use_data(CalibrationParameters, overwrite == TRUE)
+devtools::use_data(calibration.parameters, overwrite == TRUE)

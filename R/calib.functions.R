@@ -51,7 +51,10 @@
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                             proxy.calibration.type = "identity",
                             slp.int.means = NULL, slp.int.vcov = NULL,
-                            taxon = NULL,
+                            taxon = switch(proxy.calibration.type,
+                                           identity = NA,
+                                           UK37 = "Mueller global",
+                                           MgCa = "Ten planktonic species_350-500"),
                             point.or.sample = c("point", "sample"), n = 1){
 
   if (is.null(temperature) & is.null(proxy.value) |
@@ -77,18 +80,23 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   ## Get calibration parameters
   if (pct != "identity"){
+    cfs.vcov <- dplyr::filter(sedproxy::calibration.parameters,
+                       calibration.type == pct,
+                       calibration == taxon)
     if (is.null(taxon)) taxon <- 1
     if (is.null(slp.int.means)){
-      cfs <-
-        sedproxy::CalibrationParameters[[pct]][[taxon]][[
-          "means"]][c("slope", "intercept")]
-      cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
+      cfs <-  matrix(c(cfs.vcov$slope, cfs.vcov$intercept), ncol = 2, byrow = TRUE)
+      # cfs <-
+      #   sedproxy::CalibrationParameters[[pct]][[taxon]][[
+      #     "means"]][c("slope", "intercept")]
+      # cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
     }else{cfs <- matrix(slp.int.means, nrow = 1)}
 
     if (is.null(slp.int.vcov)){
-      vcov <-
-        sedproxy::CalibrationParameters[[pct]][[taxon]][[
-          "vcov"]][c("slope", "intercept"), c("slope", "intercept")]
+      vcov <- cfs.vcov$vcov[[1]]
+      # vcov <-
+      #   sedproxy::CalibrationParameters[[pct]][[taxon]][[
+      #     "vcov"]][c("slope", "intercept"), c("slope", "intercept")]
 
     }else{
       vcov <- slp.int.vcov
@@ -157,6 +165,55 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   return(out)
 }
+
+# # Visual checks of calibration data and parameters
+#
+# ## Uk37
+#
+# df <- tibble(x = 1:30,
+#              y = ProxyConversion(temperature = x, point.or.sample = "point",
+#                                  proxy.calibration.type = "UK37"))
+#
+# dat <- climproxycalibration::mueller.uk37.sst
+#
+# dat %>%
+#   ggplot(aes(x = `SST (1-12) [°C]`, y = `UK'37`)) +
+#   geom_point( ) +
+#   geom_line(data = df, aes(x=x, y =y))
+#
+# t1 <- 1:30
+#
+# p1 <- ProxyConversion(temperature = t1, point.or.sample = "point",
+#                       proxy.calibration.type = "UK37")
+#
+# t2 <- ProxyConversion(proxy.value = p1, point.or.sample = "point",
+#                       proxy.calibration.type = "UK37")
+#
+# all.equal(t1, t2)
+#
+#
+# ## MgCa
+#
+# df <- tibble(x = 1:30,
+#              y = ProxyConversion(temperature = x, point.or.sample = "point",
+#                                  proxy.calibration.type = "MgCa"))
+#
+# dat <- climproxycalibration::anand.2003.hydro
+#
+# dat %>%
+#   ggplot(aes(x = calc.t, y = `Mg/Ca (mmol/mol)`)) +
+#   geom_point( ) +
+#   geom_line(data = df, aes(x=x, y =y))
+#
+# t1 <- 1:30
+#
+# p1 <- ProxyConversion(temperature = t1, point.or.sample = "point",
+#                       proxy.calibration.type = "MgCa")
+#
+# t2 <- ProxyConversion(proxy.value = p1, point.or.sample = "point",
+#                       proxy.calibration.type = "MgCa")
+#
+# all.equal(t1, t2)
 
 
 ScaleError <- function(mean.temperature = NULL,
