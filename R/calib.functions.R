@@ -4,18 +4,18 @@
 #'
 #' @param temperature Temperature in degrees C
 #' @param proxy.value Temperature in proxy units
-#' @param proxy.calibration.type Type of proxy, e.g. UK37 or MgCa
+#' @param calibration.type Type of proxy, e.g. Uk37 or MgCa
 #' @param point.or.sample Use the "best estimate" calibration parameters, or
 #'   parameters sampled from the fitted calibration model
 #' @param n the number of replicate conversions to make in the case of sampled
 #'   calibration parameters
-#' @param taxon The name of a specific taxon for which calibration parameters
-#'   are provided by sedproxy. Currently applies only to proxy.calibration.type MgCa.
+#' @param calibration The name of a specific calibration for which calibration parameters
+#'   are provided by sedproxy. Currently applies only to calibration.type MgCa.
 #' @param slp.int.means Optional user supplied vector of values for the slope
 #'   and intercept of the calibration function. Overides the defaults.
 #' @param slp.int.vcov Optional user supplied variance covariance matrix
 #'   calibration parameters. Overides the defaults.
-#' @details Valid entries for taxon are: "10 Foram Taxa", "G. aequilateralis_350-500", "G.
+#' @details Valid entries for calibration are: "Ten planktonic species_350-500", "G. aequilateralis_350-500", "G.
 #'   aequilateralis_500-1000", "G. conglobatus_350-500", "G. hirsuta_350-500",
 #'   "G. inflata_350-500", "G. ruber pink_250-350", "G. ruber pink_350-500", "G.
 #'   ruber white_250-350", "G. ruber white_350-500", "G. sacculifer with
@@ -30,30 +30,30 @@
 #' @examples
 #' # From temperature to UK'37
 #' ## With fixed calibration
-#' ProxyConversion(temperature = c(10, 20), point.or.sample = "point", proxy.calibration.type = "UK37")
+#' ProxyConversion(temperature = c(10, 20), point.or.sample = "point", calibration.type = "Uk37")
 #'
 #' ## With random calibration, 5 replicates
-#' ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")
+#' ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", calibration.type = "Uk37")
 #'
 #'
 #' ## Back-transformation with same calibration
-#' ProxyConversion(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sample = "point"))
-#'            , point.or.sample = "point", proxy.calibration.type = "UK37")
+#' ProxyConversion(proxy.value = as.vector(CalibUk37(temperature = c(21, 22), point.or.sample = "point"))
+#'            , point.or.sample = "point", calibration.type = "Uk37")
 #'
 #' ## Back-transformation with random calibration
-#' ProxyConversion(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sample = "point"))
-#'            , n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")
+#' ProxyConversion(proxy.value = as.vector(CalibUk37(temperature = c(21, 22), point.or.sample = "point"))
+#'            , n = 5, point.or.sample = "sample", calibration.type = "Uk37")
 #'
 #' ## Incompatible arguments
 #' \dontrun{
 #' ProxyConversion(temperature = 1, proxy.value = 1)
 #' }
 ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
-                            proxy.calibration.type = "identity",
+                            calibration.type = "identity",
                             slp.int.means = NULL, slp.int.vcov = NULL,
-                            taxon = switch(proxy.calibration.type,
+                            calibration = switch(calibration.type,
                                            identity = NA,
-                                           UK37 = "Mueller global",
+                                           Uk37 = "Mueller global",
                                            MgCa = "Ten planktonic species_350-500"),
                             point.or.sample = c("point", "sample"), n = 1){
 
@@ -69,8 +69,8 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
     }
   }
 
-  pct <- match.arg(proxy.calibration.type,
-                   choices = c("identity", "MgCa", "UK37"))
+  pct <- match.arg(calibration.type,
+                   choices = c("identity", "MgCa", "Uk37"))
 
   point.or.sample <- match.arg(point.or.sample)
 
@@ -80,14 +80,14 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   ## Get calibration parameters
   if (pct != "identity"){
-    cfs.vcov <- dplyr::filter(sedproxy::calibration.parameters,
-                       calibration.type == pct,
-                       calibration == taxon)
-    if (is.null(taxon)) taxon <- 1
+
+    prs <- calibration.parameters
+    cfs.vcov <- prs[prs$calibration.type == pct & prs$calibration == calibration, ]
+    #if (is.null(calibration)) calibration <- 1
     if (is.null(slp.int.means)){
       cfs <-  matrix(c(cfs.vcov$slope, cfs.vcov$intercept), ncol = 2, byrow = TRUE)
       # cfs <-
-      #   sedproxy::CalibrationParameters[[pct]][[taxon]][[
+      #   sedproxy::CalibrationParameters[[pct]][[calibration]][[
       #     "means"]][c("slope", "intercept")]
       # cfs <-  matrix(cfs, ncol = 2, byrow = TRUE)
     }else{cfs <- matrix(slp.int.means, nrow = 1)}
@@ -95,7 +95,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
     if (is.null(slp.int.vcov)){
       vcov <- cfs.vcov$vcov[[1]]
       # vcov <-
-      #   sedproxy::CalibrationParameters[[pct]][[taxon]][[
+      #   sedproxy::CalibrationParameters[[pct]][[calibration]][[
       #     "vcov"]][c("slope", "intercept"), c("slope", "intercept")]
 
     }else{
@@ -107,10 +107,10 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
       if (is.null(slp.int.means) == FALSE & is.null(slp.int.vcov))
         warning("Sampling calibration parameters using user supplied values
                 for the mean slope and intercept but the variance covariance matrix for the
-                default or named taxon.")
+                default or named calibration.")
 
       cfs <- mvtnorm::rmvnorm(n=n, mean=cfs, sigma=vcov)
-    }
+      }
   }
 
   # Do conversion
@@ -147,7 +147,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
              }
          },
 
-         UK37 = {
+         Uk37 = {
            # convert from temperature to UK'37
            out <- if (is.null(proxy.value)){
              t(cfs[, 2] + t(temperature) * cfs[, 1])
@@ -172,7 +172,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #
 # df <- tibble(x = 1:30,
 #              y = ProxyConversion(temperature = x, point.or.sample = "point",
-#                                  proxy.calibration.type = "UK37"))
+#                                  calibration.type = "Uk37"))
 #
 # dat <- climproxycalibration::mueller.uk37.sst
 #
@@ -184,10 +184,10 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 # t1 <- 1:30
 #
 # p1 <- ProxyConversion(temperature = t1, point.or.sample = "point",
-#                       proxy.calibration.type = "UK37")
+#                       calibration.type = "Uk37")
 #
 # t2 <- ProxyConversion(proxy.value = p1, point.or.sample = "point",
-#                       proxy.calibration.type = "UK37")
+#                       calibration.type = "Uk37")
 #
 # all.equal(t1, t2)
 #
@@ -196,7 +196,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #
 # df <- tibble(x = 1:30,
 #              y = ProxyConversion(temperature = x, point.or.sample = "point",
-#                                  proxy.calibration.type = "MgCa"))
+#                                  calibration.type = "MgCa"))
 #
 # dat <- climproxycalibration::anand.2003.hydro
 #
@@ -208,10 +208,10 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 # t1 <- 1:30
 #
 # p1 <- ProxyConversion(temperature = t1, point.or.sample = "point",
-#                       proxy.calibration.type = "MgCa")
+#                       calibration.type = "MgCa")
 #
 # t2 <- ProxyConversion(proxy.value = p1, point.or.sample = "point",
-#                       proxy.calibration.type = "MgCa")
+#                       calibration.type = "MgCa")
 #
 # all.equal(t1, t2)
 
@@ -220,10 +220,10 @@ ScaleError <- function(mean.temperature = NULL,
                        sd.temperature = NULL,
                        mean.proxy.value = NULL,
                        sd.proxy.value = NULL,
-                       proxy.calibration.type,
+                       calibration.type,
                        slp.int.means = NULL,
                        slp.int.vcov = NULL,
-                       taxon = NULL,
+                       calibration = NULL,
                        point.or.sample = c("point", "sample")) {
 
   if (is.null(sd.temperature) & is.null(sd.proxy.value) |
@@ -240,8 +240,8 @@ ScaleError <- function(mean.temperature = NULL,
   }
 
 
-  proxy.calibration.type <- match.arg(proxy.calibration.type,
-                                      choices = c("MgCa", "UK37"))
+  calibration.type <- match.arg(calibration.type,
+                                      choices = c("MgCa", "Uk37"))
 
   t.mean.plus.sd <- if(is.null(mean.temperature)){NULL} else {
     mean.temperature + sd.temperature}
@@ -252,8 +252,8 @@ ScaleError <- function(mean.temperature = NULL,
       temperature = t.mean.plus.sd,
       proxy.value = p.mean.plus.sd,
       point.or.sample = point.or.sample,
-      proxy.calibration.type = proxy.calibration.type,
-      taxon = taxon,
+      calibration.type = calibration.type,
+      calibration = calibration,
       slp.int.means = slp.int.means,
       slp.int.vcov = slp.int.vcov
     ) -
@@ -261,8 +261,8 @@ ScaleError <- function(mean.temperature = NULL,
       temperature = mean.temperature,
       proxy.value = mean.proxy.value,
       point.or.sample = point.or.sample,
-      proxy.calibration.type = proxy.calibration.type,
-      taxon = taxon,
+      calibration.type = calibration.type,
+      calibration = calibration,
       slp.int.means = slp.int.means,
       slp.int.vcov = slp.int.vcov
     )
@@ -271,19 +271,19 @@ ScaleError <- function(mean.temperature = NULL,
 }
 
 # ScaleError(mean.temperature = c(20, 10), sd.temperature = 2,
-#            proxy.calibration.type = "MgCa")
+#            calibration.type = "MgCa")
 #
 # ScaleError(mean.proxy.value = c(2, 4), sd.proxy.value = 0.1,
-#            proxy.calibration.type = "MgCa")
+#            calibration.type = "MgCa")
 #
 # ScaleError(mean.temperature = c(20, 20), sd.temperature = c(2, 1),
-#            proxy.calibration.type = "UK37")
+#            calibration.type = "Uk37")
 #
 # ScaleError(mean.temperature = c(10, 20), sd.temperature = c(2, 2),
-#            proxy.calibration.type = "UK37")
+#            calibration.type = "Uk37")
 #
 # ScaleError(sd.temperature = c(2, 1),
-#            proxy.calibration.type = "UK37")
+#            calibration.type = "Uk37")
 
 #' Calibration Uncertainty
 #'
@@ -305,8 +305,8 @@ ScaleError <- function(mean.temperature = NULL,
 
 # Temp <- 1:30
 #
-# C.U <- CalibrationUncertainty(Temp, means = UK37.pars$mueller.uk37$means,
-#                        vcov = UK37.pars$mueller.uk37$vcov)
+# C.U <- CalibrationUncertainty(Temp, means = Uk37.pars$mueller.uk37$means,
+#                        vcov = Uk37.pars$mueller.uk37$vcov)
 #
 # C.U %>%
 #   ggplot(aes(x = temperature, y = mu)) +
@@ -320,9 +320,9 @@ ScaleError <- function(mean.temperature = NULL,
 # # For Mg/Ca the proxy units need exonentiating
 # C.U <- CalibrationUncertainty(10:28, means = MgCa.foram.pars$`G. aequilateralis_350-500`$means,
 #                               vcov = MgCa.foram.pars$`G. aequilateralis_350-500`$vcov) %>%
-#   mutate(Temp2 = as.vector(ProxyConversion(proxy.value = exp(mu), proxy.calibration.type = "MgCa")),
-#          T.upr = as.vector(ProxyConversion(proxy.value = exp(mu+sigma), proxy.calibration.type = "MgCa")),
-#          T.lwr = as.vector(ProxyConversion(proxy.value = exp(mu-sigma), proxy.calibration.type = "MgCa")))
+#   mutate(Temp2 = as.vector(ProxyConversion(proxy.value = exp(mu), calibration.type = "MgCa")),
+#          T.upr = as.vector(ProxyConversion(proxy.value = exp(mu+sigma), calibration.type = "MgCa")),
+#          T.lwr = as.vector(ProxyConversion(proxy.value = exp(mu-sigma), calibration.type = "MgCa")))
 #
 #
 # C.U %>%
@@ -357,7 +357,7 @@ ScaleError <- function(mean.temperature = NULL,
 #   scale_color_discrete("")
 
 # ProxyConversion(proxy.value = as.vector(CalibMgCa(temperature = c(21, 22), point.or.sample = "point"))
-#                             , point.or.sample = "point", proxy.calibration.type = "MgCa")
+#                             , point.or.sample = "point", calibration.type = "MgCa")
 
 
 CalibrationUncertainty <- function(temperature, means, vcov){
@@ -370,39 +370,39 @@ CalibrationUncertainty <- function(temperature, means, vcov){
 
 
 # CalibrationUncertainty.2 <- function(temperature = NULL, proxy.value = NULL,
-#                                      proxy.calibration.type,
+#                                      calibration.type,
 #                                      slp.int.means = NULL, slp.int.vcov = NULL,
-#                                      taxon = NULL){
+#                                      calibration = NULL){
 #
 #   if (is.null(temperature) & is.null(proxy.value) |
 #       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
 #     stop("One and only one of temperature or proxy.value must be supplied")
 #   }
 #
-#   proxy.calibration.type <- match.arg(proxy.calibration.type,
-#                                       choices = c("MgCa", "UK37"))
+#   calibration.type <- match.arg(calibration.type,
+#                                       choices = c("MgCa", "Uk37"))
 #
-#   if (proxy.calibration.type == "UK37"){
+#   if (calibration.type == "Uk37"){
 #     if (is.null(slp.int.means)){
-#       slp.int.means <- sedproxy::UK37.pars$mueller.uk37$means[c("slope", "intercept")]
+#       slp.int.means <- sedproxy::Uk37.pars$mueller.uk37$means[c("slope", "intercept")]
 #       #slp.int.means <- matrix(slp.int.means, ncol = 2, byrow = TRUE)
 #     }else{slp.int.means <- slp.int.means}
 #
 #     if (is.null(slp.int.vcov)){
-#       slp.int.vcov <- sedproxy::UK37.pars$mueller.uk37$vcov[c("slope", "intercept"), c("slope", "intercept")]
+#       slp.int.vcov <- sedproxy::Uk37.pars$mueller.uk37$vcov[c("slope", "intercept"), c("slope", "intercept")]
 #     }else{
 #       slp.int.vcov <- slp.int.vcov
 #     }
-#   }else if (proxy.calibration.type == "MgCa"){
-#     taxon <- if (is.null(taxon)) {"10 Foram Taxa"} else {match.arg(taxon)}
+#   }else if (calibration.type == "MgCa"){
+#     calibration <- if (is.null(calibration)) {"Ten planktonic species_350-500"} else {match.arg(calibration)}
 #
 #     if (is.null(slp.int.means)){
-#       slp.int.means <- sedproxy::MgCa.foram.pars[[taxon]]$means[c("slope", "intercept")]
+#       slp.int.means <- sedproxy::MgCa.foram.pars[[calibration]]$means[c("slope", "intercept")]
 #
 #     }else{slp.int.means <- matrix(slp.int.means, nrow = 1)}
 #
 #     if (is.null(slp.int.vcov)){
-#       slp.int.vcov <- sedproxy::MgCa.foram.pars[[taxon]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
+#       slp.int.vcov <- sedproxy::MgCa.foram.pars[[calibration]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
 #     }else{
 #       slp.int.vcov <- slp.int.vcov
 #     }
@@ -413,22 +413,22 @@ CalibrationUncertainty <- function(temperature, means, vcov){
 #   vars <- mm %*% slp.int.vcov %*% t(mm)
 #   sd.proxy <- sqrt(diag(vars))
 #   mu.proxy <- as.vector(mm %*% slp.int.means)
-#   if (proxy.calibration.type == "MgCa") {
+#   if (calibration.type == "MgCa") {
 #     sd.proxy = exp(mu.proxy + sd.proxy) - exp(mu.proxy)
 #     mu.proxy = exp(mu.proxy)
 #     }
 #   mu.temperature <- as.vector(ProxyConversion(proxy.value = mu.proxy,
-#                                     proxy.calibration.type = proxy.calibration.type,
+#                                     calibration.type = calibration.type,
 #                                     slp.int.means = slp.int.means))
 #
 #   sd.temperature <- as.vector(ProxyConversion(proxy.value = mu.proxy + sd.proxy,
-#                                               proxy.calibration.type = proxy.calibration.type,
+#                                               calibration.type = calibration.type,
 #                                               slp.int.means = slp.int.means)) -
 #     as.vector(ProxyConversion(proxy.value = mu.proxy,
-#                               proxy.calibration.type = proxy.calibration.type,
+#                               calibration.type = calibration.type,
 #                               slp.int.means = slp.int.means))
 #
-#   if (proxy.calibration.type == "MgCa"){
+#   if (calibration.type == "MgCa"){
 #     # noise SD needs to be divided by the mean temperature in proxy units in
 #     # order to maintain a consistent SD in temperature units.
 #     sd.temperature <- sd.temperature

@@ -15,8 +15,8 @@
 #' @examples
 ClimToProxyClim.dev <- function(clim.signal,
                             timepoints,
-                            proxy.calibration.type = c("identity", "UK37", "MgCa"),
-                            smoothed.signal.res = 100,
+                            calibration.type = c("identity", "Uk37", "MgCa"),
+                            plot.sig.res = 100,
                             habitat.weights = rep(1, 12),
                             habitat.wt.args = NULL,
                             bio.depth = 10,
@@ -113,15 +113,15 @@ ClimToProxyClim.dev <- function(clim.signal,
   }
 
 
-  proxy.calibration.type <- match.arg(proxy.calibration.type)
+  calibration.type <- match.arg(calibration.type)
 
-  if (proxy.calibration.type != "identity") {
+  if (calibration.type != "identity") {
     mean.temperature <-  mean(as.vector(clim.signal))
     proxy.clim.signal <-
       matrix(
         ProxyConversion(
           temperature = as.vector(clim.signal),
-          proxy.calibration.type = proxy.calibration.type,
+          calibration.type = calibration.type,
           point.or.sample = "point",
           n = 1
         )[, 1],
@@ -129,20 +129,20 @@ ClimToProxyClim.dev <- function(clim.signal,
         byrow = FALSE
       )
     meas.noise <- as.vector(ProxyConversion(temperature = mean.temperature + meas.noise,
-                                            proxy.calibration.type = proxy.calibration.type) -
+                                            calibration.type = calibration.type) -
                               ProxyConversion(temperature = mean.temperature,
-                                              proxy.calibration.type = proxy.calibration.type))
+                                              calibration.type = calibration.type))
   } else{
     proxy.clim.signal <- clim.signal
   }
 
   # Create smoothed climate signal --------
-  if (is.na(smoothed.signal.res)) {
+  if (is.na(plot.sig.res)) {
     timepoints.smoothed <- NA
     clim.signal.smoothed <- NA
   } else{
-    timepoints.smoothed <- seq(1, max.clim.signal.i, by = smoothed.signal.res)
-    clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res,
+    timepoints.smoothed <- seq(1, max.clim.signal.i, by = plot.sig.res)
+    clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, plot.sig.res,
                                         proxy.clim.signal)
   }
 
@@ -315,11 +315,11 @@ ClimToProxyClim.dev <- function(clim.signal,
   # Calculate chunked climate at timepoints
 
   # Create smoothed climate signal
-  if (is.na(smoothed.signal.res)) {
+  if (is.na(plot.sig.res)) {
     out$clim.timepoints.ssr <- NA
 
   } else{
-    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, proxy.clim.signal)
+    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, plot.sig.res, proxy.clim.signal)
   }
 
   # Add items to output list -----------

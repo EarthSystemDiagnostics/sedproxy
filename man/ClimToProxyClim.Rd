@@ -5,19 +5,17 @@
 \title{Simulate sediment archived proxy records from an "assumed true"
 climate signal.}
 \usage{
-ClimToProxyClim(clim.signal, timepoints,
-  proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  taxon = switch(proxy.calibration.type, identity = NA, UK37 =
-  "Mueller global", MgCa = "Ten planktonic species_350-500"),
+ClimToProxyClim(clim.signal, timepoints, calibration.type = c("identity",
+  "Uk37", "MgCa"), calibration = switch(calibration.type, identity = NA,
+  Uk37 = "Mueller global", MgCa = "Ten planktonic species_350-500"),
   slp.int.means = NULL, slp.int.vcov = NULL,
-  noise.type = switch(proxy.calibration.type, identity = "additive", UK37
-  = "additive", MgCa = "multiplicative"), smoothed.signal.res = 100,
+  noise.type = switch(calibration.type, identity = "additive", Uk37 =
+  "additive", MgCa = "multiplicative"), plot.sig.res = 100,
   habitat.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
   habitat.wt.args = NULL, bio.depth = 10, sed.acc.rate = 50,
-  layer.width = 1, sigma.measurement = 0, sigma.individual = 0,
-  meas.bias = 0, scale.noise = switch(proxy.calibration.type, identity
-  = FALSE, UK37 = TRUE, MgCa = TRUE), n.samples = Inf,
-  n.replicates = 1)
+  layer.width = 1, sigma.meas = 0, sigma.ind = 0, meas.bias = 0,
+  scale.noise = switch(calibration.type, identity = FALSE, Uk37 = TRUE,
+  MgCa = TRUE), n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
@@ -28,12 +26,12 @@ recent timepoint first" order.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
+\item{calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
 is simulated. Defaults to "identity" which means no conversion takes place.}
 
-\item{taxon}{The name of a specific taxon for which calibration parameters
-are provided by sedproxy. Currently applies only to proxy.calibration.type MgCa.}
+\item{calibration}{The name of a specific calibration for which calibration parameters
+are provided by sedproxy. Currently applies only to calibration.type MgCa.}
 
 \item{slp.int.means}{Optional user supplied vector of values for the slope
 and intercept of the calibration function. Overides the defaults.}
@@ -49,7 +47,7 @@ calibration types. Can be overidden with a string, "additive" or
 measurement noise values are used in combination with an "identity"
 calibration type.}
 
-\item{smoothed.signal.res}{The resolution, in years, of the smoothed (block
+\item{plot.sig.res}{The resolution, in years, of the smoothed (block
 averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.}
@@ -76,14 +74,14 @@ Defaults to 1 cm. If bio.depth and layer.width are both set to zero,
 each timepoint samples from a single year of the clim.signal, equivalent to
 sampling an annually laminated sediment core.}
 
-\item{sigma.measurement}{The standard deviation of the measurement error
+\item{sigma.meas}{The standard deviation of the measurement error
 added to each simulated proxy value.}
 
-\item{sigma.individual}{The standard deviation of error between individuals
+\item{sigma.ind}{The standard deviation of error between individuals
 (e.g. Forams) not otherwise modelled. This could included "vital effects" or
 aliasing of depth habitat variation not modelled via a depth resolved input
-climate signal and habitat weights. sigma.individual is scaled by n.samples
-before being combined with sigma.measurement.}
+climate signal and habitat weights. sigma.ind is scaled by n.samples
+before being combined with sigma.meas.}
 
 \item{meas.bias}{The amount of bias to add to each simulated proxy
 time-series. Each replicate proxy time-series has a constant bias added,
@@ -110,7 +108,7 @@ original climate signal at the requested timepoints.
 
 The dataframe \code{smoothed.signal} contains a block averaged version the
 input climate signal, defaults to 100 year means but this is set by the
-parameter smoothed.signal.res. This is useful for plotting against the
+parameter plot.sig.res. This is useful for plotting against the
 resulting simulated proxy.
 
 The dataframe \code{everything} contains all of the above but with multiple
@@ -123,8 +121,8 @@ climate resolution and column "value" giving the values.
 \describe{
 \item{timepoints}{Requested timepoints}
 \item{clim.signal.ann}{Input climate signal at requested timepoints at annual resolution}
-\item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = smoothed.signal.res}
-\item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res}
+\item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = plot.sig.res}
+\item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = plot.sig.res}
 \item{proxy.bt}{Climate signal after bioturbation}
 \item{proxy.bt.sb}{Climate signal after bioturbation and habitat bias}
 \item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, habitat bias, and calibration bias}
@@ -164,7 +162,7 @@ temperature from a single month. If Mg/Ca is measured on e.g.
 of the true mean climate.
 \item Measurement noise/error is added as a pure Gaussian white noise process
 with mean = 0, standard deviation =
-\code{sqrt(sigma.measurement^2 + sigma.individual^2/n.samples)}.
+\code{sqrt(sigma.meas^2 + sigma.ind^2/n.samples)}.
 \item Additionally, a random \emph{bias} can be added to each realisation of a
 proxy record. Bias is simulated as a Gaussian random variable with mean =
 0, standard deviation = \code{meas.bias}. The same randomly generated bias
@@ -184,13 +182,13 @@ clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, start = -39)
 
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
-                       proxy.calibration.type = "identity",
+                       calibration.type = "identity",
                        habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                        layer.width = 1,
-                       sigma.measurement = 0.46,
-                       sigma.individual = 0, n.samples = Inf,
-                       smoothed.signal.res = 10, meas.bias = 1,
+                       sigma.meas = 0.46,
+                       sigma.ind = 0, n.samples = Inf,
+                       plot.sig.res = 10, meas.bias = 1,
                        n.replicates = 10)
 
 PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +

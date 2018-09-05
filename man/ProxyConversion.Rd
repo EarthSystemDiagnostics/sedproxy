@@ -5,9 +5,9 @@
 \title{Convert between Temperature in Degrees C and Proxy Units}
 \usage{
 ProxyConversion(temperature = NULL, proxy.value = NULL,
-  proxy.calibration.type = "identity", slp.int.means = NULL,
-  slp.int.vcov = NULL, taxon = switch(proxy.calibration.type, identity
-  = NA, UK37 = "Mueller global", MgCa = "Ten planktonic species_350-500"),
+  calibration.type = "identity", slp.int.means = NULL,
+  slp.int.vcov = NULL, calibration = switch(calibration.type, identity
+  = NA, Uk37 = "Mueller global", MgCa = "Ten planktonic species_350-500"),
   point.or.sample = c("point", "sample"), n = 1)
 }
 \arguments{
@@ -15,7 +15,7 @@ ProxyConversion(temperature = NULL, proxy.value = NULL,
 
 \item{proxy.value}{Temperature in proxy units}
 
-\item{proxy.calibration.type}{Type of proxy, e.g. UK37 or MgCa}
+\item{calibration.type}{Type of proxy, e.g. Uk37 or MgCa}
 
 \item{slp.int.means}{Optional user supplied vector of values for the slope
 and intercept of the calibration function. Overides the defaults.}
@@ -23,8 +23,8 @@ and intercept of the calibration function. Overides the defaults.}
 \item{slp.int.vcov}{Optional user supplied variance covariance matrix
 calibration parameters. Overides the defaults.}
 
-\item{taxon}{The name of a specific taxon for which calibration parameters
-are provided by sedproxy. Currently applies only to proxy.calibration.type MgCa.}
+\item{calibration}{The name of a specific calibration for which calibration parameters
+are provided by sedproxy. Currently applies only to calibration.type MgCa.}
 
 \item{point.or.sample}{Use the "best estimate" calibration parameters, or
 parameters sampled from the fitted calibration model}
@@ -39,7 +39,7 @@ a vector of temperatures or proxy values
 A wrapper function for accessing proxy - temperature conversion functions
 }
 \details{
-Valid entries for taxon are: "10 Foram Taxa", "G. aequilateralis_350-500", "G.
+Valid entries for calibration are: "Ten planktonic species_350-500", "G. aequilateralis_350-500", "G.
   aequilateralis_500-1000", "G. conglobatus_350-500", "G. hirsuta_350-500",
   "G. inflata_350-500", "G. ruber pink_250-350", "G. ruber pink_350-500", "G.
   ruber white_250-350", "G. ruber white_350-500", "G. sacculifer with
@@ -50,19 +50,19 @@ Valid entries for taxon are: "10 Foram Taxa", "G. aequilateralis_350-500", "G.
 \examples{
 # From temperature to UK'37
 ## With fixed calibration
-ProxyConversion(temperature = c(10, 20), point.or.sample = "point", proxy.calibration.type = "UK37")
+ProxyConversion(temperature = c(10, 20), point.or.sample = "point", calibration.type = "Uk37")
 
 ## With random calibration, 5 replicates
-ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")
+ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", calibration.type = "Uk37")
 
 
 ## Back-transformation with same calibration
-ProxyConversion(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sample = "point"))
-           , point.or.sample = "point", proxy.calibration.type = "UK37")
+ProxyConversion(proxy.value = as.vector(CalibUk37(temperature = c(21, 22), point.or.sample = "point"))
+           , point.or.sample = "point", calibration.type = "Uk37")
 
 ## Back-transformation with random calibration
-ProxyConversion(proxy.value = as.vector(CalibUK37(temperature = c(21, 22), point.or.sample = "point"))
-           , n = 5, point.or.sample = "sample", proxy.calibration.type = "UK37")
+ProxyConversion(proxy.value = as.vector(CalibUk37(temperature = c(21, 22), point.or.sample = "point"))
+           , n = 5, point.or.sample = "sample", calibration.type = "Uk37")
 
 ## Incompatible arguments
 \dontrun{

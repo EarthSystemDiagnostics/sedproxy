@@ -41,8 +41,8 @@ stages.key <-
       description = c(
         "Requested timepoints",
         "Input climate signal at requested timepoints at annual resolution",
-        "Input climate signal at regular time intervals and resolution = smoothed.signal.res",
-        "Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res",
+        "Input climate signal at regular time intervals and resolution = plot.sig.res",
+        "Input climate signal at requested timepoints, smoothed to resolution = plot.sig.res",
         "Climate signal after bioturbation",
         "Climate signal after bioturbation and habitat bias",
         "Climate signal after bioturbation, habitat bias, and bias",
@@ -289,7 +289,7 @@ ui <- fluidPage(
         column(
           6,
           numericInput(
-            "sigma.measurement",
+            "sigma.meas",
             h5("Measurement noise"),
             value = 0.26,
             step = 0.01,
@@ -300,7 +300,7 @@ ui <- fluidPage(
         column(
           6,
           numericInput(
-            "sigma.individual",
+            "sigma.ind",
             h5("Individual noise"),
             value = 2,
             step = 0.1,
@@ -401,14 +401,14 @@ server <- function(input, output) {
     pfm <- ClimToProxyClim(
       clim.signal = clim(),
       timepoints = timepoints(),
-      smoothed.signal.res = 100,
+      plot.sig.res = 100,
       bio.depth = input$bio.depth,
       sed.acc.rate = input$sed.acc.rate,
       habitat.weights = seasprod(),
       n.samples = input$n.samples,
       n.replicates = input$n.replicates,
-      sigma.measurement = input$sigma.measurement,
-      sigma.individual = input$sigma.individual,
+      sigma.meas = input$sigma.meas,
+      sigma.ind = input$sigma.ind,
       meas.bias = input$meas.bias
     )
   }, ignoreNULL = FALSE)

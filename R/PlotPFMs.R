@@ -20,13 +20,13 @@
 #'
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
-#'                        proxy.calibration.type = "identity",
+#'                        calibration.type = "identity",
 #'                        habitat.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-#'                        sigma.measurement = 0.45,
-#'                        sigma.individual = 0,
+#'                        sigma.meas = 0.45,
+#'                        sigma.ind = 0,
 #'                        n.samples = Inf,
-#'                        smoothed.signal.res = 10, meas.bias = 1,
+#'                        plot.sig.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
 #'
 #' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
@@ -87,7 +87,7 @@ PlotPFMs <- function(PFMs,
   cali.attr <- attr(PFMs, "calibration.pars")
   
   if (plot.stages[1] == "default") {
-    if (cali.attr$proxy.calibration.type == "identity"){
+    if (cali.attr$calibration.type == "identity"){
       plotting.levels <- c(
         "clim.signal.monthly", "clim.signal.smoothed", "proxy.bt", "proxy.bt.sb",
         "proxy.bt.sb.sampYM",  "simulated.proxy", "observed.proxy"
@@ -153,7 +153,7 @@ PlotPFMs <- function(PFMs,
     p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
 
-  if (cali.attr$proxy.calibration.type != "identity"){
+  if (cali.attr$calibration.type != "identity"){
     p <- p + #facet_wrap(~scale, scales = "free_y") +
       facet_wrap( ~ scale, strip.position = "left", scales = "free_y") +
       theme(

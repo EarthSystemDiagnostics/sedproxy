@@ -39,8 +39,8 @@ stages.key <- dplyr::tibble(
   description = c(
     "Requested timepoints",
     "Input climate signal at requested timepoints at annual resolution",
-    "Input climate signal at regular time intervals and resolution = smoothed.signal.res",
-    "Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res",
+    "Input climate signal at regular time intervals and resolution = plot.sig.res",
+    "Input climate signal at requested timepoints, smoothed to resolution = plot.sig.res",
     "Climate signal after bioturbation",
     "Climate signal after bioturbation and habitat bias",
     "Climate signal after bioturbation, habitat bias, and bias",
@@ -137,8 +137,8 @@ MgCa.foram.pars.Anand <- left_join(MgCa.foram.pars.df, tbl3[c(1, 22:36),], by = 
 
 
 
-UK37.pars.df <- tibble(
-  calibration.type = "UK37",
+Uk37.pars.df <- tibble(
+  calibration.type = "Uk37",
   calibration = "Mueller global",
   slope = 0.033,
   intercept = 0.044,
@@ -150,10 +150,10 @@ UK37.pars.df <- tibble(
                      c("slope", "intercept"))
     )))
 
-calibration.parameters <- bind_rows(MgCa.foram.pars.Anand, UK37.pars.df)
+calibration.parameters <- bind_rows(MgCa.foram.pars.Anand, Uk37.pars.df)
 
 
-UK37.pars <- list(mueller.uk37 = structure(list(
+Uk37.pars <- list(mueller.uk37 = structure(list(
   means = structure(
     # Set to Eq. 30, Table 1. Müller et al (1998)
     c(0.033, 0.044),
@@ -171,10 +171,9 @@ UK37.pars <- list(mueller.uk37 = structure(list(
 
 
 CalibrationParameters <- list(MgCa = climproxycalibration::MgCa.foram.pars,
-                              UK37 = UK37.pars)
+                              Uk37 = Uk37.pars)
 
 
-devtools::use_data(UK37.pars, overwrite == TRUE)
-devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
-devtools::use_data(CalibrationParameters, overwrite == TRUE)
+#devtools::use_data(Uk37.pars, overwrite == TRUE)
+#devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
 devtools::use_data(calibration.parameters, overwrite == TRUE)

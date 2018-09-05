@@ -5,10 +5,10 @@
 \title{Simulate sediment archived proxy records from an "assumed true" climate signal.}
 \usage{
 ClimToProxyClim.dev(clim.signal, timepoints,
-  proxy.calibration.type = c("identity", "UK37", "MgCa"),
-  smoothed.signal.res = 100, habitat.weights = rep(1, 12),
-  habitat.wt.args = NULL, bio.depth = 10, sed.acc.rate = 50,
-  meas.noise = 0, meas.bias = 0, n.samples = Inf, n.replicates = 1)
+  calibration.type = c("identity", "Uk37", "MgCa"), plot.sig.res = 100,
+  habitat.weights = rep(1, 12), habitat.wt.args = NULL,
+  bio.depth = 10, sed.acc.rate = 50, meas.noise = 0, meas.bias = 0,
+  n.samples = Inf, n.replicates = 1)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
@@ -19,11 +19,11 @@ recent timepoint first" order.}
 
 \item{timepoints}{The timepoints for which the proxy record is to be modelled}
 
-\item{proxy.calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
+\item{calibration.type}{Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
 is simulated. Defaults to "identity" which means no conversion takes place.}
 
-\item{smoothed.signal.res}{The resolution, in years, of the smoothed (block
+\item{plot.sig.res}{The resolution, in years, of the smoothed (block
 averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.}
@@ -66,7 +66,7 @@ original climate signal at the requested timepoints.
 
 The dataframe \code{smoothed.signal} contains a block averaged version the
 input climate signal, defaults to 100 year means but this is set by the
-parameter smoothed.signal.res. This is useful for plotting against the
+parameter plot.sig.res. This is useful for plotting against the
 resulting simulated proxy.
 
 The dataframe \code{everything} contains all of the above but with multiple
@@ -79,8 +79,8 @@ climate resolution and column "value" giving the values.
 \describe{
 \item{timepoints}{Requested timepoints}
 \item{clim.signal.ann}{Input climate signal at requested timepoints at annual resolution}
-\item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = smoothed.signal.res}
-\item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res}
+\item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = plot.sig.res}
+\item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = plot.sig.res}
 \item{proxy.bt}{Climate signal after bioturbation}
 \item{proxy.bt.sb}{Climate signal after bioturbation and habitat bias}
 \item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, habitat bias, and calibration bias}
@@ -120,7 +120,7 @@ temperature from a single month. If Mg/Ca is measured on e.g.
 of the true mean climate.
 \item Measurement noise/error is added as a pure Gaussian white noise process
 with mean = 0, standard deviation =
-\code{sqrt(sigma.measurement^2 + sigma.individual^2/n.samples)}.
+\code{sqrt(sigma.meas^2 + sigma.ind^2/n.samples)}.
 \item Additionally, a random \emph{bias} can be added to each realisation of a
 proxy record. Bias is simulated as a Gaussian random variable with mean =
 0, standard deviation = \code{meas.bias}. The same randomly generated bias

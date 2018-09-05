@@ -157,11 +157,11 @@ clim.in <- ts(clim.in, start = -39)
 
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
-                       proxy.calibration.type = "identity",
+                       calibration.type = "identity",
                        habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       sigma.measurement = 0.23,
-                       sigma.individual = 2,
+                       sigma.meas = 0.23,
+                       sigma.ind = 2,
                        n.samples = 30,
                        n.replicates = 10)
 ```

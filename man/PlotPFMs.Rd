@@ -35,13 +35,13 @@ clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
 
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
-                       proxy.calibration.type = "identity",
+                       calibration.type = "identity",
                        habitat.weights = N41.G.ruber.seasonality,
                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
-                       sigma.measurement = 0.45,
-                       sigma.individual = 0,
+                       sigma.meas = 0.45,
+                       sigma.ind = 0,
                        n.samples = Inf,
-                       smoothed.signal.res = 10, meas.bias = 1,
+                       plot.sig.res = 10, meas.bias = 1,
                        n.replicates = 10)
 
 PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +

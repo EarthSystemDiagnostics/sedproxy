@@ -30,7 +30,7 @@
 #'
 #'   4. Measurement noise/error is added as a pure Gaussian white noise process
 #'   with mean = 0, standard deviation =
-#'    \code{sqrt(sigma.measurement^2 + sigma.individual^2/n.samples)}.
+#'    \code{sqrt(sigma.meas^2 + sigma.ind^2/n.samples)}.
 #'
 #'   5. Additionally, a random *bias* can be added to each realisation of a
 #'   proxy record. Bias is simulated as a Gaussian random variable with mean =
@@ -49,7 +49,7 @@
 #'   time series should be at annual resolution and in reverse, i.e. "most
 #'   recent timepoint first" order.
 #' @param timepoints The timepoints for which the proxy record is to be modelled
-#' @param proxy.calibration.type Type of proxy, e.g. Uk'37 or MgCa, to which the
+#' @param calibration.type Type of proxy, e.g. Uk'37 or MgCa, to which the
 #'   clim.signal is converted before the archiving and measurement of the proxy
 #'   is simulated. Defaults to "identity" which means no conversion takes place.
 #' @param noise.type Determines whether additive or multiplicative measurement
@@ -59,7 +59,7 @@
 #'   "multiplicative" in the case that pre-converted climate signal and
 #'   measurement noise values are used in combination with an "identity"
 #'   calibration type.
-#' @param smoothed.signal.res The resolution, in years, of the smoothed (block
+#' @param plot.sig.res The resolution, in years, of the smoothed (block
 #'   averaged) version of the input climate signal returned for plotting. This
 #'   does not affect what the proxy model uses as input. If set to NA, no
 #'   smoothed climate output is generated, this can speed up some simulations.
@@ -80,13 +80,13 @@
 #' @param sed.acc.rate Sediment accumulation rate in cm per 1000 years. Defaults
 #'   to 50 cm per ka. Either a single value, or vector of same length as
 #'   "timepoints"
-#' @param sigma.measurement The standard deviation of the measurement error
+#' @param sigma.meas The standard deviation of the measurement error
 #' added to each simulated proxy value.
-#' @param sigma.individual The standard deviation of error between individuals
+#' @param sigma.ind The standard deviation of error between individuals
 #' (e.g. Forams) not otherwise modelled. This could included "vital effects" or
 #' aliasing of depth habitat variation not modelled via a depth resolved input
-#' climate signal and habitat weights. sigma.individual is scaled by n.samples
-#' before being combined with sigma.measurement.
+#' climate signal and habitat weights. sigma.ind is scaled by n.samples
+#' before being combined with sigma.meas.
 #' @param n.samples Number of e.g. Foraminifera sampled per timepoint, this can
 #'   be either a single number, or a vector of length = timepoints
 #' @param meas.bias The amount of bias to add to each simulated proxy
@@ -110,7 +110,7 @@
 #'
 #'   The dataframe \code{smoothed.signal} contains a block averaged version the
 #'   input climate signal, defaults to 100 year means but this is set by the
-#'   parameter smoothed.signal.res. This is useful for plotting against the
+#'   parameter plot.sig.res. This is useful for plotting against the
 #'   resulting simulated proxy.
 #'
 #'   The dataframe \code{everything} contains all of the above but with multiple
@@ -123,8 +123,8 @@
 #' \describe{
 #'    \item{timepoints}{Requested timepoints}
 #'    \item{clim.signal.ann}{Input climate signal at requested timepoints at annual resolution}
-#'    \item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = smoothed.signal.res}
-#'    \item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = smoothed.signal.res}
+#'    \item{clim.signal.smoothed}{Input climate signal at regular time intervals and resolution = plot.sig.res}
+#'    \item{clim.timepoints.ssr}{Input climate signal at requested timepoints, smoothed to resolution = plot.sig.res}
 #'    \item{proxy.bt}{Climate signal after bioturbation}
 #'    \item{proxy.bt.sb}{Climate signal after bioturbation and habitat bias}
 #'    \item{proxy.bt.sb.inf.b}{Climate signal after bioturbation, habitat bias, and calibration bias}
@@ -148,13 +148,13 @@
 #'
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
-#'                        proxy.calibration.type = "identity",
+#'                        calibration.type = "identity",
 #'                        habitat.weights = N41.G.ruber.seasonality,
 #'                        sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
 #'                        layer.width = 1,
-#'                        sigma.measurement = 0.46,
-#'                        sigma.individual = 0, n.samples = Inf,
-#'                        smoothed.signal.res = 10, meas.bias = 1,
+#'                        sigma.meas = 0.46,
+#'                        sigma.ind = 0, n.samples = Inf,
+#'                        plot.sig.res = 10, meas.bias = 1,
 #'                        n.replicates = 10)
 #'
 #' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
@@ -166,29 +166,29 @@
 #'
 ClimToProxyClim <- function(clim.signal,
                             timepoints,
-                            proxy.calibration.type = c("identity", "UK37", "MgCa"),
-                            taxon = switch(proxy.calibration.type,
+                            calibration.type = c("identity", "Uk37", "MgCa"),
+                            calibration = switch(calibration.type,
                                            identity = NA,
-                                           UK37 = "Mueller global",
+                                           Uk37 = "Mueller global",
                                            MgCa = "Ten planktonic species_350-500"),
                             slp.int.means = NULL, slp.int.vcov = NULL,
-                            noise.type = switch(proxy.calibration.type,
+                            noise.type = switch(calibration.type,
                                                 identity = "additive",
-                                                UK37 = "additive",
+                                                Uk37 = "additive",
                                                 MgCa = "multiplicative"),
-                            smoothed.signal.res = 100,
+                            plot.sig.res = 100,
                             habitat.weights = rep(1/ncol(clim.signal),
                                                      ncol(clim.signal)),
                             habitat.wt.args = NULL,
                             bio.depth = 10,
                             sed.acc.rate = 50,
                             layer.width = 1,
-                            sigma.measurement = 0,
-                            sigma.individual = 0,
+                            sigma.meas = 0,
+                            sigma.ind = 0,
                             meas.bias = 0,
-                            scale.noise = switch(proxy.calibration.type,
+                            scale.noise = switch(calibration.type,
                                                  identity = FALSE,
-                                                 UK37 = TRUE,
+                                                 Uk37 = TRUE,
                                                  MgCa = TRUE),
                             n.samples = Inf,
                             n.replicates = 1) {
@@ -199,8 +199,8 @@ ClimToProxyClim <- function(clim.signal,
     stop("n.sample must be either a single value, or a vector the same
          length as timepoints")
 
-  if((length(sigma.measurement) == 1 | length(sigma.measurement)==n.timepoints)==FALSE)
-    stop("sigma.measurement must be either a single value, or a vector the same
+  if((length(sigma.meas) == 1 | length(sigma.meas)==n.timepoints)==FALSE)
+    stop("sigma.meas must be either a single value, or a vector the same
          length as timepoints")
 
   if (all(is.finite(n.samples))==FALSE & all(is.infinite(n.samples))==FALSE)
@@ -237,12 +237,12 @@ ClimToProxyClim <- function(clim.signal,
     n.samples <- rep(n.samples, n.timepoints)
   }
 
-  if (length(sigma.measurement) == 1) {
-    sigma.measurement <- rep(sigma.measurement, n.timepoints)
+  if (length(sigma.meas) == 1) {
+    sigma.meas <- rep(sigma.meas, n.timepoints)
   }
 
-  if (length(sigma.individual) == 1) {
-    sigma.individual <- rep(sigma.individual, n.timepoints)
+  if (length(sigma.ind) == 1) {
+    sigma.ind <- rep(sigma.ind, n.timepoints)
   }
 
   # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
@@ -280,17 +280,17 @@ ClimToProxyClim <- function(clim.signal,
   sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
   n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
 
-  sigma.measurement <- sigma.measurement[max.ind == FALSE & min.ind == FALSE]
-  sigma.individual <- sigma.individual[max.ind == FALSE & min.ind == FALSE]
+  sigma.meas <- sigma.meas[max.ind == FALSE & min.ind == FALSE]
+  sigma.ind <- sigma.ind[max.ind == FALSE & min.ind == FALSE]
 
   max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
 
 
-  # Scale sigma.individual by n.samples and create combined error term
+  # Scale sigma.ind by n.samples and create combined error term
   sigma.ind.scl <- ifelse(is.finite(n.samples),
-                          sigma.individual / sqrt(n.samples), 0)
+                          sigma.ind / sqrt(n.samples), 0)
 
-  sigma.meas.ind <- sqrt(sigma.measurement^2 + sigma.ind.scl^2)
+  sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
 
 
   # Generate productivity weights from function if supplied
@@ -310,14 +310,14 @@ ClimToProxyClim <- function(clim.signal,
 
 
   # Convert to proxy units if requested --------
-  proxy.calibration.type <- match.arg(proxy.calibration.type)
+  calibration.type <- match.arg(calibration.type)
 
-  if (proxy.calibration.type != "identity") {
+  if (calibration.type != "identity") {
     proxy.clim.signal <-
         ProxyConversion(
           temperature = clim.signal,
-          proxy.calibration.type = proxy.calibration.type,
-          taxon = taxon,
+          calibration.type = calibration.type,
+          calibration = calibration,
           slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov,
           point.or.sample = "point",
           n = 1
@@ -328,12 +328,12 @@ ClimToProxyClim <- function(clim.signal,
 
 
   # Create smoothed climate signal --------
-  if (is.na(smoothed.signal.res)) {
+  if (is.na(plot.sig.res)) {
     timepoints.smoothed <- NA
     clim.signal.smoothed <- NA
   } else{
-    timepoints.smoothed <- seq(min.clim.signal.i, max.clim.signal.i, by = smoothed.signal.res)
-    clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, smoothed.signal.res,
+    timepoints.smoothed <- seq(min.clim.signal.i, max.clim.signal.i, by = plot.sig.res)
+    clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, plot.sig.res,
                                         clim.signal)
   }
 
@@ -450,22 +450,22 @@ ClimToProxyClim <- function(clim.signal,
     message("Rescaling noise")
 
     # If cal type is identity re-scaling still required
-    pct <- if (proxy.calibration.type == "identity") {
+    pct <- if (calibration.type == "identity") {
       scale.noise
     } else{
-      proxy.calibration.type
+      calibration.type
     }
 
     # mean temperature in temperature units at each timepoint - use bioturbated signal
     mean.temperature <-  as.vector(ProxyConversion(proxy.value = out$proxy.bt,
-                                                   proxy.calibration.type = pct, taxon = taxon,
+                                                   calibration.type = pct, calibration = calibration,
                                                    slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov))
 
      sigma.meas.ind <- ProxyConversion(temperature = mean.temperature + sigma.meas.ind,
-                                      proxy.calibration.type = pct, taxon = taxon,
+                                      calibration.type = pct, calibration = calibration,
                                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov) -
       ProxyConversion(temperature = mean.temperature,
-                      proxy.calibration.type = pct, taxon = taxon,
+                      calibration.type = pct, calibration = calibration,
                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
 
     sigma.meas.ind <- as.vector(sigma.meas.ind)
@@ -536,11 +536,11 @@ ClimToProxyClim <- function(clim.signal,
 
 
   # Create smoothed climate signal -----
-  if (is.na(smoothed.signal.res)) {
+  if (is.na(plot.sig.res)) {
     out$clim.timepoints.ssr <- NA
 
   } else{
-    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, smoothed.signal.res, clim.signal)
+    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, plot.sig.res, clim.signal)
   }
 
   # Add items to output list -----------
@@ -594,21 +594,21 @@ ClimToProxyClim <- function(clim.signal,
   # If n.replicates > 1
   # First convert back to temperature units with fixed parameters
   # Then re-convert to proxy units with random parameters
-  if (proxy.calibration.type != "identity"){
+  if (calibration.type != "identity"){
 
     if (n.replicates > 1){
       out$simulated.proxy.cal.err <-
         ProxyConversion(proxy.value = out$simulated.proxy,
-                        proxy.calibration.type = proxy.calibration.type,
-                        taxon = taxon,
+                        calibration.type = calibration.type,
+                        calibration = calibration,
                         point.or.sample = "point", n = 1,
                         slp.int.means = slp.int.means,
                         slp.int.vcov = slp.int.vcov)
 
       out$simulated.proxy.cal.err <-
         ProxyConversion(temperature = out$simulated.proxy.cal.err,
-                        proxy.calibration.type = proxy.calibration.type,
-                        taxon = taxon,
+                        calibration.type = calibration.type,
+                        calibration = calibration,
                         point.or.sample = "sample", n = n.replicates,
                         slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
     }else{
@@ -618,8 +618,8 @@ ClimToProxyClim <- function(clim.signal,
     # Do this in all cases, not just if n.replicates == 1
     out$reconstructed.climate <-
       ProxyConversion(proxy.value = out$simulated.proxy,
-                      proxy.calibration.type = proxy.calibration.type,
-                      taxon = taxon,
+                      calibration.type = calibration.type,
+                      calibration = calibration,
                       point.or.sample = "point", n = 1,
                       slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov)
 
@@ -634,18 +634,22 @@ ClimToProxyClim <- function(clim.signal,
   everything <- MakePFMDataframe(out)
 
   slp.int.means <- if (is.null(slp.int.means)) {
-    taxon <- if (proxy.calibration.type == "MgCa" & is.null(taxon)) {
-      "10 Foram Taxa"
-    } else {taxon}
-    switch(proxy.calibration.type,
-           MgCa = MgCa.foram.pars[[taxon]][["means"]],
-           UK37 = UK37.pars[["mueller.uk37"]][["means"]])
+    calibration <- if (calibration.type == "MgCa" & is.null(calibration)) {
+      "Ten planktonic species_350-500"
+    } else {calibration}
+    cfs.vcov <- dplyr::filter(sedproxy::calibration.parameters,
+                  calibration.type == calibration.type,
+                  calibration == calibration)
+    matrix(c(cfs.vcov$slope, cfs.vcov$intercept), ncol = 2, byrow = TRUE)
+    # switch(calibration.type,
+    #        MgCa = MgCa.foram.pars[[calibration]][["means"]],
+    #        Uk37 = Uk37.pars[["mueller.uk37"]][["means"]])
   } else{
     slp.int.means
   }
 
-  calibration.pars <- list(proxy.calibration.type = proxy.calibration.type,
-                           taxon = taxon,
+  calibration.pars <- list(calibration.type = calibration.type,
+                           calibration = calibration,
                            slp.int.means = slp.int.means)
 
   attr(simulated.proxy, "calibration.pars") <-  calibration.pars
