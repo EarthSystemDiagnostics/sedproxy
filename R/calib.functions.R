@@ -56,6 +56,12 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
                                            Uk37 = "Mueller global",
                                            MgCa = "Ten planktonic species_350-500"),
                             point.or.sample = c("point", "sample"), n = 1){
+ 
+  pct <- match.arg(calibration.type,
+                   choices = c("identity", "MgCa", "Uk37"))
+  
+  point.or.sample <- match.arg(point.or.sample)
+  
 
   if (is.null(temperature) & is.null(proxy.value) |
       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
@@ -68,11 +74,6 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
       stop("If input is matrix and point.or.sample == 'sample', n must equal ncol(input)")
     }
   }
-
-  pct <- match.arg(calibration.type,
-                   choices = c("identity", "MgCa", "Uk37"))
-
-  point.or.sample <- match.arg(point.or.sample)
 
   if (point.or.sample == "point" & n > 1){
     stop("Multiple replicates only returned if point.or.sample == 'sample'")}
@@ -120,9 +121,9 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 
   if (is.vec){
     if (is.null(temperature)){
-      proxy.value <- matrix(proxy.value, ncol = 1)
+      proxy.value <- matrix(rep(proxy.value, n), ncol = n)
     } else if (is.null(proxy.value)){
-      temperature <- matrix(temperature, ncol = 1)
+      temperature <- matrix(rep(temperature, n), ncol = n)
     }
   }
 
@@ -158,8 +159,8 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
          }
   )
 
-  # convert back to vector if vector input
-  if (is.vec){
+  # convert back to vector if vector input and n == 1
+  if (is.vec & n == 1){
     out <- as.vector(out)
   }
 
