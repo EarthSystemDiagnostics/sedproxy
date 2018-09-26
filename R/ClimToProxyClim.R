@@ -300,7 +300,7 @@ ClimToProxyClim <- function(clim.signal,
     habitat.weights <- habitat.weights / sum(habitat.weights)
   }
 
-  # If vector ensure seasonal productivities are weights and matrix
+  # If vector ensure habitat.weights are weights and matrix
   if (is.vector(habitat.weights)){
     habitat.weights <- habitat.weights / sum(habitat.weights)
     habitat.weights <- matrix(rep(habitat.weights, nrow(clim.signal)),
@@ -409,7 +409,10 @@ ClimToProxyClim <- function(clim.signal,
 
       # Get without seasonal aliasing (bioturbation aliasing only)
 
-      clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights)
+      # habitat weights rows need to sum to 1
+      habitat.weights.r1 <- habitat.weights / rowSums(habitat.weights)
+
+      clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights.r1)
       row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
 
       samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
@@ -743,7 +746,7 @@ MakePFMDataframe <- function(PFM){
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
   rtn <- droplevels(dplyr::filter(rtn, stats::complete.cases(value)))
-  rtn <- dplyr::left_join(rtn, select(sedproxy::stages.key, stage, scale, label), by = "stage")
+  rtn <- dplyr::left_join(rtn, select(stages.key, stage, scale, label), by = "stage")
   #rtn <- select(rtn, -plotting.colour, -plotting.alpha)
 
   return(rtn)
