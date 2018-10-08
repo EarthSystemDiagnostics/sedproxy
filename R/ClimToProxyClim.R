@@ -332,7 +332,7 @@ ClimToProxyClim <- function(clim.signal,
     timepoints.smoothed <- NA
     clim.signal.smoothed <- NA
   } else{
-    timepoints.smoothed <- seq(min.clim.signal.i, max.clim.signal.i, by = plot.sig.res)
+    timepoints.smoothed <- seq(min.clim.signal.i-1, max.clim.signal.i-1, by = plot.sig.res)
     clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, plot.sig.res,
                                         clim.signal)
   }
