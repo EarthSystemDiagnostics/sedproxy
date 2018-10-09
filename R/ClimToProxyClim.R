@@ -250,10 +250,12 @@ ClimToProxyClim <- function(clim.signal,
   # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
   # focal.timepoint + 3*bio.depth.timesteps
 
+  n.bd <- 3
+
   max.min.windows <- matrix(t(sapply(1:length(timepoints), function(tp) {
     bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate[tp])
     layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate[tp])
-    return(c(max = timepoints[tp] + 3 * bio.depth.timesteps,
+    return(c(max = timepoints[tp] + n.bd * bio.depth.timesteps,
              min = timepoints[tp] - bio.depth.timesteps - layer.width.years / 2))
   })), ncol = 2)
 
