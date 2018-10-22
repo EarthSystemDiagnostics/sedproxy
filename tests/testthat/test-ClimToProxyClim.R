@@ -87,3 +87,4 @@ test_that("Slow = Cached slow", {
                expected = data.frame(PFM.slow$simulated.proxy))
   
 })
+

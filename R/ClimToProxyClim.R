@@ -1022,10 +1022,12 @@ ClimToProxyClim_Rapid <- function(clim.signal,
 ChunkMatrix <- function(timepoints, width, climate.matrix){
 
   if (is.ts(climate.matrix)) {
-     sapply(timepoints, function(tp){
-      rel.wind <- 1:width -round(width/2)
-      inds <- rel.wind + tp - start(climate.matrix)[1] + 1
-      inds <- inds[inds > 0 & inds < nrow(climate.matrix)]
+    rel.wind <- 1:width -round(width/2)
+    strt <- start(climate.matrix)[1] 
+    n.row <- nrow(climate.matrix)
+    sapply(timepoints, function(tp){
+      inds <- rel.wind + tp - strt + 1
+      inds <- inds[inds > 0 & inds < n.row]
       m <- climate.matrix[inds, , drop = FALSE]
       mean(m)
     })}else{
