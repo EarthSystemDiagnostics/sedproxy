@@ -193,8 +193,7 @@ ClimToProxyClim <- function(clim.signal,
                             n.samples = Inf,
                             n.replicates = 1) {
   # Check inputs --------
-
-
+  
   if (length(bio.depth)==1 && length(sed.acc.rate)==1 &&
       length(layer.width)==1 && length(n.samples)==1 &&
       (is.function(habitat.weights) == FALSE) && is.vector(habitat.weights)){
@@ -662,7 +661,7 @@ ClimToProxyClim <- function(clim.signal,
 
   everything <- MakePFMDataframe(out)
 
-  slp.int.means <- if (is.null(slp.int.means)) {
+  slp.int.means <- if (is.null(slp.int.means) && calibration.type != "identity") {
     calibration <- if (calibration.type == "MgCa" & is.null(calibration)) {
       "Ten planktonic species_350-500"
     } else {calibration}
@@ -1003,9 +1002,11 @@ ClimToProxyClim_Rapid <- function(clim.signal,
 
 
   attr(simulated.proxy, "calibration.pars") <- list(calibration.type = "identity",
-                                                    calibration = NA)
+                                                    calibration = NA,
+                                                    slp.int.means = NULL) 
   attr(everything, "calibration.pars") <-  list(calibration.type = "identity",
-                                                calibration = NA)
+                                                calibration = NA,
+                                                slp.int.means = NULL)
 
   out <- list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
