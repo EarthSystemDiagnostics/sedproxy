@@ -191,9 +191,10 @@ ClimToProxyClim <- function(clim.signal,
                                                  Uk37 = TRUE,
                                                  MgCa = TRUE),
                             n.samples = Inf,
-                            n.replicates = 1) {
+                            n.replicates = 1,
+                            n.bd = 3) {
   # Check inputs --------
-  
+
   if (length(bio.depth)==1 && length(sed.acc.rate)==1 &&
       length(layer.width)==1 && length(n.samples)==1 &&
       (is.function(habitat.weights) == FALSE) && is.vector(habitat.weights)){
@@ -272,8 +273,6 @@ ClimToProxyClim <- function(clim.signal,
 
   # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
   # focal.timepoint + 3*bio.depth.timesteps
-
-  n.bd <- 3
 
   max.min.windows <- matrix(t(sapply(1:length(timepoints), function(tp) {
     bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate[tp])
@@ -1003,7 +1002,7 @@ ClimToProxyClim_Rapid <- function(clim.signal,
 
   attr(simulated.proxy, "calibration.pars") <- list(calibration.type = "identity",
                                                     calibration = NA,
-                                                    slp.int.means = NULL) 
+                                                    slp.int.means = NULL)
   attr(everything, "calibration.pars") <-  list(calibration.type = "identity",
                                                 calibration = NA,
                                                 slp.int.means = NULL)
@@ -1023,7 +1022,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 
   if (is.ts(climate.matrix)) {
     rel.wind <- 1:width -round(width/2)
-    strt <- start(climate.matrix)[1] 
+    strt <- start(climate.matrix)[1]
     n.row <- nrow(climate.matrix)
     sapply(timepoints, function(tp){
       inds <- rel.wind + tp - strt + 1
