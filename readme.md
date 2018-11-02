@@ -8,6 +8,10 @@ output:
 
 -------
 
+
+
+
+
 ## Introduction
 
 `sedproxy` provides a forward model for sediment archived climate proxies. It is based on work described in Laepple and Huybers (2013). A manuscript is in review at Climate of the Past Discussions, which more fully describes the forward model and its applications [(Dolman and Laepple, in review)](https://www.clim-past-discuss.net/cp-2018-13/).
@@ -230,10 +234,27 @@ PFM %>%
 ![](readme_files/figure-html/plot_reps-1.png)<!-- -->
 
 
+**Conversion to proxy units**
+ 
+The initial input climate signal can be converted into "proxy units" if a `calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+
+
+```
+## Rescaling noise
+```
 
 
 
+```
+## Joining, by = c("stage", "scale")
+```
 
+```
+## Scale for 'alpha' is already present. Adding another scale for 'alpha',
+## which will replace the existing scale.
+```
+
+![](readme_files/figure-html/MgCa_plot-1.png)<!-- -->
 
 
 
