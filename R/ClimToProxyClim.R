@@ -142,7 +142,7 @@
 #'@importFrom plyr alply
 #'@export
 #'
-#' @examples
+#'@examples
 #' library(ggplot2)
 #' set.seed(26052017)
 #' clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15, start = -39)
@@ -694,28 +694,23 @@ ClimToProxyClim <- function(clim.signal,
 
 }
 
-
-# Fast version for simpler cases --------------
-
+#' @md
+#' @title Fast version of ClimToProxyClim.
+#' @description Fast version of ClimToProxyClim for simulations with 
+#' time-invariant parameters. Used internally by ClimToProxyClim.
 ClimToProxyClim_Rapid <- function(clim.signal,
                             timepoints,
-                            plot.sig.res = 100,
-                            habitat.weights = rep(1/ncol(clim.signal),
-                                                  ncol(clim.signal)),
-                            bio.depth = 10,
-                            sed.acc.rate = 50,
-                            layer.width = 1,
-                            sigma.meas = 0,
-                            sigma.ind = 0,
-                            meas.bias = 0,
-                            n.samples = Inf,
-                            n.replicates = 1) {
+                            plot.sig.res,
+                            habitat.weights,
+                            bio.depth,
+                            sed.acc.rate,
+                            layer.width,
+                            sigma.meas,
+                            sigma.ind,
+                            meas.bias,
+                            n.samples,
+                            n.replicates) {
   # Check inputs --------
-
-  # AllEquals <- function(x, tol = .Machine$double.eps ^ 0.5) {
-  #   abs(max(x) - min(x)) < tol
-  # }
-
   stopifnot(length(bio.depth)==1)
   stopifnot(length(sed.acc.rate)==1)
   stopifnot(length(layer.width)==1)
