@@ -89,7 +89,8 @@ drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 defaults to zero.}
 
 \item{n.samples}{Number of e.g. Foraminifera sampled per timepoint, this can
-be either a single number, or a vector of length = timepoints}
+be either a single number, or a vector of length = timepoints. Can be set
+to Inf for non-discrete proxies, e.g. for Uk’37.}
 
 \item{n.replicates}{Number of replicate proxy time-series to simulate from
 the climate signal}

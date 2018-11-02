@@ -88,7 +88,8 @@
 #' climate signal and habitat weights. sigma.ind is scaled by n.samples
 #' before being combined with sigma.meas.
 #' @param n.samples Number of e.g. Foraminifera sampled per timepoint, this can
-#'   be either a single number, or a vector of length = timepoints
+#'   be either a single number, or a vector of length = timepoints. Can be set 
+#'   to Inf for non-discrete proxies, e.g. for Uk’37.
 #' @param meas.bias The amount of bias to add to each simulated proxy
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
@@ -199,7 +200,7 @@ ClimToProxyClim <- function(clim.signal,
       length(layer.width)==1 && length(n.samples)==1 &&
       (is.function(habitat.weights) == FALSE) && is.vector(habitat.weights)){
 
-    print("Using Rapid version")
+    message("Using Rapid version")
 
     out <- ClimToProxyClim_Rapid (clim.signal = clim.signal,
                                   timepoints=timepoints,
