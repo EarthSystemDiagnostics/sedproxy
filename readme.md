@@ -210,7 +210,7 @@ PFM %>%
 ## which will replace the existing scale.
 ```
 
-![](readme_files/figure-html/default_plot-1.png)<!-- -->
+![](readme_files/figure-html/default_plot-1.svg)<!-- -->
 
 
 **Plot 5 replicates of the final simulated proxy**
@@ -231,7 +231,7 @@ PFM %>%
 ## which will replace the existing scale.
 ```
 
-![](readme_files/figure-html/plot_reps-1.png)<!-- -->
+![](readme_files/figure-html/plot_reps-1.svg)<!-- -->
 
 
 **Conversion to proxy units**
@@ -254,7 +254,7 @@ The initial input climate signal can be converted into "proxy units" if a `calib
 ## which will replace the existing scale.
 ```
 
-![](readme_files/figure-html/MgCa_plot-1.png)<!-- -->
+![](readme_files/figure-html/MgCa_plot-1.svg)<!-- -->
 
 
 
