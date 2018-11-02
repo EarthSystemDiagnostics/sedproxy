@@ -214,9 +214,3 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #                       calibration.type = "MgCa")
 #
 # all.equal(t1, t2)
-
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master
