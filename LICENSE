@@ -1,5 +1,4 @@
-All code is released under the MIT license with the exception of the function "growth_rate_l09_R" in source file FAME.R which is made available under the GNU General Public License
-https://www.gnu.org/licenses/gpl.html as it was translated from GPL Python code provided with the publication Roche, D. M., Waelbroeck, C., Metcalfe, B. and Caley, T.: FAME (v1.0): a simple module to simulate the effect of planktonic foraminifer species-specific habitat on their oxygen isotopic content, Geosci. Model Dev. Discuss., 2017, 1–22, doi:10.5194/gmd-2017-251, 2017.
+All code is released under the MIT license with the exception of the function "growth_rate_l09_R" in source file FAME.R which is made available under the GNU General Public License https://www.gnu.org/licenses/gpl.html as it was translated from GPL Python code provided with the publication Roche, D. M., Waelbroeck, C., Metcalfe, B. and Caley, T.: FAME (v1.0): a simple module to simulate the effect of planktonic foraminifer species-specific habitat on their oxygen isotopic content, Geosci. Model Dev. Discuss., 2017, 1–22, doi:10.5194/gmd-2017-251, 2017.
 
 MIT
 YEAR: 2017

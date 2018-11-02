@@ -1,3 +1,12 @@
+# sedproxy 0.5.0
+
+* Release version for revised CoTP Discussion paper
+* Can now use dynamic habitat weights
+* Now has explicit sensor stage with conversion from temperature to Mg/Ca or Uk'37 units
+* Habitat weights can be calculated using temperature response function and parameterisation from FAME 1.0 module
+* Calibration uncertainty modelled via sampling parameters from fitted calibration regression model for each replicate
+
+
 # sedproxy 0.4.0
 
 * Release version for CoTP Discussion paper

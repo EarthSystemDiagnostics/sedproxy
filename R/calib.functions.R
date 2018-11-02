@@ -26,7 +26,6 @@
 #' @export
 #' @importFrom mvtnorm rmvnorm
 #' @family calib
-#'
 #' @examples
 #' # From temperature to UK'37
 #' ## With fixed calibration
@@ -216,5 +215,8 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
 #
 # all.equal(t1, t2)
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
