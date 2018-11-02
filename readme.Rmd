@@ -8,6 +8,12 @@ output:
 
 -------
 
+
+```{r knitr_setup, echo=FALSE}
+knitr::opts_chunk$set(dev = "png", dpi = 300)
+```
+
+
 ## Introduction
 
 `sedproxy` provides a forward model for sediment archived climate proxies. It is based on work described in Laepple and Huybers (2013). A manuscript is in review at Climate of the Past Discussions, which more fully describes the forward model and its applications [(Dolman and Laepple, in review)](https://www.clim-past-discuss.net/cp-2018-13/).
@@ -138,15 +144,16 @@ PFM %>%
 ```
 
 
-```{r MgCa, fig.show='hold', warning=FALSE, echo=FALSE, eval=FALSE}
-# ### Proxy types
-# 
-# The initial input climate signal can be converted into "proxy units" if a `calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
+**Conversion to proxy units**
+ 
+The initial input climate signal can be converted into "proxy units" if a `calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
 
+```{r MgCa, fig.show='hold', warning=FALSE, echo=FALSE, eval=TRUE}
 set.seed(26052017)
 PFM_2 <- ClimToProxyClim(clim.signal = clim.in, 
                          timepoints = round(N41.proxy$Published.age),
                          calibration.type = "MgCa",
+                         #calibration = "Ten planktonic species_350-500",
                          habitat.weights = N41.G.ruber.seasonality,
                          sed.acc.rate = N41.proxy$Sed.acc.rate.cm.ka,
                          sigma.meas = 0.46,
@@ -156,12 +163,9 @@ PFM_2 <- ClimToProxyClim(clim.signal = clim.in,
 ```
 
 
-```{r MgCa_plot, fig.width=6, fig.height=5.5, echo=FALSE, eval=FALSE}
-# `PlotPFM` returns a ggplot2 object so it is easy to customize figures with new axes labels an such
-
-PFM_2$everything %>% 
-  PlotPFMs(.) +
-  labs(y = "Mg/Ca")
+```{r MgCa_plot, fig.width=6, fig.height=5.5, echo=FALSE, eval=TRUE}
+PFM_2 %>%
+  PlotPFMs(.) 
 ```
 
 
