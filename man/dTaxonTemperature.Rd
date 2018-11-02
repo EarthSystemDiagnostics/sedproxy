@@ -2,7 +2,7 @@
 % Please edit documentation in R/dTaxonTemperature.R
 \name{dTaxonTemperature}
 \alias{dTaxonTemperature}
-\title{Foram production as a function of temperature, using published temperature preference parameters}
+\title{Foram production as a function of temperature, using published temperature preference parameters.}
 \usage{
 dTaxonTemperature(temperature, taxon = taxa.temperature.prefs$ID)
 }
@@ -12,5 +12,5 @@ dTaxonTemperature(temperature, taxon = taxa.temperature.prefs$ID)
 \item{taxon}{taxon ID in table taxa.temperature.prefs,}
 }
 \description{
-Foram production as a function of temperature, using published temperature preference parameters
+Foram production as a function of temperature, using published temperature preference parameters.
 }

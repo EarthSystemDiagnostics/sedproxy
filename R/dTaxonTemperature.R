@@ -1,4 +1,4 @@
-#' Foram production as a function of temperature, using published temperature preference parameters
+#' Foram production as a function of temperature, using published temperature preference parameters.
 #'
 #' @param temperature temperature in degrees celsius
 #' @param taxon taxon ID in table taxa.temperature.prefs,
