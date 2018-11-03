@@ -10,7 +10,7 @@ output:
 
 
 ```{r knitr_setup, echo=FALSE}
-knitr::opts_chunk$set(dev = "png", dpi = 300)
+knitr::opts_chunk$set(dev = "svg")
 ```
 
 
