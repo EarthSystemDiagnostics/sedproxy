@@ -7,7 +7,7 @@
 CalibrationUncertainty(temperature, means, vcov)
 }
 \arguments{
-\item{temperature}{temperature at which to evaluate proxy uncertainty in
+\item{temperature}{Temperature at which to evaluate proxy uncertainty in
 degrees celsius}
 
 \item{means}{intercept and slope of fitted calibration regression}

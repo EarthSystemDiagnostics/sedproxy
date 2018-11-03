@@ -73,7 +73,7 @@ ScaleError <- function(mean.temperature = NULL,
 #'   from the variance-covariance matrix of the coefficients of a fitted
 #'   calibration regression equation. Also returns the mean proxy value at the
 #'   given temperature.
-#' @param temperature temperature at which to evaluate proxy uncertainty in
+#' @param temperature Temperature at which to evaluate proxy uncertainty in
 #'   degrees celsius
 #' @param means intercept and slope of fitted calibration regression
 #' @param vcov variance-covariance matrix of slope and intercept from fitted

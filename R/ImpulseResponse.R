@@ -4,8 +4,8 @@
 #' @param d mixing depth. If d == 0, a single weight of 1 is returned
 #' @param z0 depth of the pulse without bioturbation
 #'
-#' @description Depth solution for Berger and Heath; e.g. page 65 in Officer and
-#'   Lynch (1983).
+#' @description Depth solution for Berger and Heath; e.g. page 65 in 
+#' Officer and Lynch (1983).
 #'
 #'   For a given mixing depth \code{d}, it gives the probability
 #'   that a particle has been moved from a depth horizon \code{z} units away
