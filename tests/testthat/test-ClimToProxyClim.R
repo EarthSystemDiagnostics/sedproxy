@@ -6,7 +6,7 @@ test_that("Fast = Slow", {
   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
   clim.in <- ts(clim.in, start = -39)
 
-  tpts <- round(seq(4000, 20000, length.out = 100))
+  tpts <- round(seq(40, 22000, length.out = 100))
 
   set.seed(26052017)
   PFM.slow <- ClimToProxyClim(clim.signal = clim.in,
