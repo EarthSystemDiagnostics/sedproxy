@@ -396,7 +396,7 @@ ClimToProxyClim <- function(clim.signal,
     })
   }else{
 # Slow ----
-   
+    
     # Create vectors from "scalar" inputs
     if (length(sed.acc.rate) == 1) {
       sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
@@ -417,15 +417,18 @@ ClimToProxyClim <- function(clim.signal,
     if (length(sigma.ind) == 1) {
       sigma.ind <- rep(sigma.ind, n.timepoints)
     }
+   
+    # Remove timepoint specific parameters that exceed clim.signal ------
+ 
+    if (length(sed.acc.rate) > n.timepoints) sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
+    if (length(layer.width) > n.timepoints) layer.width <- layer.width[max.ind == FALSE & min.ind == FALSE]
+      
+    if (length(n.samples) > n.timepoints) n.samples <-    n.samples   [max.ind == FALSE & min.ind == FALSE]
+    
+    if (length(sigma.meas) > n.timepoints) sigma.meas <- sigma.meas[max.ind == FALSE & min.ind == FALSE]
+    if (length(sigma.ind) > n.timepoints) sigma.ind <- sigma.ind[max.ind == FALSE & min.ind == FALSE]
     
 
-    # Remove timepoint specific parameters that exceed clim.signal ------
-    sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
-    n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
-    
-    sigma.meas <- sigma.meas[max.ind == FALSE & min.ind == FALSE]
-    sigma.ind <- sigma.ind[max.ind == FALSE & min.ind == FALSE]
-    
     # Generate productivity weights from function if supplied
     if (is.function(habitat.weights)){
       FUN <- match.fun(habitat.weights)
@@ -484,7 +487,6 @@ ClimToProxyClim <- function(clim.signal,
       
       # Bioturbation + seasonal bias + aliasing
       if (is.infinite(n.samples[tp])) {
-        print("hello inf")
         proxy.bt.sb.sampY <- rep(NA, n.replicates)
         proxy.bt.sb.sampYM <- rep(NA, n.replicates)
       } else if (is.finite(n.samples[tp])) {
@@ -510,21 +512,13 @@ ClimToProxyClim <- function(clim.signal,
         
         clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights.r1)
         row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
-        print("hello finite")
-        print(tp)
-        print(timepoints[tp]) 
-        print(clim.sig.window.ann[row.indices])
-        print(n.samples[tp])
-        
+       
         samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
         
         proxy.bt.sb.sampY <- colMeans(samp.bt)
-        print(proxy.bt.sb.sampY)
-        
       }
 
-      print(proxy.bt.sb)
-      
+
      
       # Gather output ----------
       list(
