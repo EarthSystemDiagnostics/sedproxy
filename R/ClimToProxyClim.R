@@ -196,28 +196,6 @@ ClimToProxyClim <- function(clim.signal,
                             n.bd = 3) {
   # Check inputs --------
 
-  if (length(bio.depth)==1 && length(sed.acc.rate)==1 &&
-      length(layer.width)==1 && length(n.samples)==1 &&
-      (is.function(habitat.weights) == FALSE) && is.vector(habitat.weights)){
-
-    message("Using Rapid version")
-
-    out <- ClimToProxyClim_Rapid (clim.signal = clim.signal,
-                                  timepoints=timepoints,
-                                  plot.sig.res = plot.sig.res,
-                                  habitat.weights = habitat.weights,
-                                  bio.depth = bio.depth,
-                                  sed.acc.rate = sed.acc.rate,
-                                  layer.width = layer.width,
-                                  sigma.meas = sigma.meas,
-                                  sigma.ind = sigma.ind,
-                                  meas.bias = meas.bias,
-                                  n.samples = n.samples,
-                                  n.replicates = n.replicates)
-    return(out)
-  }
-
-
   n.timepoints <- length(timepoints)
 
   if((length(n.samples) == 1 | length(n.samples)==n.timepoints)==FALSE)
@@ -228,6 +206,10 @@ ClimToProxyClim <- function(clim.signal,
     stop("sigma.meas must be either a single value, or a vector the same
          length as timepoints")
 
+  if((length(sigma.ind) == 1 | length(sigma.ind)==n.timepoints)==FALSE)
+    stop("sigma.ind must be either a single value, or a vector the same
+         length as timepoints")
+  
   if (all(is.finite(n.samples))==FALSE & all(is.infinite(n.samples))==FALSE)
     stop("n.samples cannot be a mix of finite and infinite")
 
@@ -244,114 +226,28 @@ ClimToProxyClim <- function(clim.signal,
          a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
-
-
-  # Ensure seasonal productivities are weights
-  habitat.weights <- habitat.weights / sum(habitat.weights)
-
-  # Calculate timepoint invariant values ------
-  max.clim.signal.i <- end(clim.signal)[1]
-  min.clim.signal.i <- start(clim.signal)[1]
-
-  if (length(sed.acc.rate) == 1) {
-    sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
-  }
-
-  # Replicate n.samples if not vector
-  if (length(n.samples) == 1) {
-    n.samples <- rep(n.samples, n.timepoints)
-  }
-
-  if (length(sigma.meas) == 1) {
-    sigma.meas <- rep(sigma.meas, n.timepoints)
-  }
-
-  if (length(sigma.ind) == 1) {
-    sigma.ind <- rep(sigma.ind, n.timepoints)
-  }
-
-  # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
-
-  # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
-  # focal.timepoint + 3*bio.depth.timesteps
-
-  max.min.windows <- matrix(t(sapply(1:length(timepoints), function(tp) {
-    bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate[tp])
-    layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate[tp])
-    return(c(max = timepoints[tp] + n.bd * bio.depth.timesteps,
-             min = timepoints[tp] - bio.depth.timesteps - layer.width.years / 2))
-  })), ncol = 2)
-
-  colnames(max.min.windows) <- c("max", "min")
-
-  max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
-  min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
-
-  if (any(max.ind))
-    warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
-                   paste(timepoints[max.ind], collapse = ", "),
-                   " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
-
-  if (any(max.min.windows[,"min"] < min.clim.signal.i))
-    warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
-                   timepoints[max.min.windows[, "min"] < min.clim.signal.i],
-                   " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
-
-
-  timepoints <- timepoints[max.ind == FALSE & min.ind == FALSE]
-  n.timepoints <- length(timepoints)
-
-  # Remove timepoints that exceed clim.signal ------
-  sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
-  n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
-
-  sigma.meas <- sigma.meas[max.ind == FALSE & min.ind == FALSE]
-  sigma.ind <- sigma.ind[max.ind == FALSE & min.ind == FALSE]
-
-  max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
-
-
-  # Scale sigma.ind by n.samples and create combined error term
-  sigma.ind.scl <- ifelse(is.finite(n.samples),
-                          sigma.ind / sqrt(n.samples), 0)
-
-  sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
-
-
-  # Generate productivity weights from function if supplied
-  if (is.function(habitat.weights)){
-    FUN <- match.fun(habitat.weights)
-    habitat.weights <- do.call(FUN, args = c(list(x = clim.signal), habitat.wt.args))
-    habitat.weights <- habitat.weights / sum(habitat.weights)
-  }
-
-  # If vector ensure habitat.weights are weights and matrix
-  if (is.vector(habitat.weights)){
-    habitat.weights <- habitat.weights / sum(habitat.weights)
-    habitat.weights <- matrix(rep(habitat.weights, nrow(clim.signal)),
-                                 nrow = nrow(clim.signal), byrow = TRUE)
-  }
-
-
-
+  
   # Convert to proxy units if requested --------
   calibration.type <- match.arg(calibration.type)
-
+  
   if (calibration.type != "identity") {
     proxy.clim.signal <-
-        ProxyConversion(
-          temperature = clim.signal,
-          calibration.type = calibration.type,
-          calibration = calibration,
-          slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov,
-          point.or.sample = "point",
-          n = 1
-        )
+      ProxyConversion(
+        temperature = clim.signal,
+        calibration.type = calibration.type,
+        calibration = calibration,
+        slp.int.means = slp.int.means, slp.int.vcov = slp.int.vcov,
+        point.or.sample = "point",
+        n = 1
+      )
   } else{
     proxy.clim.signal <- clim.signal
   }
-
-
+  
+  # Calculate timepoint invariant values ------
+  max.clim.signal.i <- end(clim.signal)[1]
+  min.clim.signal.i <- start(clim.signal)[1]
+  
   # Create smoothed climate signal --------
   if (is.na(plot.sig.res)) {
     timepoints.smoothed <- NA
@@ -361,100 +257,287 @@ ClimToProxyClim <- function(clim.signal,
     clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, plot.sig.res,
                                         clim.signal)
   }
+  
+  # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
+  
+  # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
+  # focal.timepoint + 3*bio.depth.timesteps
+  
+  bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
+  layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
+  
+  max.min.windows <- cbind(max = timepoints + n.bd * bio.depth.timesteps,
+                           min = timepoints - bio.depth.timesteps - layer.width.years / 2)
+  
+  max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
+  min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
+  
+  if (any(max.ind))
+    warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
+                   paste(timepoints[max.ind], collapse = ", "),
+                   " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
+  
+  if (any(max.min.windows[,"min"] < min.clim.signal.i))
+    warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
+                   timepoints[max.min.windows[, "min"] < min.clim.signal.i],
+                   " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
+  
+  
+  timepoints <- timepoints[max.ind == FALSE & min.ind == FALSE]
+  n.timepoints <- length(timepoints)
+  
+  max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
+  
+  # Scale sigma.ind by n.samples and create combined error term
+  sigma.ind.scl <- ifelse(is.finite(n.samples),
+                          sigma.ind / sqrt(n.samples), 0)
+  
+  sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
+  
+  
+# Use Rapid or Slow version ----------------------
+  
+  if (length(bio.depth)==1 && length(sed.acc.rate)==1 &&
+      length(layer.width)==1 && length(n.samples)==1 &&
+      (is.function(habitat.weights) == FALSE) && is.vector(habitat.weights)){
+
+    # Rapid ------    
+    message("Using Rapid version")
+    # Ensure seasonal productivities are weights
+    habitat.weights <- habitat.weights / sum(habitat.weights)
 
 
-  # For each timepoint ------
-  out <- sapply(1:n.timepoints, function(tp) {
-    # Get bioturbation window ----------
-    first.tp <- max.min.windows[tp, "min"]
-    last.tp <- max.min.windows[tp, "max"]
+    # Get relative bioturbation window ----------
+    
+    first.tp <- -bio.depth.timesteps - layer.width.years / 2
+    last.tp <- n.bd * bio.depth.timesteps
     bioturb.window <- first.tp:last.tp
-
+    
     # Get bioturbation weights --------
-    bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
-                                           layer.width = layer.width, sed.acc.rate = sed.acc.rate[tp],
+    bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = 0,
+                                           layer.width = layer.width, sed.acc.rate = sed.acc.rate,
                                            bio.depth = bio.depth)
-
-    #bioturb.weights <- bioturb.weights / sum(bioturb.weights)
-
-    # Get portion of clim.signal corresponding to bioturbation window -------
-    ## window is slow
-    # clim.sig.window <- stats:::window.ts(proxy.clim.signal,
-    #                           start = first.tp,
-    #                           end = last.tp)
-    clim.sig.window <-  proxy.clim.signal[first.tp:last.tp - min.clim.signal.i+1, ]
-
-    # this is estimating mean deviation MD, (not MAD or SD)
-    # no need to estimate this from the psuedo data
-    # MD = 2/(exp(1)/std) for exponential, where std = lambda = bio.depth.timesteps
-    # smoothing.width = sum(bioturb.weights*abs(bioturb.window))
+    
 
     # Get bioturbation X no-seasonality weights matrix ---------
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
-
-
+    
     # Get bioturbation X seasonality weights matrix ---------
-    habitat.weights <- habitat.weights[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
-    habitat.weights <- habitat.weights / sum(habitat.weights)
-    clim.sig.weights <- bioturb.weights * habitat.weights
+    clim.sig.weights <- bioturb.weights %*% t(habitat.weights)
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
-
+    
     # Check weights sum to 1, within tolerance
     weight.err <- abs(sum(clim.sig.weights) - 1)
     if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
-
-
-    # Calculate mean clim.signal -------
-
-    # Just bioturbation
-    proxy.bt <- sum(biot.sig.weights * clim.sig.window)
-
-    # Bioturbation + seasonal bias
-    proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
-
-    # Bioturbation + seasonal bias + aliasing
-    if (is.infinite(n.samples[tp])) {
-      proxy.bt.sb.sampY <- rep(NA, n.replicates)
-      proxy.bt.sb.sampYM <- rep(NA, n.replicates)
-    } else if (is.finite(n.samples[tp])) {
-      # call sample once for all replicates together, then take means of
+    
+    # Do sampling ------
+    if (is.finite(n.samples)) {
+      # call sample once for all replicates and timepoints together, then take means of
       # groups of n.samples
       # Get indices not values
-      samp.indices <-  sample(length(clim.sig.window),
-                              n.samples[tp] * n.replicates,
+      tot.n.samples <- n.samples * n.replicates * n.timepoints
+      
+      length.clim.sig.w <- length(clim.sig.weights)
+      
+      samp.indices <-  sample(length.clim.sig.w,
+                              tot.n.samples,
                               prob = clim.sig.weights,
-                              replace = TRUE)
-
-      # convert vector to matrix (cheap only attributes changed), then means
-      # can be taken across columns to get per replicate means
-      samp <- matrix(clim.sig.window[samp.indices], nrow = n.samples[tp])
-      #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
-      proxy.bt.sb.sampYM <- colMeans(samp)
-
-      # Get without seasonal aliasing (bioturbation aliasing only)
-
-      # habitat weights rows need to sum to 1
-      habitat.weights.r1 <- habitat.weights / rowSums(habitat.weights)
-
-      clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights.r1)
-      row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
-
-      samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
-      proxy.bt.sb.sampY <- colMeans(samp.bt)
-
+                              replace = TRUE)}
+    
+    # For each timepoint ------
+    out <- sapply(1:n.timepoints, function(tp) {
+      
+      # Get portion of clim.signal corresponding to bioturbation window for this timepoint -------
+      
+   
+      clim.sig.window <- proxy.clim.signal[bioturb.window + timepoints[tp] - min.clim.signal.i+1, ]
+      
+      
+      # Calculate mean clim.signal -------
+      
+      # Just bioturbation
+      proxy.bt <- sum(biot.sig.weights * clim.sig.window)
+      
+      # Bioturbation + seasonal bias
+      proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
+      
+      # Bioturbation + seasonal bias + aliasing
+      if (is.infinite(n.samples)) {
+        proxy.bt.sb.sampY <- rep(NA, n.replicates)
+        proxy.bt.sb.sampYM <- rep(NA, n.replicates)
+      } else if (is.finite(n.samples)) {
+        # Use previously sampled indices
+        # get indices for this timepoint
+        samp.indices.tp <- samp.indices[((tp-1)*n.samples*n.replicates+1):(tp*n.samples*n.replicates)]
+        
+        # convert vector to matrix (cheap only attributes changed), then means
+        # can be taken across columns to get per replicate means
+        samp <- matrix(clim.sig.window[samp.indices.tp], nrow = n.samples)
+        #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
+        proxy.bt.sb.sampYM <- colMeans(samp)
+        
+        #Get without seasonal aliasing (bioturbation aliasing only)
+        clim.sig.window.ann <- colSums(t(clim.sig.window) * habitat.weights)
+        col.indices <- (samp.indices.tp-1) %% nrow(clim.sig.window) + 1
+        
+        samp.bt <- matrix(clim.sig.window.ann[col.indices], ncol = n.samples)
+        proxy.bt.sb.sampY <- rowMeans(samp.bt)
+      }
+      
+      
+      # Gather output ----------
+      list(
+        #smoothing.width = smoothing.width,
+        proxy.bt = proxy.bt,
+        proxy.bt.sb = proxy.bt.sb,
+        proxy.bt.sb.sampY = proxy.bt.sb.sampY,
+        proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
+    })
+  }else{
+# Slow ----
+   
+    # Create vectors from "scalar" inputs
+    if (length(sed.acc.rate) == 1) {
+      sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
     }
 
+    if (length(layer.width) == 1) {
+      layer.width <- rep(layer.width, n.timepoints)
+    }
+    
+    if (length(n.samples) == 1) {
+      n.samples <- rep(n.samples, n.timepoints)
+    }
 
-    # Gather output ----------
-    list(
-      #smoothing.width = smoothing.width,
-      proxy.bt = proxy.bt,
-      proxy.bt.sb = proxy.bt.sb,
-      proxy.bt.sb.sampY = proxy.bt.sb.sampY,
-      proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
-  })
+    if (length(sigma.meas) == 1) {
+      sigma.meas <- rep(sigma.meas, n.timepoints)
+    }
 
+    if (length(sigma.ind) == 1) {
+      sigma.ind <- rep(sigma.ind, n.timepoints)
+    }
+    
+
+    # Remove timepoint specific parameters that exceed clim.signal ------
+    sed.acc.rate <- sed.acc.rate[max.ind == FALSE & min.ind == FALSE]
+    n.samples <- n.samples[max.ind == FALSE & min.ind == FALSE]
+    
+    sigma.meas <- sigma.meas[max.ind == FALSE & min.ind == FALSE]
+    sigma.ind <- sigma.ind[max.ind == FALSE & min.ind == FALSE]
+    
+    # Generate productivity weights from function if supplied
+    if (is.function(habitat.weights)){
+      FUN <- match.fun(habitat.weights)
+      habitat.weights <- do.call(FUN, args = c(list(x = clim.signal), habitat.wt.args))
+      habitat.weights <- habitat.weights / sum(habitat.weights)
+    }
+    
+    # If vector ensure habitat.weights are weights and matrix
+    if (is.vector(habitat.weights)){
+      habitat.weights <- habitat.weights / sum(habitat.weights)
+      habitat.weights <- matrix(rep(habitat.weights, nrow(clim.signal)),
+                                nrow = nrow(clim.signal), byrow = TRUE)
+    }
+    
+   
+    # For each timepoint ------
+    out <- sapply(1:n.timepoints, function(tp) {
+ 
+      # Get bioturbation window ----------
+      first.tp <- max.min.windows[tp, "min"]
+      last.tp <- max.min.windows[tp, "max"]
+      bioturb.window <- first.tp:last.tp
+      
+
+      # Get bioturbation weights --------
+      bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
+                                             layer.width = layer.width[tp], sed.acc.rate = sed.acc.rate[tp],
+                                             bio.depth = bio.depth)
+      
+      clim.sig.window <-  proxy.clim.signal[first.tp:last.tp - min.clim.signal.i+1, ]
+      
+      
+      # Get bioturbation X no-seasonality weights matrix ---------
+      biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
+      biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
+      
+      
+      # Get bioturbation X seasonality weights matrix ---------
+      habitat.weights <- habitat.weights[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
+      habitat.weights <- habitat.weights / sum(habitat.weights)
+      clim.sig.weights <- bioturb.weights * habitat.weights
+      clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
+      
+      # Check weights sum to 1, within tolerance
+      weight.err <- abs(sum(clim.sig.weights) - 1)
+      if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
+      
+      
+      # Calculate mean clim.signal -------
+      
+      # Just bioturbation
+      proxy.bt <- sum(biot.sig.weights * clim.sig.window)
+      
+      # Bioturbation + seasonal bias
+      proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
+      
+      # Bioturbation + seasonal bias + aliasing
+      if (is.infinite(n.samples[tp])) {
+        print("hello inf")
+        proxy.bt.sb.sampY <- rep(NA, n.replicates)
+        proxy.bt.sb.sampYM <- rep(NA, n.replicates)
+      } else if (is.finite(n.samples[tp])) {
+
+        # call sample once for all replicates together, then take means of
+        # groups of n.samples
+        # Get indices not values
+        samp.indices <-  sample(length(clim.sig.window),
+                                n.samples[tp] * n.replicates,
+                                prob = clim.sig.weights,
+                                replace = TRUE)
+        
+        # convert vector to matrix (cheap only attributes changed), then means
+        # can be taken across columns to get per replicate means
+        samp <- matrix(clim.sig.window[samp.indices], nrow = n.samples[tp])
+        #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
+        proxy.bt.sb.sampYM <- colMeans(samp)
+        
+        # Get without seasonal aliasing (bioturbation aliasing only)
+        
+        # habitat weights rows need to sum to 1
+        habitat.weights.r1 <- habitat.weights / rowSums(habitat.weights)
+        
+        clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights.r1)
+        row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
+        print("hello finite")
+        print(tp)
+        print(timepoints[tp]) 
+        print(clim.sig.window.ann[row.indices])
+        print(n.samples[tp])
+        
+        samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
+        
+        proxy.bt.sb.sampY <- colMeans(samp.bt)
+        print(proxy.bt.sb.sampY)
+        
+      }
+
+      print(proxy.bt.sb)
+      
+     
+      # Gather output ----------
+      list(
+        #smoothing.width = smoothing.width,
+        proxy.bt = proxy.bt,
+        proxy.bt.sb = proxy.bt.sb,
+        proxy.bt.sb.sampY = proxy.bt.sb.sampY,
+        proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
+    })
+    
+  }
+  
+ 
   #out <- apply(out, 1, function(x) simplify2array(x))
   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
 
@@ -694,325 +777,311 @@ ClimToProxyClim <- function(clim.signal,
 
 }
 
-#' @md
-#' @title Fast version of ClimToProxyClim.
-#' @description Fast version of ClimToProxyClim for simulations with 
-#' time-invariant parameters. Used internally by ClimToProxyClim.
-ClimToProxyClim_Rapid <- function(clim.signal,
-                            timepoints,
-                            plot.sig.res,
-                            habitat.weights,
-                            bio.depth,
-                            sed.acc.rate,
-                            layer.width,
-                            sigma.meas,
-                            sigma.ind,
-                            meas.bias,
-                            n.samples,
-                            n.replicates) {
-  # Check inputs --------
-  stopifnot(length(bio.depth)==1)
-  stopifnot(length(sed.acc.rate)==1)
-  stopifnot(length(layer.width)==1)
-  stopifnot(length(n.samples)==1)
-  if (is.function(habitat.weights)) stop("habitat.weights must be constant for rapid version")
-
-  stopifnot(is.vector(habitat.weights))
-
-
-  n.timepoints <- length(timepoints)
-
-
-  # Ensure seasonal productivities are weights
-  habitat.weights <- habitat.weights / sum(habitat.weights)
-
-  # Calculate timepoint invariant values ------
-  max.clim.signal.i <- end(clim.signal)[1]
-  min.clim.signal.i <- start(clim.signal)[1]
-
-
-  # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
-
-  # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
-  # focal.timepoint + 3*bio.depth.timesteps
-
-  n.bd <- 3
-
-  bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
-  layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
-
-  max.min.windows <- cbind(max = timepoints + n.bd * bio.depth.timesteps,
-    min = timepoints - bio.depth.timesteps - layer.width.years / 2)
-
-  max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
-  min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
-
-  if (any(max.ind))
-    warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
-                   paste(timepoints[max.ind], collapse = ", "),
-                   " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
-
-  if (any(max.min.windows[,"min"] < min.clim.signal.i))
-    warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
-                   timepoints[max.min.windows[, "min"] < min.clim.signal.i],
-                   " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
-
-
-  timepoints <- timepoints[max.ind == FALSE & min.ind == FALSE]
-  n.timepoints <- length(timepoints)
-
-  max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
-
-
-  # Scale sigma.ind by n.samples and create combined error term
-  sigma.ind.scl <- ifelse(is.finite(n.samples),
-                          sigma.ind / sqrt(n.samples), 0)
-
-  sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
-
-
-  # No calibration in rapid version
-  proxy.clim.signal <- clim.signal
-
-
-  # Create smoothed climate signal --------
-  if (is.na(plot.sig.res)) {
-    timepoints.smoothed <- NA
-    clim.signal.smoothed <- NA
-  } else{
-    timepoints.smoothed <- seq(min.clim.signal.i-1, max.clim.signal.i-1, by = plot.sig.res)
-    clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, plot.sig.res,
-                                        clim.signal)
-  }
-
-
-
-  # Get relative bioturbation window ----------
-
-  first.tp <- -bio.depth.timesteps - layer.width.years / 2
-  last.tp <- n.bd * bio.depth.timesteps
-  bioturb.window <- first.tp:last.tp
-
-  # Get bioturbation weights --------
-  bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = 0,
-                                         layer.width = layer.width, sed.acc.rate = sed.acc.rate,
-                                         bio.depth = bio.depth)
-
-  #bioturb.weights <- bioturb.weights / sum(bioturb.weights)
-
-  # Get bioturbation X no-seasonality weights matrix ---------
-  biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
-  biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
-
-  # Get bioturbation X seasonality weights matrix ---------
-  clim.sig.weights <- bioturb.weights %*% t(habitat.weights)
-  clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
-
-  # Check weights sum to 1, within tolerance
-  weight.err <- abs(sum(clim.sig.weights) - 1)
-  if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
-
-  # Do sampling ------
-  if (is.finite(n.samples)) {
-    # call sample once for all replicates and timepoints together, then take means of
-    # groups of n.samples
-    # Get indices not values
-    tot.n.samples <- n.samples * n.replicates * n.timepoints
-
-    length.clim.sig.w <- length(clim.sig.weights)
-
-    samp.indices <-  sample(length.clim.sig.w,
-                            tot.n.samples,
-                            prob = clim.sig.weights,
-                            replace = TRUE)}
-
-  # For each timepoint ------
-  out <- sapply(1:n.timepoints, function(tp) {
-
-    # Get portion of clim.signal corresponding to bioturbation window for this timepoint -------
-    clim.sig.window <- proxy.clim.signal[bioturb.window + timepoints[tp] - min.clim.signal.i+1, ]
-
-
-    # Calculate mean clim.signal -------
-
-    # Just bioturbation
-    proxy.bt <- sum(biot.sig.weights * clim.sig.window)
-
-    # Bioturbation + seasonal bias
-    proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
-
-    # Bioturbation + seasonal bias + aliasing
-    if (is.infinite(n.samples)) {
-      proxy.bt.sb.sampY <- rep(NA, n.replicates)
-      proxy.bt.sb.sampYM <- rep(NA, n.replicates)
-    } else if (is.finite(n.samples)) {
-      # Use previously sampled indices
-      # get indices for this timepoint
-      samp.indices.tp <- samp.indices[((tp-1)*n.samples*n.replicates+1):(tp*n.samples*n.replicates)]
-
-      # convert vector to matrix (cheap only attributes changed), then means
-      # can be taken across columns to get per replicate means
-      samp <- matrix(clim.sig.window[samp.indices.tp], nrow = n.samples)
-      #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
-      proxy.bt.sb.sampYM <- colMeans(samp)
-
-      #Get without seasonal aliasing (bioturbation aliasing only)
-      clim.sig.window.ann <- colSums(t(clim.sig.window) * habitat.weights)
-      col.indices <- (samp.indices.tp-1) %% nrow(clim.sig.window) + 1
-
-      samp.bt <- matrix(clim.sig.window.ann[col.indices], ncol = n.samples)
-      proxy.bt.sb.sampY <- rowMeans(samp.bt)
-
-
-
-      # Get without seasonal aliasing (bioturbation aliasing only)
-
-      # # habitat weights rows need to sum to 1
-      # habitat.weights.r1 <- habitat.weights / rowSums(habitat.weights)
-      #
-      # clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights.r1)
-      # row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
-      #
-      # samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
-      # proxy.bt.sb.sampY <- colMeans(samp.bt)
-    }
-
-
-    # Gather output ----------
-    list(
-      #smoothing.width = smoothing.width,
-      proxy.bt = proxy.bt,
-      proxy.bt.sb = proxy.bt.sb,
-      proxy.bt.sb.sampY = proxy.bt.sb.sampY,
-      proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
-  })
-
-  #out <- apply(out, 1, function(x) simplify2array(x))
-  out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
-
-  # remove extra attributes added by alply
-  attr(out, "split_type") <- NULL
-  attr(out, "split_labels") <- NULL
-
-  if (n.replicates == 1) out$proxy.bt.sb.sampYM <- matrix(out$proxy.bt.sb.sampYM, nrow = 1)
-  out$proxy.bt.sb.sampYM <- t(out$proxy.bt.sb.sampYM)
-
-  if (n.replicates == 1) out$proxy.bt.sb.sampY <- matrix(out$proxy.bt.sb.sampY, nrow = 1)
-  out$proxy.bt.sb.sampY <- t(out$proxy.bt.sb.sampY)
-
-
-  # Add bias and noise --------
-
-    noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = sigma.meas.ind)
-
-    if (meas.bias != 0) {
-      bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
-    } else{
-      bias <- rep(0, n.replicates)
-    }
-
-    # Add bias and noise to infinite sample --------
-
-    out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
-    out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
-
-    if (all(is.finite(n.samples))){
-      out$proxy.bt.sb.inf.b[,] <- NA
-      out$proxy.bt.sb.inf.b.n[,] <- NA
-    }
-
-    # Add bias and noise to finite sample --------
-    out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
-    out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
-
-    # set intermediate bias stages to NA if no bias modelled
-    if (meas.bias == 0) {
-      out$proxy.bt.sb.inf.b[,] <- NA
-      out$proxy.bt.sb.sampYM.b[,] <- NA
-    }
-
-
-  # Create smoothed climate signal -----
-  if (is.na(plot.sig.res)) {
-    out$clim.timepoints.ssr <- NA
-
-  } else{
-    out$clim.timepoints.ssr <- ChunkMatrix(timepoints, plot.sig.res, clim.signal)
-  }
-
-  # Add items to output list -----------
-  out$timepoints = timepoints
-  out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
-  #out$sed.acc.rate = sed.acc.rate
-  out$timepoints.smoothed = timepoints.smoothed
-  out$clim.signal.smoothed = clim.signal.smoothed
-
-  # Organise output -------
-  simulated.proxy <-
-    dplyr::tbl_df(out[c(
-      "timepoints",
-      "clim.signal.ann",
-      "clim.timepoints.ssr",
-      "proxy.bt",
-      "proxy.bt.sb"#,
-      #"sed.acc.rate",
-      #"smoothing.width"
-    )])
-
-  simulated.proxy$proxy.bt.sb.sampY <- out$proxy.bt.sb.sampY[, 1, drop = TRUE]
-  simulated.proxy$proxy.bt.sb.sampYM <- out$proxy.bt.sb.sampYM[, 1, drop = TRUE]
-  simulated.proxy$proxy.bt.sb.inf.b <- out$proxy.bt.sb.inf.b[, 1, drop = TRUE]
-  simulated.proxy$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b.n[, 1, drop = TRUE]
-  simulated.proxy$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM.b[, 1, drop = TRUE]
-  simulated.proxy$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b.n[, 1, drop = TRUE]
-
-  if (all(is.finite(n.samples))) {
-    simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.sampYM.b.n
-    out$simulated.proxy <- out$proxy.bt.sb.sampYM.b.n
-  } else{
-    simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.inf.b.n
-    out$simulated.proxy <- out$proxy.bt.sb.inf.b.n
-  }
-
-
-  smoothed.signal <- dplyr::tbl_df(out[c(
-    "timepoints.smoothed",
-    "clim.signal.smoothed"
-  )])
-
-  smoothed.signal <- dplyr::rename(smoothed.signal,
-                                   timepoints = timepoints.smoothed,
-                                   value = clim.signal.smoothed)
-
-  smoothed.signal$Stage <- "clim.signal.smoothed"
-
-
-  out$simulated.proxy.cal.err <- out$simulated.proxy
-  out$reconstructed.climate <- out$simulated.proxy
-
-  simulated.proxy$simulated.proxy.cal.err <- out$simulated.proxy.cal.err[, 1, drop = TRUE]
-  simulated.proxy$reconstructed.climate <- out$reconstructed.climate[, 1, drop = TRUE]
-
-  everything <- MakePFMDataframe(out)
-
-
-  attr(simulated.proxy, "calibration.pars") <- list(calibration.type = "identity",
-                                                    calibration = NA,
-                                                    slp.int.means = NULL)
-  attr(everything, "calibration.pars") <-  list(calibration.type = "identity",
-                                                calibration = NA,
-                                                slp.int.means = NULL)
-
-  out <- list(simulated.proxy=simulated.proxy,
-              smoothed.signal=smoothed.signal,
-              everything = everything,
-              calibration.pars = "None")
-
-  class(out) <- "sedproxy.pfm"
-
-  return(out)
-
-}
+#' #' @md
+#' #' @title Fast version of ClimToProxyClim.
+#' #' @description Fast version of ClimToProxyClim for simulations with 
+#' #' time-invariant parameters. Used internally by ClimToProxyClim.
+#' ClimToProxyClim_Rapid <- function(clim.signal,
+#'                             timepoints,
+#'                             plot.sig.res,
+#'                             habitat.weights,
+#'                             bio.depth,
+#'                             sed.acc.rate,
+#'                             layer.width,
+#'                             sigma.meas,
+#'                             sigma.ind,
+#'                             meas.bias,
+#'                             n.samples,
+#'                             n.replicates, 
+#'                             n.bd) {
+#'   # Check inputs --------
+#'   stopifnot(length(bio.depth)==1)
+#'   stopifnot(length(sed.acc.rate)==1)
+#'   stopifnot(length(layer.width)==1)
+#'   stopifnot(length(n.samples)==1)
+#'   if (is.function(habitat.weights)) stop("habitat.weights must be constant for rapid version")
+#' 
+#'   stopifnot(is.vector(habitat.weights))
+#' 
+#' 
+#'   n.timepoints <- length(timepoints)
+#' 
+#' 
+#'   # Ensure seasonal productivities are weights
+#'   habitat.weights <- habitat.weights / sum(habitat.weights)
+#' 
+#'   # Calculate timepoint invariant values ------
+#'   max.clim.signal.i <- end(clim.signal)[1]
+#'   min.clim.signal.i <- start(clim.signal)[1]
+#' 
+#' 
+#'   # Check whether bioturbation window will extend beyond climate signal for any of the timepoints
+#' 
+#'   # bioturbation window will be focal.timepoint - bio.depth.timesteps - layer.width.years / 2 to
+#'   # focal.timepoint + 3*bio.depth.timesteps
+#' 
+#'   bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
+#'   layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
+#' 
+#'   max.min.windows <- cbind(max = timepoints + n.bd * bio.depth.timesteps,
+#'     min = timepoints - bio.depth.timesteps - layer.width.years / 2)
+#' 
+#'   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
+#'   min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
+#' 
+#'   if (any(max.ind))
+#'     warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
+#'                    paste(timepoints[max.ind], collapse = ", "),
+#'                    " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
+#' 
+#'   if (any(max.min.windows[,"min"] < min.clim.signal.i))
+#'     warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
+#'                    timepoints[max.min.windows[, "min"] < min.clim.signal.i],
+#'                    " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
+#' 
+#' 
+#'   timepoints <- timepoints[max.ind == FALSE & min.ind == FALSE]
+#'   n.timepoints <- length(timepoints)
+#' 
+#'   max.min.windows <- max.min.windows[max.ind == FALSE & min.ind == FALSE, , drop = FALSE]
+#' 
+#' 
+#'   # Scale sigma.ind by n.samples and create combined error term
+#'   sigma.ind.scl <- ifelse(is.finite(n.samples),
+#'                           sigma.ind / sqrt(n.samples), 0)
+#' 
+#'   sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
+#' 
+#' 
+#'   # No calibration in rapid version
+#'   proxy.clim.signal <- clim.signal
+#' 
+#' 
+#'   # Create smoothed climate signal --------
+#'   if (is.na(plot.sig.res)) {
+#'     timepoints.smoothed <- NA
+#'     clim.signal.smoothed <- NA
+#'   } else{
+#'     timepoints.smoothed <- seq(min.clim.signal.i-1, max.clim.signal.i-1, by = plot.sig.res)
+#'     clim.signal.smoothed <- ChunkMatrix(timepoints.smoothed, plot.sig.res,
+#'                                         clim.signal)
+#'   }
+#' 
+#' 
+#' 
+#'   # Get relative bioturbation window ----------
+#' 
+#'   first.tp <- -bio.depth.timesteps - layer.width.years / 2
+#'   last.tp <- n.bd * bio.depth.timesteps
+#'   bioturb.window <- first.tp:last.tp
+#' 
+#'   # Get bioturbation weights --------
+#'   bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = 0,
+#'                                          layer.width = layer.width, sed.acc.rate = sed.acc.rate,
+#'                                          bio.depth = bio.depth)
+#' 
+#'   #bioturb.weights <- bioturb.weights / sum(bioturb.weights)
+#' 
+#'   # Get bioturbation X no-seasonality weights matrix ---------
+#'   biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
+#'   biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
+#' 
+#'   # Get bioturbation X seasonality weights matrix ---------
+#'   clim.sig.weights <- bioturb.weights %*% t(habitat.weights)
+#'   clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
+#' 
+#'   # Check weights sum to 1, within tolerance
+#'   weight.err <- abs(sum(clim.sig.weights) - 1)
+#'   if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
+#' 
+#'   # Do sampling ------
+#'   if (is.finite(n.samples)) {
+#'     # call sample once for all replicates and timepoints together, then take means of
+#'     # groups of n.samples
+#'     # Get indices not values
+#'     tot.n.samples <- n.samples * n.replicates * n.timepoints
+#' 
+#'     length.clim.sig.w <- length(clim.sig.weights)
+#' 
+#'     samp.indices <-  sample(length.clim.sig.w,
+#'                             tot.n.samples,
+#'                             prob = clim.sig.weights,
+#'                             replace = TRUE)}
+#' 
+#'   # For each timepoint ------
+#'   out <- sapply(1:n.timepoints, function(tp) {
+#' 
+#'     # Get portion of clim.signal corresponding to bioturbation window for this timepoint -------
+#'     clim.sig.window <- proxy.clim.signal[bioturb.window + timepoints[tp] - min.clim.signal.i+1, ]
+#' 
+#' 
+#'     # Calculate mean clim.signal -------
+#' 
+#'     # Just bioturbation
+#'     proxy.bt <- sum(biot.sig.weights * clim.sig.window)
+#' 
+#'     # Bioturbation + seasonal bias
+#'     proxy.bt.sb <- sum(clim.sig.weights * clim.sig.window)
+#' 
+#'     # Bioturbation + seasonal bias + aliasing
+#'     if (is.infinite(n.samples)) {
+#'       proxy.bt.sb.sampY <- rep(NA, n.replicates)
+#'       proxy.bt.sb.sampYM <- rep(NA, n.replicates)
+#'     } else if (is.finite(n.samples)) {
+#'       # Use previously sampled indices
+#'       # get indices for this timepoint
+#'       samp.indices.tp <- samp.indices[((tp-1)*n.samples*n.replicates+1):(tp*n.samples*n.replicates)]
+#' 
+#'       # convert vector to matrix (cheap only attributes changed), then means
+#'       # can be taken across columns to get per replicate means
+#'       samp <- matrix(clim.sig.window[samp.indices.tp], nrow = n.samples)
+#'       #proxy.bt.sb.sampYM <- apply(samp, 2, mean)
+#'       proxy.bt.sb.sampYM <- colMeans(samp)
+#' 
+#'       #Get without seasonal aliasing (bioturbation aliasing only)
+#'       clim.sig.window.ann <- colSums(t(clim.sig.window) * habitat.weights)
+#'       col.indices <- (samp.indices.tp-1) %% nrow(clim.sig.window) + 1
+#' 
+#'       samp.bt <- matrix(clim.sig.window.ann[col.indices], ncol = n.samples)
+#'       proxy.bt.sb.sampY <- rowMeans(samp.bt)
+#'     }
+#' 
+#' 
+#'     # Gather output ----------
+#'     list(
+#'       #smoothing.width = smoothing.width,
+#'       proxy.bt = proxy.bt,
+#'       proxy.bt.sb = proxy.bt.sb,
+#'       proxy.bt.sb.sampY = proxy.bt.sb.sampY,
+#'       proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
+#'   })
+#' 
+#'   #out <- apply(out, 1, function(x) simplify2array(x))
+#'   out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
+#' 
+#'   # remove extra attributes added by alply
+#'   attr(out, "split_type") <- NULL
+#'   attr(out, "split_labels") <- NULL
+#' 
+#'   if (n.replicates == 1) out$proxy.bt.sb.sampYM <- matrix(out$proxy.bt.sb.sampYM, nrow = 1)
+#'   out$proxy.bt.sb.sampYM <- t(out$proxy.bt.sb.sampYM)
+#' 
+#'   if (n.replicates == 1) out$proxy.bt.sb.sampY <- matrix(out$proxy.bt.sb.sampY, nrow = 1)
+#'   out$proxy.bt.sb.sampY <- t(out$proxy.bt.sb.sampY)
+#' 
+#' 
+#'   # Add bias and noise --------
+#' 
+#'     noise <- stats::rnorm(n = n.replicates * n.timepoints, mean = 0, sd = sigma.meas.ind)
+#' 
+#'     if (meas.bias != 0) {
+#'       bias <- stats::rnorm(n = n.replicates, mean = 0, sd = meas.bias)
+#'     } else{
+#'       bias <- rep(0, n.replicates)
+#'     }
+#' 
+#'     # Add bias and noise to infinite sample --------
+#' 
+#'     out$proxy.bt.sb.inf.b <- outer(out$proxy.bt.sb, bias, FUN = "+")
+#'     out$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b + noise
+#' 
+#'     if (all(is.finite(n.samples))){
+#'       out$proxy.bt.sb.inf.b[,] <- NA
+#'       out$proxy.bt.sb.inf.b.n[,] <- NA
+#'     }
+#' 
+#'     # Add bias and noise to finite sample --------
+#'     out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
+#'     out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
+#' 
+#'     # set intermediate bias stages to NA if no bias modelled
+#'     if (meas.bias == 0) {
+#'       out$proxy.bt.sb.inf.b[,] <- NA
+#'       out$proxy.bt.sb.sampYM.b[,] <- NA
+#'     }
+#' 
+#' 
+#'   # Create smoothed climate signal -----
+#'   if (is.na(plot.sig.res)) {
+#'     out$clim.timepoints.ssr <- NA
+#' 
+#'   } else{
+#'     out$clim.timepoints.ssr <- ChunkMatrix(timepoints, plot.sig.res, clim.signal)
+#'   }
+#' 
+#'   # Add items to output list -----------
+#'   out$timepoints = timepoints
+#'   out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
+#'   #out$sed.acc.rate = sed.acc.rate
+#'   out$timepoints.smoothed = timepoints.smoothed
+#'   out$clim.signal.smoothed = clim.signal.smoothed
+#' 
+#'   # Organise output -------
+#'   simulated.proxy <-
+#'     dplyr::tbl_df(out[c(
+#'       "timepoints",
+#'       "clim.signal.ann",
+#'       "clim.timepoints.ssr",
+#'       "proxy.bt",
+#'       "proxy.bt.sb"#,
+#'       #"sed.acc.rate",
+#'       #"smoothing.width"
+#'     )])
+#' 
+#'   simulated.proxy$proxy.bt.sb.sampY <- out$proxy.bt.sb.sampY[, 1, drop = TRUE]
+#'   simulated.proxy$proxy.bt.sb.sampYM <- out$proxy.bt.sb.sampYM[, 1, drop = TRUE]
+#'   simulated.proxy$proxy.bt.sb.inf.b <- out$proxy.bt.sb.inf.b[, 1, drop = TRUE]
+#'   simulated.proxy$proxy.bt.sb.inf.b.n <- out$proxy.bt.sb.inf.b.n[, 1, drop = TRUE]
+#'   simulated.proxy$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM.b[, 1, drop = TRUE]
+#'   simulated.proxy$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b.n[, 1, drop = TRUE]
+#' 
+#'   if (all(is.finite(n.samples))) {
+#'     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.sampYM.b.n
+#'     out$simulated.proxy <- out$proxy.bt.sb.sampYM.b.n
+#'   } else{
+#'     simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.inf.b.n
+#'     out$simulated.proxy <- out$proxy.bt.sb.inf.b.n
+#'   }
+#' 
+#' 
+#'   smoothed.signal <- dplyr::tbl_df(out[c(
+#'     "timepoints.smoothed",
+#'     "clim.signal.smoothed"
+#'   )])
+#' 
+#'   smoothed.signal <- dplyr::rename(smoothed.signal,
+#'                                    timepoints = timepoints.smoothed,
+#'                                    value = clim.signal.smoothed)
+#' 
+#'   smoothed.signal$Stage <- "clim.signal.smoothed"
+#' 
+#' 
+#'   out$simulated.proxy.cal.err <- out$simulated.proxy
+#'   out$reconstructed.climate <- out$simulated.proxy
+#' 
+#'   simulated.proxy$simulated.proxy.cal.err <- out$simulated.proxy.cal.err[, 1, drop = TRUE]
+#'   simulated.proxy$reconstructed.climate <- out$reconstructed.climate[, 1, drop = TRUE]
+#' 
+#'   everything <- MakePFMDataframe(out)
+#' 
+#' 
+#'   attr(simulated.proxy, "calibration.pars") <- list(calibration.type = "identity",
+#'                                                     calibration = NA,
+#'                                                     slp.int.means = NULL)
+#'   attr(everything, "calibration.pars") <-  list(calibration.type = "identity",
+#'                                                 calibration = NA,
+#'                                                 slp.int.means = NULL)
+#' 
+#'   out <- list(simulated.proxy=simulated.proxy,
+#'               smoothed.signal=smoothed.signal,
+#'               everything = everything,
+#'               calibration.pars = "None")
+#' 
+#'   class(out) <- "sedproxy.pfm"
+#' 
+#'   return(out)
+#' 
+#' }
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
 
