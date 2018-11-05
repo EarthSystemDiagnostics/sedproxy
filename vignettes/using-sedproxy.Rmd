@@ -9,6 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r knitr_setup, echo=FALSE}
+knitr::opts_chunk$set(dev = "svg")
+```
 
 
 ## Introduction
@@ -138,12 +141,11 @@ PFM %>%
            max.replicates = 5)
 ```
 
+**Conversion to proxy units**
+ 
+The initial input climate signal can be converted into "proxy units" if a `calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
 
 ```{r MgCa, fig.show='hold', warning=FALSE, echo=FALSE, eval=TRUE}
-# ### Proxy types
-# 
-# The initial input climate signal can be converted into "proxy units" if a `calibration.type` is specified. This simulates the Environment -> Sensor stage of the proxy system.
-
 set.seed(26052017)
 PFM_2 <- ClimToProxyClim(clim.signal = clim.in, 
                          timepoints = round(N41.proxy$Published.age),
@@ -159,7 +161,6 @@ PFM_2 <- ClimToProxyClim(clim.signal = clim.in,
 
 
 ```{r MgCa_plot, fig.width=6, fig.height=5.5, echo=FALSE, eval=TRUE}
-# `PlotPFM` returns a ggplot2 object so it is easy to customize figures with new axes labels and such
 PFM_2 %>%
   PlotPFMs(.) 
 ```

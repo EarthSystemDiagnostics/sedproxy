@@ -1,3 +1,10 @@
+# sedproxy 0.6
+
+* Fast version of ClimToProxyClim called internally when parameters are time-invariant
+* Bugfix to calculation of bioturbation weights when layer.width == 0
+* Other performance improvements
+* Basic unit tests to detect changes to output for a standard simulation
+
 # sedproxy 0.5.0
 
 * Release version for revised CoTP Discussion paper
