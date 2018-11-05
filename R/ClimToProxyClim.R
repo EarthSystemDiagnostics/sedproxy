@@ -138,7 +138,6 @@
 #' }
 #'
 #'@importFrom dplyr tbl_df rename
-#'@importFrom plyr alply
 #'@export
 #'
 #'@examples
@@ -528,12 +527,23 @@ ClimToProxyClim <- function(clim.signal,
 
   }
 
-  #out <- apply(out, 1, function(x) simplify2array(x))
-  out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
+  # #return(out)
+  RestructOut <- function(out, n.replicates){
+    if (n.replicates == 1){
+      tmp <- apply(out, 1, function(x) simplify2array(x))
+      as.list(data.frame(apply(tmp, 2, as.vector)))
+    }else{
+      apply(out, 1, function(x) simplify2array(x))
+    }
+  }
 
-  # remove extra attributes added by alply
-  attr(out, "split_type") <- NULL
-  attr(out, "split_labels") <- NULL
+  out <- RestructOut(out, n.replicates = n.replicates)
+  # #out <- apply(out, 1, function(x) simplify2array(x))
+  # out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
+  #
+  #  # remove extra attributes added by alply
+  #  attr(out, "split_type") <- NULL
+  #  attr(out, "split_labels") <- NULL
 
   if (n.replicates == 1) out$proxy.bt.sb.sampYM <- matrix(out$proxy.bt.sb.sampYM, nrow = 1)
   out$proxy.bt.sb.sampYM <- t(out$proxy.bt.sb.sampYM)
