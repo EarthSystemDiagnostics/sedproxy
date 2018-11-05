@@ -2,8 +2,7 @@
 % Please edit documentation in R/ClimToProxyClim.R
 \name{ClimToProxyClim}
 \alias{ClimToProxyClim}
-\title{Simulate sediment archived proxy records from an "assumed true"
-climate signal.}
+\title{Simulate sediment archived proxy records from an input climate signal.}
 \usage{
 ClimToProxyClim(clim.signal, timepoints, calibration.type = c("identity",
   "Uk37", "MgCa"), calibration = switch(calibration.type, identity = NA,
