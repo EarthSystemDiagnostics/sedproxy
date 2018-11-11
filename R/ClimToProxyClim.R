@@ -171,7 +171,7 @@ ClimToProxyClim <- function(clim.signal,
                                            Uk37 = "Mueller global",
                                            MgCa = "Ten planktonic species_350-500"),
                             slp.int.means = NULL, slp.int.vcov = NULL,
-                            noise.type = switch(calibration.type,
+                            noise.type = switch(calibration.type, 
                                                 identity = "additive",
                                                 Uk37 = "additive",
                                                 MgCa = "multiplicative"),
@@ -323,10 +323,13 @@ ClimToProxyClim <- function(clim.signal,
     biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
     biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
+    
     # Get bioturbation X seasonality weights matrix ---------
     clim.sig.weights <- bioturb.weights %*% t(habitat.weights)
     clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
 
+  
+    
     # Check weights sum to 1, within tolerance
     weight.err <- abs(sum(clim.sig.weights) - 1)
     if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
@@ -363,6 +366,7 @@ ClimToProxyClim <- function(clim.signal,
       if (is.infinite(n.samples)) {
         proxy.bt.sb.sampY <- rep(NA, n.replicates)
         proxy.bt.sb.sampYM <- rep(NA, n.replicates)
+        row.indices <- NA
       } else if (is.finite(n.samples)) {
         # Use previously sampled indices
         # get indices for this timepoint
@@ -376,11 +380,17 @@ ClimToProxyClim <- function(clim.signal,
 
         #Get without seasonal aliasing (bioturbation aliasing only)
         clim.sig.window.ann <- colSums(t(clim.sig.window) * habitat.weights)
-        col.indices <- (samp.indices.tp-1) %% nrow(clim.sig.window) + 1
-
-        samp.bt <- matrix(clim.sig.window.ann[col.indices], ncol = n.samples)
+        row.indices <- (samp.indices.tp-1) %% nrow(clim.sig.window) + 1
+ 
+        samp.bt <- matrix(clim.sig.window.ann[row.indices], ncol = n.samples)
         proxy.bt.sb.sampY <- rowMeans(samp.bt)
       }
+      
+      row.indices.df <- data.frame(timepoints = rep(timepoints, each = n.replicates*n.samples),
+                                   replicate = 1:n.replicates,
+                                   indices = row.indices + min(bioturb.window) + 
+                                     timepoints[tp] - min.clim.signal.i
+                                   )
 
       # Gather output ----------
       list(
@@ -388,7 +398,9 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt = proxy.bt,
         proxy.bt.sb = proxy.bt.sb,
         proxy.bt.sb.sampY = proxy.bt.sb.sampY,
-        proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
+        proxy.bt.sb.sampYM = proxy.bt.sb.sampYM,
+        row.indices = row.indices.df
+        )
     })
   }else{
 # Slow ----
@@ -485,6 +497,7 @@ ClimToProxyClim <- function(clim.signal,
       if (is.infinite(n.samples[tp])) {
         proxy.bt.sb.sampY <- rep(NA, n.replicates)
         proxy.bt.sb.sampYM <- rep(NA, n.replicates)
+        row.indices <- NA
       } else if (is.finite(n.samples[tp])) {
 
         # call sample once for all replicates together, then take means of
@@ -514,7 +527,11 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt.sb.sampY <- colMeans(samp.bt)
       }
 
-
+      row.indices.df <- data.frame(timepoints = rep(timepoints, each = n.replicates*n.samples),
+                                   replicate = 1:n.replicates,
+                                   indices = row.indices + min(bioturb.window) + 
+                                     timepoints[tp] - min.clim.signal.i
+      )
 
       # Gather output ----------
       list(
@@ -522,7 +539,9 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt = proxy.bt,
         proxy.bt.sb = proxy.bt.sb,
         proxy.bt.sb.sampY = proxy.bt.sb.sampY,
-        proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
+        proxy.bt.sb.sampYM = proxy.bt.sb.sampYM,
+        row.indices = row.indices.df
+        )
     })
 
   }
@@ -537,14 +556,10 @@ ClimToProxyClim <- function(clim.signal,
     }
   }
 
-  out <- RestructOut(out, n.replicates = n.replicates)
-  # #out <- apply(out, 1, function(x) simplify2array(x))
-  # out <- plyr::alply(out, 1, function(x) simplify2array(x), .dims = TRUE)
-  #
-  #  # remove extra attributes added by alply
-  #  attr(out, "split_type") <- NULL
-  #  attr(out, "split_labels") <- NULL
-
+  row.indices <- dplyr::arrange(dplyr::as_tibble(dplyr::bind_rows(out[5, ])), timepoints, replicate)
+  
+  out <- RestructOut(out[1:4,], n.replicates = n.replicates)
+  
   if (n.replicates == 1) out$proxy.bt.sb.sampYM <- matrix(out$proxy.bt.sb.sampYM, nrow = 1)
   out$proxy.bt.sb.sampYM <- t(out$proxy.bt.sb.sampYM)
 
@@ -769,8 +784,9 @@ ClimToProxyClim <- function(clim.signal,
   out <- list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = everything,
-              calibration.pars = calibration.pars)
-
+              calibration.pars = calibration.pars,
+              row.indices = row.indices)
+I
   class(out) <- "sedproxy.pfm"
 
   return(out)
