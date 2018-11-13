@@ -527,10 +527,11 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt.sb.sampY <- colMeans(samp.bt)
       }
 
-      row.indices.df <- data.frame(timepoints = rep(timepoints[tp], each = n.replicates*n.samples),
+      row.indices.df <- data.frame(timepoints = rep(timepoints[tp],
+                                                    each = n.replicates*n.samples[tp]),
                                    replicate = 1:n.replicates,
-                                   indices = row.indices + min(bioturb.window) +
-                                     timepoints[tp] - min.clim.signal.i
+                                   indices = row.indices + min(bioturb.window)
+                                      - min.clim.signal.i
       )
 
       # Gather output ----------
