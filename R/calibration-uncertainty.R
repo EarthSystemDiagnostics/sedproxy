@@ -141,6 +141,7 @@ CalibrationUncertainty <- function(temperature, means, vcov){
   vars <- mm %*% vcov %*% t(mm)
   sds <- sqrt(diag(vars))
   mu <- as.vector(mm %*% means)
+
   return(tibble::tibble(temperature, mu=mu, sigma=sds))
 }
 
