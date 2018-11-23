@@ -19,7 +19,7 @@ Given a vector of depths, \code{z}, relative to a given horizon, the
   horizon has been moved there by bioturbation from depth \code{z}
 }
 \description{
-Depth solution for Berger and Heath; e.g. page 65 in 
+Depth solution for Berger and Heath; e.g. page 65 in
 Officer and Lynch (1983).
 
   For a given mixing depth \code{d}, it gives the probability
@@ -27,6 +27,7 @@ Officer and Lynch (1983).
   from the focus horizon.
 }
 \examples{
+
 z <- seq(-100, 100, length.out = 1000)
 d <- 10
 
