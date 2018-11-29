@@ -3,6 +3,7 @@
 export(BioturbationWeights)
 export(CalibrationUncertainty)
 export(ClimToProxyClim)
+export(ClimToProxyClim_IFA)
 export(ImpulseResponse)
 export(PlotPFMs)
 export(ProxyConversion)
