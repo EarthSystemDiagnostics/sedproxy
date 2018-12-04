@@ -179,58 +179,59 @@
 #' PlotPFMs(PFM$everything, stage.order = "var", plot.stages = "all")
 #'
 ClimToProxyClim_IFA <- function(clim.signal,
-                            timepoints,
-                            calibration.type = c("identity", "Uk37", "MgCa"),
-                            calibration = switch(calibration.type,
-                                                 identity = NA,
-                                                 Uk37 = "Mueller global",
-                                                 MgCa = "Ten planktonic species_350-500"),
-                            slp.int.means = NULL, slp.int.vcov = NULL,
-                            noise.type = switch(calibration.type,
-                                                identity = "additive",
-                                                Uk37 = "additive",
-                                                MgCa = "multiplicative"),
-                            plot.sig.res = 100,
-                            habitat.weights = rep(1/ncol(clim.signal),
-                                                  ncol(clim.signal)),
-                            habitat.wt.args = NULL,
-                            bio.depth = 10,
-                            sed.acc.rate = 50,
-                            layer.width = 1,
-                            sigma.meas = 0,
-                            sigma.ind = 0,
-                            meas.bias = 0,
-                            scale.noise = switch(calibration.type,
-                                                 identity = FALSE,
-                                                 Uk37 = TRUE,
-                                                 MgCa = TRUE),
-                            n.samples = Inf,
-                            n.replicates = 1,
-                            n.bd = 3) {
+                                timepoints,
+                                calibration.type = c("identity", "Uk37", "MgCa"),
+                                calibration = switch(calibration.type,
+                                                     identity = NA,
+                                                     Uk37 = "Mueller global",
+                                                     MgCa = "Ten planktonic species_350-500"),
+                                slp.int.means = NULL, slp.int.vcov = NULL,
+                                noise.type = switch(calibration.type,
+                                                    identity = "additive",
+                                                    Uk37 = "additive",
+                                                    MgCa = "multiplicative"),
+                                plot.sig.res = 100,
+                                habitat.weights = rep(1/ncol(clim.signal),
+                                                      ncol(clim.signal)),
+                                habitat.wt.args = NULL,
+                                bio.depth = 10,
+                                sed.acc.rate = 50,
+                                layer.width = 1,
+                                sigma.meas = 0,
+                                sigma.ind = 0,
+                                meas.bias = 0,
+                                scale.noise = switch(calibration.type,
+                                                     identity = FALSE,
+                                                     Uk37 = TRUE,
+                                                     MgCa = TRUE),
+                                n.samples = Inf,
+                                n.replicates = 1,
+                                n.bd = 3) {
   # Check inputs --------
 
   n.timepoints <- length(timepoints)
 
-  if((length(n.samples) == 1 | length(n.samples)==n.timepoints)==FALSE)
-    stop("n.sample must be either a single value, or a vector the same
-         length as timepoints")
+  CheckLength <- function(vec, correct.length){
+    if((length(vec) == 1 | length(vec)==correct.length)==FALSE)
+      stop(paste0(deparse(substitute(vec)), " must be either a single value,
+                  or a vector the same length as ",
+                  deparse(substitute(correct.length))
+                  )
+           )
+  }
 
-  if((length(sigma.meas) == 1 | length(sigma.meas)==n.timepoints)==FALSE)
-    stop("sigma.meas must be either a single value, or a vector the same
-         length as timepoints")
-
-  if((length(sigma.ind) == 1 | length(sigma.ind)==n.timepoints)==FALSE)
-    stop("sigma.ind must be either a single value, or a vector the same
-         length as timepoints")
+  CheckLength(n.samples, n.timepoints)
+  CheckLength(sigma.meas, n.timepoints)
+  CheckLength(sigma.ind, n.timepoints)
+  CheckLength(sed.acc.rate, n.timepoints)
 
   if (all(is.finite(n.samples))==FALSE & all(is.infinite(n.samples))==FALSE)
     stop("n.samples cannot be a mix of finite and infinite")
 
   stopifnot(is.matrix(clim.signal))
   if (is.ts(clim.signal)==FALSE)
-    stop("Since version 0.3.1 of sedproxy, ClimToProxyClim requires clim.signal to be a ts object")
-  stopifnot(length(sed.acc.rate) == n.timepoints |
-              length(sed.acc.rate) == 1)
+    stop("Since version 0.3.1 of sedproxy, ClimToProxyClim requires clim.signal
+         to be a ts object")
 
   if (any(is.function(habitat.weights),
           (is.vector(habitat.weights)&length(habitat.weights) == ncol(clim.signal)),
@@ -238,7 +239,6 @@ ClimToProxyClim_IFA <- function(clim.signal,
     stop("habitat.weights must be either a vector of weights with length = ncol(clim.signal),
          a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
-
 
   # Convert to proxy units if requested --------
   calibration.type <- match.arg(calibration.type)
@@ -307,6 +307,109 @@ ClimToProxyClim_IFA <- function(clim.signal,
                           sigma.ind / sqrt(n.samples), 0)
 
   sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
+
+
+  # Get bioturbation windows for all timepoints
+  # Create vectors from "scalar" inputs
+  if (length(sed.acc.rate) == 1) {
+    sed.acc.rate <- rep(sed.acc.rate, n.timepoints)
+  }
+
+  if (length(layer.width) == 1) {
+    layer.width <- rep(layer.width, n.timepoints)
+  }
+
+  if (length(n.samples) == 1) {
+    n.samples <- rep(n.samples, n.timepoints)
+  }
+
+  if (length(sigma.meas) == 1) {
+    sigma.meas <- rep(sigma.meas, n.timepoints)
+  }
+
+  if (length(sigma.ind) == 1) {
+    sigma.ind <- rep(sigma.ind, n.timepoints)
+  }
+
+  # Remove timepoint specific parameters that exceed clim.signal ------
+
+  if (length(sed.acc.rate) > n.timepoints) sed.acc.rate <- sed.acc.rate[valid.inds]
+  if (length(layer.width) > n.timepoints) layer.width <- layer.width[valid.inds]
+  if (length(n.samples) > n.timepoints) n.samples <-  n.samples[valid.inds]
+  if (length(sigma.meas) > n.timepoints) sigma.meas <- sigma.meas[valid.inds]
+  if (length(sigma.ind) > n.timepoints) sigma.ind <- sigma.ind[valid.inds]
+
+
+ # Generate productivity weights from function if supplied
+  if (is.function(habitat.weights)){
+    FUN <- match.fun(habitat.weights)
+    habitat.weights <- do.call(FUN, args = c(list(x = clim.signal), habitat.wt.args))
+    habitat.weights <- habitat.weights / sum(habitat.weights)
+  }
+
+  # If vector ensure habitat.weights are weights and matrix
+  if (is.vector(habitat.weights)){
+    habitat.weights <- habitat.weights / sum(habitat.weights)
+    habitat.weights <- matrix(rep(habitat.weights, nrow(clim.signal)),
+                              nrow = nrow(clim.signal), byrow = TRUE)
+  }
+
+  bt.windows <- lapply(seq_along(timepoints), function(tp){
+    max.min.windows[tp, "min"]:max.min.windows[tp, "max"]
+  })
+
+  bt.wts <- lapply(seq_along(timepoints), function(tp){
+    bioturb.weights <- BioturbationWeights(z = bt.windows[[tp]], focal.z = timepoints[tp],
+                                           layer.width = layer.width[tp],
+                                           sed.acc.rate = sed.acc.rate[tp],
+                                           bio.depth = bio.depth)
+
+    biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
+    biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
+    return(biot.sig.weights)
+  })
+
+  hab.wts <- lapply(seq_along(timepoints), function(tp){
+    habitat.weights <- habitat.weights[bt.windows[[tp]], , drop = FALSE]
+    habitat.weights <- habitat.weights / sum(habitat.weights)
+    })
+
+  clim.sig.wts <- lapply(seq_along(timepoints), function(tp) {
+    clim.sig.wts <- hab.wts[[tp]] * bt.wts[[tp]]
+    clim.sig.wts / sum(clim.sig.wts)
+    })
+
+  sample.inds <- lapply(seq_along(timepoints), function(tp) {
+    sample(length(clim.sig.wts[[tp]]),
+           n.samples[tp] * n.replicates,
+           prob = clim.sig.wts[[tp]],
+           replace = TRUE)
+  })
+
+  clim.sig.windows <- lapply(seq_along(timepoints), function(tp) {
+    proxy.clim.signal[bt.windows[[tp]], , drop=FALSE]
+  })
+
+  samples <- lapply(seq_along(timepoints), function(tp) {
+   clim.sig.windows[[tp]][sample.inds[[tp]]]
+  })
+
+  biot.clim <- lapply(seq_along(timepoints), function(tp) {
+    sum(clim.sig.windows[[tp]] * bt.wts[[tp]])
+  })
+
+  clim.means <- lapply(seq_along(timepoints), function(tp) {
+    # can be taken across columns to get per replicate means
+    samp <- matrix(samples[[tp]], nrow = n.samples[tp])
+    colMeans(samp)
+  })
+
+
+  ind.forams <- lapply(seq_along(timepoints), function(tp) {
+    samples[[tp]] + rnorm(length(samples), 0, 1)
+  })
+
+
 
 
   # Use Rapid or Slow version ----------------------
@@ -792,4 +895,36 @@ ClimToProxyClim_IFA <- function(clim.signal,
 
 }
 
+GetIndices <- function(tp, sed.acc.rate, layer.width, bio.depth){
 
+  # Get bioturbation weights --------
+
+  bio.wdth <-
+
+    first.tp <- max.min.windows[tp, "min"]
+  last.tp <- max.min.windows[tp, "max"]
+  bioturb.window <- first.tp:last.tp
+
+  bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
+                                         layer.width = layer.width[tp], sed.acc.rate = sed.acc.rate[tp],
+                                         bio.depth = bio.depth)
+
+  # Get bioturbation X seasonality weights matrix ---------
+  habitat.weights <- habitat.weights[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
+  habitat.weights <- habitat.weights / sum(habitat.weights)
+  clim.sig.weights <- bioturb.weights * habitat.weights
+  clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
+
+  # Check weights sum to 1, within tolerance
+  weight.err <- abs(sum(clim.sig.weights) - 1)
+  if ((weight.err < 1e-10) == FALSE) stop(paste0("weight.err = ", weight.err))
+
+  # call sample once for all replicates together, then take means of
+  # groups of n.samples
+  # Get indices not values
+  samp.indices <-  sample(length(clim.sig.window),
+                          n.samples[tp] * n.replicates,
+                          prob = clim.sig.weights,
+                          replace = TRUE)
+
+}
