@@ -386,29 +386,69 @@ ClimToProxyClim_IFA <- function(clim.signal,
            replace = TRUE)
   })
 
+  # get sampled rows
+
+  row.inds <- lapply(seq_along(timepoints), function(tp) {
+    inds <- (sample.inds[[tp]]-1) %% nrow(clim.sig.wts[[tp]]) + 1
+    inds
+  })
+
+  row.inds.abs <- lapply(seq_along(timepoints), function(tp) {
+    row.inds[[tp]] + max.min.windows[tp, "min"] - min.clim.signal.i
+  })
+
+  col.inds <- lapply(seq_along(timepoints), function(tp) {
+    ceiling(sample.inds[[tp]] / nrow(hab.wts[[tp]]))
+    })
+
   clim.sig.windows <- lapply(seq_along(timepoints), function(tp) {
     proxy.clim.signal[bt.windows[[tp]], , drop=FALSE]
   })
 
   samples <- lapply(seq_along(timepoints), function(tp) {
-   clim.sig.windows[[tp]][sample.inds[[tp]]]
+   samp <- clim.sig.windows[[tp]][sample.inds[[tp]]]
+   matrix(samp, nrow = n.samples[tp])
   })
 
-  biot.clim <- lapply(seq_along(timepoints), function(tp) {
+  proxy.bt <- sapply(seq_along(timepoints), function(tp) {
     sum(clim.sig.windows[[tp]] * bt.wts[[tp]])
   })
 
-  clim.means <- lapply(seq_along(timepoints), function(tp) {
+  proxy.bt.sb <- sapply(seq_along(timepoints), function(tp) {
+    sum(clim.sig.windows[[tp]] * clim.sig.wts[[tp]])
+  })
+
+  proxy.bt.sampY <- sapply(seq_along(timepoints), function(tp) {
+    hw <- hab.wts[[tp]]
+    hw <- hw / rowSums(hw)
+    rows <- rowSums(clim.sig.windows[[tp]] * hw)[row.inds[[tp]]]
+    colMeans(matrix(rows, nrow = n.samples[tp]))
+  })
+
+  proxy.bt.sb.sampYM <- sapply(seq_along(timepoints), function(tp) {
     # can be taken across columns to get per replicate means
     samp <- matrix(samples[[tp]], nrow = n.samples[tp])
     colMeans(samp)
   })
 
+  # ind.errs <- lapply(seq_along(timepoints), function(tp) {
+  #   errs <- rnorm(n.samples[tp] * n.replicates, 0, sigma.ind)
+  #   matrix(errs, nrow = n.samples[tp])
+  # })
 
-  ind.forams <- lapply(seq_along(timepoints), function(tp) {
-    samples[[tp]] + rnorm(length(samples), 0, 1)
-  })
+  # meas.errs <- rnorm(length(timepoints) * n.replicates, 0, sigma.meas)
 
+  out2 <- list(
+    timepoints = timepoints,
+    proxy.bt = proxy.bt,
+    proxy.bt.sb = proxy.bt.sb,
+    #sample.inds = sample.inds,
+    row.inds = row.inds.abs,
+    row.inds.rel = row.inds,
+    #col.inds = col.inds,
+    proxy.bt.sampY = proxy.bt.sampY,
+    proxy.bt.sb.sampYM = proxy.bt.sb.sampYM
+  )
 
 
 
@@ -887,7 +927,8 @@ ClimToProxyClim_IFA <- function(clim.signal,
   out <- list(simulated.proxy=simulated.proxy,
               smoothed.signal=smoothed.signal,
               everything = everything,
-              calibration.pars = calibration.pars)
+              calibration.pars = calibration.pars,
+              out2 = out2)
 
   class(out) <- "sedproxy.pfm"
 
