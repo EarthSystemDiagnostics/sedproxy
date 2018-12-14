@@ -1,3 +1,7 @@
+# sedproxy 0.6.2
+
+* fixed calibration parameters attribute
+
 # sedproxy 0.6.1
 
 * Release version for final copy edited version of CoTP paper
