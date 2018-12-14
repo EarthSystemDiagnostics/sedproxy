@@ -744,20 +744,24 @@ ClimToProxyClim <- function(clim.signal,
 
   everything <- MakePFMDataframe(out)
 
-  slp.int.means <- if (is.null(slp.int.means) && calibration.type != "identity") {
-    calibration <- if (calibration.type == "MgCa" & is.null(calibration)) {
-      "Ten planktonic species_350-500"
-    } else {calibration}
-    cfs.vcov <- dplyr::filter(sedproxy::calibration.parameters,
-                  calibration.type == calibration.type,
-                  calibration == calibration)
-    matrix(c(cfs.vcov$slope, cfs.vcov$intercept), ncol = 2, byrow = TRUE)
-    # switch(calibration.type,
-    #        MgCa = MgCa.foram.pars[[calibration]][["means"]],
-    #        Uk37 = Uk37.pars[["mueller.uk37"]][["means"]])
-  } else{
-    slp.int.means
-  }
+  slp.int.means <-
+    if (is.null(slp.int.means) && calibration.type != "identity") {
+      calibration <-
+        if (calibration.type == "MgCa" & is.null(calibration)) {
+          "Ten planktonic species_350-500"
+        } else {
+          calibration
+        }
+
+      cp <- data.frame(sedproxy::calibration.parameters)
+      cfs.vcov <- cp[cp$calibration.type == calibration.type &
+                       cp$calibration == calibration,]
+      matrix(c(cfs.vcov$slope, cfs.vcov$intercept),
+             ncol = 2,
+             byrow = TRUE)
+    } else{
+      slp.int.means
+    }
 
   calibration.pars <- list(calibration.type = calibration.type,
                            calibration = calibration,
