@@ -398,6 +398,9 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt.sb.sampY <- rowMeans(samp.bt)
       }
 
+      if(testInteger(min(bioturb.window))!=TRUE) warning("min(bioturb.window) not integer")
+      if(testInteger(min.clim.signal.i)!=TRUE) warning("min.clim.signal.i not integer")
+      
       row.indices.df <- data.frame(timepoints = rep(timepoints[tp], each = n.replicates*n.samples),
                                    replicate = 1:n.replicates,
                                    indices = row.indices + min(bioturb.window) +
