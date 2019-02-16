@@ -192,6 +192,13 @@ ClimToProxyClim <- function(clim.signal,
                             n.samples = Inf,
                             n.replicates = 1,
                             n.bd = 3) {
+  
+  testInteger <- function(x){
+    test <- all.equal(x, as.integer(x), check.attributes = FALSE)
+    if(test == TRUE){ return(TRUE) }
+    else { return(FALSE) }
+  }
+  
   # Check inputs --------
 
   n.timepoints <- length(timepoints)
@@ -262,10 +269,10 @@ ClimToProxyClim <- function(clim.signal,
   # focal.timepoint + 3*bio.depth.timesteps
 
   bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
-  layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
+  layer.width.years <- (1000 * layer.width / sed.acc.rate)
 
   max.min.windows <- cbind(max = timepoints + n.bd * bio.depth.timesteps,
-                           min = timepoints - bio.depth.timesteps - layer.width.years / 2)
+                           min = timepoints - bio.depth.timesteps - round(layer.width.years / 2))
 
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
   min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
@@ -287,6 +294,8 @@ ClimToProxyClim <- function(clim.signal,
 
   max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
 
+  print(max.min.windows)
+  
   # Scale sigma.ind by n.samples and create combined error term
   sigma.ind.scl <- ifelse(is.finite(n.samples),
                           sigma.ind / sqrt(n.samples), 0)
@@ -308,7 +317,7 @@ ClimToProxyClim <- function(clim.signal,
 
     # Get relative bioturbation window ----------
 
-    first.tp <- -bio.depth.timesteps - layer.width.years / 2
+    first.tp <- -bio.depth.timesteps - round(layer.width.years / 2)
     last.tp <- n.bd * bio.depth.timesteps
     bioturb.window <- first.tp:last.tp
 
@@ -382,6 +391,9 @@ ClimToProxyClim <- function(clim.signal,
         clim.sig.window.ann <- colSums(t(clim.sig.window) * habitat.weights)
         row.indices <- (samp.indices.tp-1) %% nrow(clim.sig.window) + 1
 
+        if(testInteger(samp.indices.tp)!=TRUE) warning("samp.indices.tp not integer")
+        if(testInteger(row.indices)!=TRUE) warning("row.indices not integer")
+        
         samp.bt <- matrix(clim.sig.window.ann[row.indices], ncol = n.samples)
         proxy.bt.sb.sampY <- rowMeans(samp.bt)
       }
@@ -391,6 +403,10 @@ ClimToProxyClim <- function(clim.signal,
                                    indices = row.indices + min(bioturb.window) +
                                      timepoints[tp] - min.clim.signal.i
                                    )
+      
+      if(testInteger(row.indices.df$indices)!=TRUE) warning("row.indices.df$indices not integer")
+      
+      
 
       # Gather output ----------
       list(
@@ -451,6 +467,8 @@ ClimToProxyClim <- function(clim.signal,
                                 nrow = nrow(clim.signal), byrow = TRUE)
     }
 
+    print(max.min.windows)
+    
 
     # For each timepoint ------
     out <- sapply(1:n.timepoints, function(tp) {
@@ -460,7 +478,7 @@ ClimToProxyClim <- function(clim.signal,
       last.tp <- max.min.windows[tp, "max"]
       bioturb.window <- first.tp:last.tp
 
-
+    
       # Get bioturbation weights --------
       bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
                                              layer.width = layer.width[tp], sed.acc.rate = sed.acc.rate[tp],
@@ -521,12 +539,19 @@ ClimToProxyClim <- function(clim.signal,
 
         clim.sig.window.ann <- rowSums(clim.sig.window * habitat.weights.r1)
         row.indices <- (samp.indices-1) %% nrow(clim.sig.window) + 1
-
+        
+        if(testInteger(samp.indices)!=TRUE) warning("samp.indices.tp not integer")
+        if(testInteger(row.indices)!=TRUE) warning("row.indices not integer")
+        
         samp.bt <- matrix(clim.sig.window.ann[row.indices], nrow = n.samples[tp])
 
         proxy.bt.sb.sampY <- colMeans(samp.bt)
       }
-
+      
+      if(testInteger(min(bioturb.window))!=TRUE) warning("min(bioturb.window) not integer")
+      if(testInteger(min.clim.signal.i)!=TRUE) warning("min.clim.signal.i not integer")
+      
+      
       row.indices.df <- data.frame(timepoints = rep(timepoints[tp],
                                                     each = n.replicates*n.samples[tp]),
                                    replicate = 1:n.replicates,
@@ -534,6 +559,8 @@ ClimToProxyClim <- function(clim.signal,
                                       - min.clim.signal.i
       )
 
+      if(testInteger(row.indices.df$indices)!=TRUE) warning("row.indices.df$indices not integer")
+      
       # Gather output ----------
       list(
         #smoothing.width = smoothing.width,
