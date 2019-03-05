@@ -67,15 +67,24 @@ ScaleError <- function(mean.temperature = NULL,
 # ScaleError(sd.temperature = c(2, 1),
 #            calibration.type = "Uk37")
 
+
+
 #' Calibration Uncertainty
 #'
 #' @description Calculates the calibration uncertainty at a given temperature
 #'   from the variance-covariance matrix of the coefficients of a fitted
 #'   calibration regression equation. Also returns the mean proxy value at the
 #'   given temperature.
+#'
+#'   The uncertainty in proxy units can be scaled to temperature units by
+#'   dividing by the calibration slope.
+#'
+#'   For linear calibrations on transformed variabes such as Mg/Ca, this is the
+#'   uncertainty on the log(Mg/Ca) values.
+#'
 #' @param temperature Temperature at which to evaluate proxy uncertainty in
 #'   degrees celsius
-#' @param means intercept and slope of fitted calibration regression
+#' @param means slope and intercept of fitted calibration regression
 #' @param vcov variance-covariance matrix of slope and intercept from fitted
 #'   calibration regression
 #'
@@ -146,54 +155,47 @@ CalibrationUncertainty <- function(temperature, means, vcov){
 }
 
 
+
 # CalibrationUncertainty.2 <- function(temperature = NULL, proxy.value = NULL,
 #                                      calibration.type,
 #                                      slp.int.means = NULL, slp.int.vcov = NULL,
 #                                      calibration = NULL){
 #
-#   if (is.null(temperature) & is.null(proxy.value) |
+#   pct <- match.arg(calibration.type,
+#                    choices = c("identity", "MgCa", "Uk37"))
+#
+#
+#     if (is.null(temperature) & is.null(proxy.value) |
 #       is.null(temperature) == FALSE & is.null(proxy.value) == FALSE){
 #     stop("One and only one of temperature or proxy.value must be supplied")
 #   }
 #
-#   calibration.type <- match.arg(calibration.type,
-#                                       choices = c("MgCa", "Uk37"))
 #
-#   if (calibration.type == "Uk37"){
+#   ## Get calibration parameters
+#   if (pct != "identity"){
+#     prs <- calibration.parameters
+#     cfs.vcov <- prs[prs$calibration.type == pct & prs$calibration == calibration, ]
 #     if (is.null(slp.int.means)){
-#       slp.int.means <- sedproxy::Uk37.pars$mueller.uk37$means[c("slope", "intercept")]
-#       #slp.int.means <- matrix(slp.int.means, ncol = 2, byrow = TRUE)
-#     }else{slp.int.means <- slp.int.means}
+#       cfs <-  matrix(c(cfs.vcov$slope, cfs.vcov$intercept), ncol = 2, byrow = TRUE)
+#      }else{cfs <- matrix(slp.int.means, nrow = 1)}
 #
 #     if (is.null(slp.int.vcov)){
-#       slp.int.vcov <- sedproxy::Uk37.pars$mueller.uk37$vcov[c("slope", "intercept"), c("slope", "intercept")]
-#     }else{
-#       slp.int.vcov <- slp.int.vcov
+#       vcov <- cfs.vcov$vcov[[1]]
+#       }else{
+#       vcov <- slp.int.vcov
+#       }
 #     }
-#   }else if (calibration.type == "MgCa"){
-#     calibration <- if (is.null(calibration)) {"Ten planktonic species_350-500"} else {match.arg(calibration)}
-#
-#     if (is.null(slp.int.means)){
-#       slp.int.means <- sedproxy::MgCa.foram.pars[[calibration]]$means[c("slope", "intercept")]
-#
-#     }else{slp.int.means <- matrix(slp.int.means, nrow = 1)}
-#
-#     if (is.null(slp.int.vcov)){
-#       slp.int.vcov <- sedproxy::MgCa.foram.pars[[calibration]]$vcov[c("slope", "intercept"), c("slope", "intercept")]
-#     }else{
-#       slp.int.vcov <- slp.int.vcov
-#     }
-#   }
-#
 #
 #   mm <- cbind(temperature, 1)
 #   vars <- mm %*% slp.int.vcov %*% t(mm)
 #   sd.proxy <- sqrt(diag(vars))
 #   mu.proxy <- as.vector(mm %*% slp.int.means)
+#
 #   if (calibration.type == "MgCa") {
 #     sd.proxy = exp(mu.proxy + sd.proxy) - exp(mu.proxy)
 #     mu.proxy = exp(mu.proxy)
-#     }
+#   }
+#
 #   mu.temperature <- as.vector(ProxyConversion(proxy.value = mu.proxy,
 #                                     calibration.type = calibration.type,
 #                                     slp.int.means = slp.int.means))
@@ -216,4 +218,79 @@ CalibrationUncertainty <- function(temperature, means, vcov){
 #                         sigma.proxy = sd.proxy,
 #                         mu.temperature, sigma.temperature = sd.temperature))
 # }
+
+
+
+
+#' Calibration (regression) error from RSE and x values of fitted regression
+#'
+#' @param x_star New x values for which error in y is desired
+#' @param rse Residual Standard Error of fitted regression
+#' @param x x values from fitted regression
+#'
+#' @return vector
+#' @export
+#'
+#' @examples
+#' n <- 20
+#' df <- data.frame(x = runif(n, 50, 100))
+#' df$y <- 1 + 0.5 * df$x + rnorm(n, 0, 10)
+#'
+#' plot(df)
+#' lm1 <- lm(y~x, data = df)
+#' abline(lm1)
+#'
+#' ####
+#'
+#' library(dplyr)
+#' library(ggplot2)
+#'
+#' n <- 20
+#' df <- data.frame(x = runif(n, 50, 100))
+#' df$y <- 1 + 0.5 * df$x + rnorm(n, 0, 10)
+#'
+#' plot(df)
+#' lm1 <- lm(y~x, data = df)
+#' abline(lm1)
+#'
+#' CalErr(c(23, 56, 79), summary(lm1)$sigma, df$x)
+#'
+#' df2 <- tibble(x = 0:200,
+#'               y = predict(lm1, newdata = data.frame(x=x))) %>%
+#'   mutate(y.err = CalErr(x_star = x, rse = summary(lm1)$sigma, x = df$x))
+#'
+#' df %>%
+#'   ggplot(aes(x , y)) +
+#'   geom_point() +
+#'   geom_smooth(method = "lm") +
+#'   geom_line(data = df2, aes(x, y = y + 2*y.err))+
+#'   geom_line(data = df2, aes(x, y = y - 2*y.err))
+#'
+CalErr <- function(x_star, rse, x){
+  n <- length(x)
+  mu_x <- mean(x)
+  rse * sqrt(1/n + (x_star - mu_x)^2 / sum((x - mu_x)^2))
+}
+
+
+# From Gebregiorgis, D., Hathorne, E. C., Giosan, L., Clemens, S., Nürnberg, D.
+# and Frank, M.: Southern Hemisphere forcing of South Asian monsoon
+# precipitation over the past ~1 million years, Nature Communications, 9(1),
+# 4702, doi:10.1038/s41467-018-07076-2, 2018.
+
+# sig.sq_T_Mg_Ca <- function(Mg_Ca, a, sigma_a, b, sigma_b, sigma_Mg_Ca){
 #
+#   dT_da <- - 1/a^2 * log(Mg_Ca / b)
+#
+#   dT_db <- -1/(a*b)
+#
+#   dT_dMg_Ca <- 1/a * 1/Mg_Ca
+#
+#
+#   sig.sq_T <- (dT_da * sigma_a)^2 + (dT_db * sigma_b)^2 + (dT_dMg_Ca * sigma_Mg_Ca)^2
+#
+#   return(sig.sq_T)
+# }
+
+
+

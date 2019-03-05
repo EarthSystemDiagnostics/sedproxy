@@ -10,7 +10,7 @@ CalibrationUncertainty(temperature, means, vcov)
 \item{temperature}{Temperature at which to evaluate proxy uncertainty in
 degrees celsius}
 
-\item{means}{intercept and slope of fitted calibration regression}
+\item{means}{slope and intercept of fitted calibration regression}
 
 \item{vcov}{variance-covariance matrix of slope and intercept from fitted
 calibration regression}
@@ -24,4 +24,10 @@ Calculates the calibration uncertainty at a given temperature
   from the variance-covariance matrix of the coefficients of a fitted
   calibration regression equation. Also returns the mean proxy value at the
   given temperature.
+
+  The uncertainty in proxy units can be scaled to temperature units by
+  dividing by the calibration slope.
+
+  For linear calibrations on transformed variabes such as Mg/Ca, this is the
+  uncertainty on the log(Mg/Ca) values.
 }
