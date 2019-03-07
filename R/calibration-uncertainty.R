@@ -93,65 +93,63 @@ ScaleError <- function(mean.temperature = NULL,
 #' @export
 #'
 #' @examples
-# Temp <- 1:30
-#
-# C.U <- CalibrationUncertainty(Temp, means = Uk37.pars$mueller.uk37$means,
-#                        vcov = Uk37.pars$mueller.uk37$vcov)
-#
-# C.U %>%
-#   ggplot(aes(x = temperature, y = mu)) +
-#   geom_ribbon(aes(ymax = mu + sigma, ymin = mu - sigma,
-#                   colour = "1 SD", fill = "1 SD")) +
-#   geom_line(aes(colour = "Mean", fill = "Mean")) +
-#   scale_fill_discrete("") +
-#   scale_color_discrete("")
-#
-#
-# # For Mg/Ca the proxy units need exonentiating
-# C.U <- CalibrationUncertainty(10:28, means = MgCa.foram.pars$`G. aequilateralis_350-500`$means,
-#                               vcov = MgCa.foram.pars$`G. aequilateralis_350-500`$vcov) %>%
-#   mutate(Temp2 = as.vector(ProxyConversion(proxy.value = exp(mu), calibration.type = "MgCa")),
-#          T.upr = as.vector(ProxyConversion(proxy.value = exp(mu+sigma), calibration.type = "MgCa")),
-#          T.lwr = as.vector(ProxyConversion(proxy.value = exp(mu-sigma), calibration.type = "MgCa")))
-#
-#
-# C.U %>%
-#   ggplot(aes(x = temperature, y = exp(mu))) +
-#   geom_ribbon(aes(ymax = exp(mu + sigma), ymin = exp(mu - sigma),
-#                   colour = "1 SD", fill = "1 SD")) +
-#   geom_line(aes(colour = "Mean", fill = "Mean")) +
-#   scale_fill_discrete("") +
-#   scale_color_discrete("")
-#
-# C.U %>%
-#   ggplot(aes(x = temperature, y = Temp2)) +
-#   geom_ribbon(aes(ymax = T.upr, ymin = T.lwr,
-#                   colour = "1 SD", fill = "1 SD")) +
-#   geom_line(aes(colour = "Mean", fill = "Mean")) +
-#   scale_fill_discrete("") +
-#   scale_color_discrete("")
-#
-# C.U %>%
-#   ggplot(aes(x = exp(mu), y = Temp2)) +
-#   geom_ribbon(aes(ymax = T.upr, ymin = T.lwr,
-#                   colour = "1 SD", fill = "1 SD")) +
-#   geom_line(aes(colour = "Mean", fill = "Mean")) +
-#   scale_fill_discrete("") +
-#   scale_color_discrete("")
-
-#
-# C.U %>%
-#   ggplot(aes(x = temperature, y = Temp2)) +
-#   geom_line(aes(colour = "Mean", fill = "Mean")) +
-#   scale_fill_discrete("") +
-#   scale_color_discrete("")
+#' Temp <- 10:20
+#'
+#' cp <- with(calibration.parameters, calibration.parameters[calibration.type == "Uk37", ])
+#'
+#' C.U <- CalibrationUncertainty(Temp, means = c(cp$slope, cp$intercept),
+#'                               vcov = cp$vcov[[1]])
+#'
+#' C.U %>%
+#'   ggplot(aes(x = temperature, y = mu.proxy)) +
+#'   geom_ribbon(aes(ymax = mu.proxy + sigma.proxy, ymin = mu.proxy - sigma.proxy,
+#'                   colour = "1 SD", fill = "1 SD")) +
+#'   geom_line() +
+#'   scale_fill_discrete("") +
+#'   scale_color_discrete("")
+#'
+#'
+#' # For Mg/Ca the proxy units need exonentiating
+#' cp <- with(calibration.parameters, calibration.parameters[calibration == "G. ruber pink_250-350", ])
+#'
+#' Temp <- 1:30
+#'
+#'
+#' C.U <- CalibrationUncertainty(Temp, means = c(cp$slope, cp$intercept),
+#'                               vcov = cp$vcov[[1]]) %>%
+#'   mutate(MgCa = exp(mu.proxy),
+#'          MgCa.upr = exp(mu.proxy + sigma.proxy),
+#'          MgCa.lwr = exp(mu.proxy - sigma.proxy))
+#'
+#' C.U %>%
+#'   ggplot(aes(x = temperature, y = MgCa)) +
+#'   geom_ribbon(aes(ymax = MgCa.upr, ymin = MgCa.lwr,
+#'                   colour = "1 SD", fill = "1 SD")) +
+#'   geom_line() +
+#'   scale_fill_discrete("") +
+#'   scale_color_discrete("") +
+#'   scale_x_continuous(limits = c(-1, 31)) +
+#'   scale_y_continuous(limits = c(0, 7))
+#'
+#'
+#' C.U %>%
+#'   ggplot(aes(x = MgCa, y = temperature)) +
+#'   geom_ribbon(aes(ymax = temperature + sigma.temperature, ymin = temperature - sigma.temperature,
+#'                   colour = "1 SD", fill = "1 SD")) +
+#'   geom_line() +
+#'   scale_fill_discrete("") +
+#'   scale_color_discrete("") +
+#'   scale_y_continuous(limits = c(-1, 31)) +
+#'   scale_x_continuous(limits = c(0, 7)) +
+#'   coord_flip()
+#'
 CalibrationUncertainty <- function(temperature, means, vcov){
   mm <- cbind(temperature, 1)
   vars <- mm %*% vcov %*% t(mm)
   sds <- sqrt(diag(vars))
   mu <- as.vector(mm %*% means)
 
-  return(tibble::tibble(temperature, mu=mu, sigma=sds))
+  return(tibble::tibble(temperature, mu.proxy=mu, sigma.proxy=sds, sigma.temperature = sds / means[1]))
 }
 
 

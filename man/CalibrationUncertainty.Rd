@@ -31,3 +31,55 @@ Calculates the calibration uncertainty at a given temperature
   For linear calibrations on transformed variabes such as Mg/Ca, this is the
   uncertainty on the log(Mg/Ca) values.
 }
+\examples{
+Temp <- 10:20
+
+cp <- with(calibration.parameters, calibration.parameters[calibration.type == "Uk37", ])
+
+C.U <- CalibrationUncertainty(Temp, means = c(cp$slope, cp$intercept),
+                              vcov = cp$vcov[[1]])
+
+C.U \%>\%
+  ggplot(aes(x = temperature, y = mu.proxy)) +
+  geom_ribbon(aes(ymax = mu.proxy + sigma.proxy, ymin = mu.proxy - sigma.proxy,
+                  colour = "1 SD", fill = "1 SD")) +
+  geom_line() +
+  scale_fill_discrete("") +
+  scale_color_discrete("")
+
+
+# For Mg/Ca the proxy units need exonentiating
+cp <- with(calibration.parameters, calibration.parameters[calibration == "G. ruber pink_250-350", ])
+
+Temp <- 1:30
+
+
+C.U <- CalibrationUncertainty(Temp, means = c(cp$slope, cp$intercept),
+                              vcov = cp$vcov[[1]]) \%>\%
+  mutate(MgCa = exp(mu.proxy),
+         MgCa.upr = exp(mu.proxy + sigma.proxy),
+         MgCa.lwr = exp(mu.proxy - sigma.proxy))
+
+C.U \%>\%
+  ggplot(aes(x = temperature, y = MgCa)) +
+  geom_ribbon(aes(ymax = MgCa.upr, ymin = MgCa.lwr,
+                  colour = "1 SD", fill = "1 SD")) +
+  geom_line() +
+  scale_fill_discrete("") +
+  scale_color_discrete("") +
+  scale_x_continuous(limits = c(-1, 31)) +
+  scale_y_continuous(limits = c(0, 7))
+
+
+C.U \%>\%
+  ggplot(aes(x = MgCa, y = temperature)) +
+  geom_ribbon(aes(ymax = temperature + sigma.temperature, ymin = temperature - sigma.temperature,
+                  colour = "1 SD", fill = "1 SD")) +
+  geom_line() +
+  scale_fill_discrete("") +
+  scale_color_discrete("") +
+  scale_y_continuous(limits = c(-1, 31)) +
+  scale_x_continuous(limits = c(0, 7)) +
+  coord_flip()
+
+}
