@@ -85,7 +85,11 @@ PlotPFMs <- function(PFMs,
                 .Names = stages.key$stage)
 
   cali.attr <- attr(PFMs, "calibration.pars")
-  
+
+  if (is.null(cali.attr)) {
+    cali.attr <- list(calibration.type = "identity")
+  }
+
   if (plot.stages[1] == "default") {
     if (cali.attr$calibration.type == "identity"){
       plotting.levels <- c(
