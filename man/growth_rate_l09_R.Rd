@@ -6,7 +6,7 @@
 \usage{
 growth_rate_l09_R(nm_foram = c("sacculifer", "bulloides", "pachy_d",
   "siphonifera", "universa", "pachy_s", "dutertrei", "ruber"), input_T,
-  norm = 0)
+  norm = FALSE, min.growth.thresh = 0)
 }
 \arguments{
 \item{nm_foram}{Name of foram.}
@@ -14,6 +14,10 @@ growth_rate_l09_R(nm_foram = c("sacculifer", "bulloides", "pachy_d",
 \item{input_T}{Input temperature in Kelvin}
 
 \item{norm}{Optional normalizing factor}
+
+\item{min.growth.thresh}{Sets a lower cutoff for growth as a proportion of
+the maximum growth rate for that taxon. In Roche et al (2018) a cutoff of
+0.1 was used, meaning all growth rates less than 0.1*max were set to zero.}
 }
 \value{
 Growth rate/day
@@ -30,7 +34,7 @@ The code is made available under the GNU General Public License
 https://www.gnu.org/licenses/gpl.html
 }
 \examples{
-growth_rate_l09_R(nm_foram = "ruber", input_T = (c(280, 290)), norm = 1)
+growth_rate_l09_R(nm_foram = 'ruber', input_T = (c(280, 290)), norm = 1)
 }
 \references{
 Roche, D. M., Waelbroeck, C., Metcalfe, B. and Caley, T.: FAME

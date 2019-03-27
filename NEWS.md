@@ -1,3 +1,8 @@
+# sedproxy 0.6.4
+
+* implement growth rate threshold in growth_rate_l09_R (FAME)
+
+
 # sedproxy 0.6.2
 
 * fixed calibration parameters attribute
