@@ -69,20 +69,20 @@ PlotPFMs <- function(PFMs,
 
   # assign default asthetic mappings
 
-  breaks <- stages.key$stage
+  breaks <- sedproxy::stages.key$stage
 
   if (colr.palette[1] == "default")
     colr.palette  <-
-      structure(stages.key$plotting.colour,
-                .Names = stages.key$stage)
+      structure(sedproxy::stages.key$plotting.colour,
+                .Names = sedproxy::stages.key$stage)
 
   if (alpha.palette[1] == "default") alpha.palette  <-
-      structure(stages.key$plotting.alpha,
-                .Names = stages.key$stage)
+      structure(sedproxy::stages.key$plotting.alpha,
+                .Names = sedproxy::stages.key$stage)
 
   if (levl.labels[1] == "default") levl.labels  <-
-      structure(stages.key$label,
-                .Names = stages.key$stage)
+      structure(sedproxy::stages.key$label,
+                .Names = sedproxy::stages.key$stage)
 
   cali.attr <- attr(PFMs, "calibration.pars")
 
@@ -102,7 +102,7 @@ PlotPFMs <- function(PFMs,
         )
       }
     } else if (plot.stages == "all") {
-    plotting.levels <- stages.key$stage
+    plotting.levels <- sedproxy::stages.key$stage
     plotting.levels <- subset(plotting.levels, plotting.levels %in% c("clim.signal.ann", "clim.timepoints.ssr") == FALSE)
   } else{
     plotting.levels <- plot.stages
@@ -113,7 +113,7 @@ PlotPFMs <- function(PFMs,
 
 
   # match scaling flag
-  PFMs <- dplyr::left_join(PFMs, stages.key[, c("stage", "scale")])
+  PFMs <- dplyr::left_join(PFMs, sedproxy::stages.key[, c("stage", "scale")])
 
   #set factor level ordering for stages
   stage.order <- match.arg(stage.order)
