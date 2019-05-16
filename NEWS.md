@@ -1,9 +1,25 @@
+# sedproxy 0.6.4
+
+* implement growth rate threshold in growth_rate_l09_R (FAME)
+
+
+# sedproxy 0.6.2
+
+* fixed calibration parameters attribute
+
+# sedproxy 0.6.1
+
+* Release version for final copy edited version of CoTP paper
+* Repository moved to Github
+
+
 # sedproxy 0.6
 
 * Fast version of ClimToProxyClim called internally when parameters are time-invariant
 * Bugfix to calculation of bioturbation weights when layer.width == 0
 * Other performance improvements
 * Basic unit tests to detect changes to output for a standard simulation
+
 
 # sedproxy 0.5.0
 
@@ -17,6 +33,7 @@
 # sedproxy 0.4.0
 
 * Release version for CoTP Discussion paper
+
 
 # sedproxy 0.3.1
 
