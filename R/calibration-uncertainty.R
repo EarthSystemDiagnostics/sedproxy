@@ -1,3 +1,19 @@
+#' Title
+#'
+#' @param mean.temperature
+#' @param sd.temperature
+#' @param mean.proxy.value
+#' @param sd.proxy.value
+#' @param calibration.type
+#' @param slp.int.means
+#' @param slp.int.vcov
+#' @param calibration
+#' @param point.or.sample
+#'
+#' @return
+#' @export
+#'
+#' @examples
 ScaleError <- function(mean.temperature = NULL,
                        sd.temperature = NULL,
                        mean.proxy.value = NULL,

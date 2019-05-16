@@ -22,9 +22,9 @@ Given a vector of depths, \code{z}, relative to a given horizon, the
 Depth solution for Berger and Heath; e.g. page 65 in
 Officer and Lynch (1983).
 
-  For a given mixing depth \code{d}, it gives the probability
-  that a particle has been moved from a depth horizon \code{z} units away
-  from the focus horizon.
+ For a given mixing depth \code{d}, it gives the probability
+ that a particle has been moved from a depth horizon \code{z} units away
+ from the focus horizon.
 }
 \examples{
 
