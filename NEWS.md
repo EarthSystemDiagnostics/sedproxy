@@ -1,3 +1,8 @@
+# sedproxy 0.6.5
+
+* bugfix - fix case where bio.depth and layer width both == 0, single row of clim.signal should be used for each requested timepoint
+
+
 # sedproxy 0.6.4
 
 * implement growth rate threshold in growth_rate_l09_R (FAME)
