@@ -31,10 +31,12 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
     focal.z <- focal.z / sed.acc.rate
   }
 
+
   lwy <- ceiling(layer.width / sed.acc.rate)
   #lwy[lwy < 1] <- 1 #lwy can be 0
   mdy <- ceiling(bio.depth / sed.acc.rate)
 
+  if (lwy == 0 & mdy == 0) lwy <- 1
 
   C <- lwy/2
   lam <- 1/mdy

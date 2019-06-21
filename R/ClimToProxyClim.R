@@ -310,6 +310,7 @@ ClimToProxyClim <- function(clim.signal,
 
     first.tp <- -bio.depth.timesteps - layer.width.years / 2
     last.tp <- n.bd * bio.depth.timesteps
+
     bioturb.window <- first.tp:last.tp
 
     # Get bioturbation weights --------
@@ -349,7 +350,7 @@ ClimToProxyClim <- function(clim.signal,
     out <- sapply(1:n.timepoints, function(tp) {
 
       # Get portion of clim.signal corresponding to bioturbation window for this timepoint -------
-      clim.sig.window <- proxy.clim.signal[bioturb.window + timepoints[tp] - min.clim.signal.i+1, ]
+      clim.sig.window <- proxy.clim.signal[bioturb.window + timepoints[tp] - min.clim.signal.i+1, , drop = FALSE]
 
       # Calculate mean clim.signal -------
 
@@ -448,13 +449,12 @@ ClimToProxyClim <- function(clim.signal,
       last.tp <- max.min.windows[tp, "max"]
       bioturb.window <- first.tp:last.tp
 
-
       # Get bioturbation weights --------
       bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
                                              layer.width = layer.width[tp], sed.acc.rate = sed.acc.rate[tp],
                                              bio.depth = bio.depth)
 
-      clim.sig.window <-  proxy.clim.signal[first.tp:last.tp - min.clim.signal.i+1, ]
+      clim.sig.window <-  proxy.clim.signal[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
 
 
       # Get bioturbation X no-seasonality weights matrix ---------
@@ -821,6 +821,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #' @return a dataframe
 #' @importFrom dplyr bind_rows filter
 #' @importFrom tidyr gather
+#' @keywords internal
 MakePFMDataframe <- function(PFM){
   df <- data.frame(
     proxy.bt.sb.sampY = as.vector(PFM$proxy.bt.sb.sampY),

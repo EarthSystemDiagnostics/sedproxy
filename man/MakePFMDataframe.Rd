@@ -17,3 +17,4 @@ a dataframe
 Convert "everything" part of output from ClimToProxyClim to dataframe.
 Used internally.
 }
+\keyword{internal}
