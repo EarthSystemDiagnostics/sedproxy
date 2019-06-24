@@ -656,7 +656,7 @@ ClimToProxyClim <- function(clim.signal,
 
   # Add items to output list -----------
   out$timepoints = timepoints
-  out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
+  out$clim.signal.ann = rowSums(clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]) / ncol(clim.signal)
   #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
