@@ -125,6 +125,29 @@ test_that("zero mixing works", {
                expected = rowMeans(clim.in)[tpts])
 })
 
+test_that("negative times work", {
+
+  set.seed(26052017)
+  clim.in <- matrix(rnorm(101*12), ncol = 12)
+  clim.in <- ts(clim.in, start = -49)
+
+  tpts <- c(1, 10, 100, 200)-51
+
+  PFM <- ClimToProxyClim(clim.signal = clim.in,
+                         timepoints = tpts,
+                         calibration.type = "identity",
+                         sed.acc.rate = rep(50, length(tpts)),
+                         bio.depth = 0, layer.width = 0,
+                         n.samples = 30, n.replicates = 10, n.bd = 3)
+
+  PFM$simulated.proxy$clim.signal.ann
+  rowMeans(clim.in[time(clim.in)%in%tpts,])
+
+
+  expect_equal(object = PFM$simulated.proxy$clim.signal.ann,
+               expected = rowMeans(clim.in[time(clim.in)%in%tpts,]))
+
+})
 
 
 # test_that("First rep equal to single rep"){
