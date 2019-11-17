@@ -85,6 +85,17 @@ test_that("Slow = Cached slow", {
 
   expect_equal(object = data.frame(PFM.cache$simulated.proxy),
                expected = data.frame(PFM.slow$simulated.proxy))
+  
+  # PlotPFMs(PFM.cache)
+  # PlotPFMs(PFM.slow)
+  # 
+  # plot(PFM.cache$simulated.proxy$simulated.proxy, PFM.slow$simulated.proxy$simulated.proxy)
+  # abline(0, 1)
+  # 
+  # plot(PFM.cache$simulated.proxy$clim.timepoints.ssr, PFM.slow$simulated.proxy$clim.timepoints.ssr)
+  # plot(PFM.cache$simulated.proxy$proxy.bt, PFM.slow$simulated.proxy$proxy.bt)
+  # abline(0, 1)
+  
 })
 
 

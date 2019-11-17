@@ -294,7 +294,7 @@ ClimToProxyClim <- function(clim.signal,
 
   max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
 
-  print(max.min.windows)
+  #print(max.min.windows)
   
   # Scale sigma.ind by n.samples and create combined error term
   sigma.ind.scl <- ifelse(is.finite(n.samples),
@@ -470,7 +470,7 @@ ClimToProxyClim <- function(clim.signal,
                                 nrow = nrow(clim.signal), byrow = TRUE)
     }
 
-    print(max.min.windows)
+    #print(max.min.windows)
     
 
     # For each timepoint ------
