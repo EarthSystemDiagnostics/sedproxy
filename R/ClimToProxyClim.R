@@ -95,6 +95,9 @@
 #'   defaults to zero.
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
+#' @param keep.row.indices For each timepoint and replicate, keep the indices of 
+#' the input climate matrix that were actually sampled. Defaults to FALSE. Can 
+#' result in a much larger output object.
 #' @inheritParams ProxyConversion
 #'
 #' @return \code{ClimToProxyClim} returns a list with three elements:
@@ -153,7 +156,7 @@
 #'                        layer.width = 1,
 #'                        sigma.meas = 0.46,
 #'                        sigma.ind = 0, n.samples = Inf,
-#'                        plot.sig.res = 10, meas.bias = 1,
+#'                        plot.sig.res = 10, meas.bias = 0,
 #'                        n.replicates = 10)
 #'
 #' PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
@@ -191,6 +194,7 @@ ClimToProxyClim <- function(clim.signal,
                                                  MgCa = TRUE),
                             n.samples = Inf,
                             n.replicates = 1,
+                            keep.row.indices = TRUE,
                             n.bd = 3) {
   
   testInteger <- function(x){
@@ -401,13 +405,19 @@ ClimToProxyClim <- function(clim.signal,
       if(testInteger(min(bioturb.window))!=TRUE) warning("min(bioturb.window) not integer")
       if(testInteger(min.clim.signal.i)!=TRUE) warning("min.clim.signal.i not integer")
       
-      row.indices.df <- data.frame(timepoints = rep(timepoints[tp], each = n.replicates*n.samples),
-                                   replicate = 1:n.replicates,
-                                   indices = row.indices + min(bioturb.window) +
-                                     timepoints[tp] - min.clim.signal.i
-                                   )
-      
-      if(testInteger(row.indices.df$indices)!=TRUE) warning("row.indices.df$indices not integer")
+      if (keep.row.indices){
+        row.indices.df <- data.frame(timepoints = rep(timepoints[tp], each = n.replicates*n.samples),
+                                     replicate = 1:n.replicates,
+                                     indices = row.indices + min(bioturb.window) +
+                                       timepoints[tp] - min.clim.signal.i
+        )
+        
+        if(testInteger(row.indices.df$indices)!=TRUE) warning("row.indices.df$indices not integer")
+      }else{
+        row.indices.df <- row.indices.df <- data.frame(timepoints = NA,
+                                                       replicate = NA,
+                                                       indices = NA)  
+        }
       
       
 
@@ -554,15 +564,19 @@ ClimToProxyClim <- function(clim.signal,
       if(testInteger(min(bioturb.window))!=TRUE) warning("min(bioturb.window) not integer")
       if(testInteger(min.clim.signal.i)!=TRUE) warning("min.clim.signal.i not integer")
       
+      if (keep.row.indices){
+        row.indices.df <- data.frame(timepoints = rep(timepoints[tp],
+                                                      each = n.replicates*n.samples[tp]),
+                                     replicate = 1:n.replicates,
+                                     indices = row.indices + min(bioturb.window)
+                                     - min.clim.signal.i)
+        if(testInteger(row.indices.df$indices)!=TRUE) warning("row.indices.df$indices not integer")
+      }else{
+        row.indices.df <- data.frame(timepoints = NA,
+                                     replicate = NA,
+                                     indices = NA)
+      }
       
-      row.indices.df <- data.frame(timepoints = rep(timepoints[tp],
-                                                    each = n.replicates*n.samples[tp]),
-                                   replicate = 1:n.replicates,
-                                   indices = row.indices + min(bioturb.window)
-                                      - min.clim.signal.i
-      )
-
-      if(testInteger(row.indices.df$indices)!=TRUE) warning("row.indices.df$indices not integer")
       
       # Gather output ----------
       list(

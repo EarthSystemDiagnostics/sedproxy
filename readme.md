@@ -183,10 +183,10 @@ PFM$everything
 ##  1       4334         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ##  2       4527         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ##  3       4576         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
+##  4       4721         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
+##  5       4914         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
 ##  6       4994         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
+##  7       5092         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ##  8       5156         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
 ##  9       5254         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ## 10       5318         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y

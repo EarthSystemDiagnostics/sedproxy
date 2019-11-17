@@ -14,7 +14,8 @@ ClimToProxyClim(clim.signal, timepoints, calibration.type = c("identity",
   habitat.wt.args = NULL, bio.depth = 10, sed.acc.rate = 50,
   layer.width = 1, sigma.meas = 0, sigma.ind = 0, meas.bias = 0,
   scale.noise = switch(calibration.type, identity = FALSE, Uk37 = TRUE,
-  MgCa = TRUE), n.samples = Inf, n.replicates = 1, n.bd = 3)
+  MgCa = TRUE), n.samples = Inf, n.replicates = 1,
+  keep.row.indices = TRUE, n.bd = 3)
 }
 \arguments{
 \item{clim.signal}{The "assumed true" climate signal, e.g. climate model
@@ -93,6 +94,10 @@ to Inf for non-discrete proxies, e.g. for Uk’37.}
 
 \item{n.replicates}{Number of replicate proxy time-series to simulate from
 the climate signal}
+
+\item{keep.row.indices}{For each timepoint and replicate, keep the indices of
+the input climate matrix that were actually sampled. Defaults to FALSE. Can
+result in a much larger output object.}
 }
 \value{
 \code{ClimToProxyClim} returns a list with three elements:
@@ -188,7 +193,7 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
                        layer.width = 1,
                        sigma.meas = 0.46,
                        sigma.ind = 0, n.samples = Inf,
-                       plot.sig.res = 10, meas.bias = 1,
+                       plot.sig.res = 10, meas.bias = 0,
                        n.replicates = 10)
 
 PlotPFMs(PFM$everything, max.replicates = 1, stage.order = "seq") +
