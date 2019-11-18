@@ -608,7 +608,8 @@ ClimToProxyClim <- function(clim.signal,
     }
 
     # Add bias and noise to finite sample --------
-    out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM + bias
+    
+    out$proxy.bt.sb.sampYM.b <- sweep(out$proxy.bt.sb.sampYM, 2, bias, FUN = "+")
     out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
 
     # set intermediate bias stages to NA if no bias modelled
@@ -635,7 +636,7 @@ ClimToProxyClim <- function(clim.signal,
     }
 
     # Add bias and noise to finite sample --------
-    out$proxy.bt.sb.sampYM.b <- out$proxy.bt.sb.sampYM * bias
+    out$proxy.bt.sb.sampYM.b <- sweep(out$proxy.bt.sb.sampYM, 2, bias, "*")
     out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b * noise
 
     # set intermediate bias stages to NA if no bias modelled

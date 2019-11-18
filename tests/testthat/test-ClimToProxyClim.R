@@ -149,6 +149,53 @@ test_that("negative times work", {
 
 })
 
+test_that("meas.bias applied repwise", {
+  
+  clim.in <- ts(matrix(rep(1, 12*1e04), ncol = 12))
+  PFM.fast <- ClimToProxyClim(clim.in,
+                         timepoints = seq(1000, 6000, 500),
+                         meas.bias = 3,
+                         n.replicates = 3,
+                        )
+  
+  #PlotPFMs(PFM.fast, max.replicates = 30)
+  
+  PFM.sub.fast <- PFM.fast$everything[PFM.fast$everything$stage == "simulated.proxy", ]
+  
+  PFM.slow <- ClimToProxyClim(clim.in,
+                         timepoints = seq(1000, 6000, 500),
+                         sed.acc.rate = rep(50, 11),
+                         meas.bias = 3,
+                         n.replicates = 3,
+                         n.samples = 30)
+  #PlotPFMs(PFM.slow)
+  
+  PFM.sub.slow <- PFM.slow$everything[PFM.slow$everything$stage == "simulated.proxy", ]
+  
+  
+  PFM.mult <- ClimToProxyClim(clim.in,
+                              timepoints = seq(1000, 6000, 500),
+                              sed.acc.rate = rep(50, 11),
+                              meas.bias = log(3),
+                              n.replicates = 3,
+                              n.samples = 30,
+                              noise.type = "multiplicative")
+  #PlotPFMs(PFM.mult)
+  
+  PFM.sub.mult <- PFM.mult$everything[PFM.mult$everything$stage == "simulated.proxy", ]
+  
+  
+  expect_equal(as.numeric(tapply(PFM.sub.fast$value, PFM.sub.fast$replicate, sd)),
+               c(0,0,0))
+  
+  expect_equal(as.numeric(tapply(PFM.sub.slow$value, PFM.sub.slow$replicate, sd)),
+               c(0,0,0))
+  
+  expect_equal(as.numeric(tapply(PFM.sub.mult$value, PFM.sub.mult$replicate, sd)),
+               c(0,0,0))
+  
+  })
+
 
 # test_that("First rep equal to single rep"){
 #
