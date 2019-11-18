@@ -14,8 +14,8 @@ output:
 
 ## Introduction
 
-`sedproxy` provides a forward model for sediment archived climate proxies.   The forward model and its applications are described in detail in [(Dolman and Laepple, CP 2018)](https://www.clim-past.net/14/1851/2018/cp-14-1851-2018.html).
 
+`sedproxy` provides a forward model for sediment archived climate proxies. The forward model and its applications are described in detail in [(Dolman and Laepple, CP 2018)](https://www.clim-past.net/14/1851/2018/cp-14-1851-2018.html).
 
 Please contact Dr Andrew Dolman <<andrew.dolman@awi.de>>, or Dr Thomas Laepple <<tlaepple@awi.de>>, at the Alfred-Wegener-Institute, Helmholtz Centre for Polar and Marine Research, Germany, for more information.
 
@@ -190,7 +190,7 @@ PFM$everything
 ##  8       5156         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
 ##  9       5254         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ## 10       5318         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-## # … with 14,035 more rows
+## # ... with 14,035 more rows
 ```
 
 **Simple plotting**
