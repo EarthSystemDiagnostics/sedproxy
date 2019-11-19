@@ -16,7 +16,7 @@ knitr::opts_chunk$set(dev = "svg")
 
 ## Introduction
 
-`sedproxy` provides a forward model for sediment archived climate proxies.   The forward model and its applications are described in detail in [(Dolman and Laepple, CP 2018)](https://www.clim-past.net/14/1851/2018/cp-14-1851-2018.html).
+`sedproxy` provides a forward model for sediment archived climate proxies. The forward model and its applications are described in detail in [(Dolman and Laepple, CP 2018)](https://www.clim-past.net/14/1851/2018/cp-14-1851-2018.html).
 
 Please contact Dr Andrew Dolman <<andrew.dolman@awi.de>>, or Dr Thomas Laepple <<tlaepple@awi.de>>, at the Alfred-Wegener-Institute, Helmholtz Centre for Polar and Marine Research, Germany, for more information.
 

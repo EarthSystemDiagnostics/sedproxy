@@ -190,7 +190,7 @@ PFM$everything
 ##  8       5156         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
 ##  9       5254         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ## 10       5318         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-## # ... with 14,035 more rows
+## # … with 14,035 more rows
 ```
 
 **Simple plotting**
