@@ -584,9 +584,9 @@ ClimToProxyClim_IFA <- function(clim.signal,
   # Add items to output list -----------
   out$timepoints = timepoints
   out$clim.signal.ann = rowSums(clim.signal[timepoints,  , drop = FALSE]) / ncol(clim.signal)
+  
   #out$sed.acc.rate = sed.acc.rate
-  out$timepoints.smoothed = timepoints.smoothed
-  out$clim.signal.smoothed = clim.signal.smoothed
+  
 
   # Organise output -------
   # simulated.proxy <-
@@ -614,18 +614,6 @@ ClimToProxyClim_IFA <- function(clim.signal,
   #   simulated.proxy$simulated.proxy <- simulated.proxy$proxy.bt.sb.inf.b.n
   #   out$simulated.proxy <- out$proxy.bt.sb.inf.b.n
   # }
-
-
-  smoothed.signal <- dplyr::tbl_df(out[c(
-    "timepoints.smoothed",
-    "clim.signal.smoothed"
-  )])
-
-  smoothed.signal <- dplyr::rename(smoothed.signal,
-                                   timepoints = timepoints.smoothed,
-                                   value = clim.signal.smoothed)
-
-  smoothed.signal$Stage <- "clim.signal.smoothed"
 
 
   # Add calibration uncertainty -------
@@ -670,8 +658,25 @@ ClimToProxyClim_IFA <- function(clim.signal,
   #simulated.proxy$reconstructed.climate <- out$reconstructed.climate[, 1, drop = TRUE]
   #print(out)
   #everything.2 <- MakePFMDataframe(out)
-  everything <- out
+  #everything <- out
+  everything <- as.data.frame(lapply(out, function(x) as.numeric(x))) 
+  everything$replicate <- rep(1:n.replicates,
+                              each = length(out$timepoints))
+  
+  everything <- gather(everything, stage, value, -timepoints, -replicate)  
+  everything <- select(everything, timepoints, replicate, everything())
+  
+  smoothed.signal <- data.frame(
+    timepoints = timepoints.smoothed,
+    replicate = 1,
+    value = clim.signal.smoothed
+  )
+  
+  smoothed.signal$stage <- "clim.signal.smoothed"
 
+  everything <- bind_rows(everything, smoothed.signal)
+  
+  
   slp.int.means <-
     if (is.null(slp.int.means) && calibration.type != "identity") {
       calibration <-
