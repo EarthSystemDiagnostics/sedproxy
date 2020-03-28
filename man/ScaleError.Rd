@@ -4,13 +4,23 @@
 \alias{ScaleError}
 \title{Title}
 \usage{
-ScaleError(mean.temperature = NULL, sd.temperature = NULL,
-  mean.proxy.value = NULL, sd.proxy.value = NULL, calibration.type,
-  slp.int.means = NULL, slp.int.vcov = NULL, calibration = NULL,
-  point.or.sample = c("point", "sample"))
+ScaleError(
+  mean.temperature = NULL,
+  sd.temperature = NULL,
+  mean.proxy.value = NULL,
+  sd.proxy.value = NULL,
+  calibration.type,
+  slp.int.means = NULL,
+  slp.int.vcov = NULL,
+  calibration = NULL,
+  point.or.sample = c("point", "sample")
+)
 }
 \arguments{
 \item{point.or.sample}{}
+}
+\value{
+
 }
 \description{
 Title

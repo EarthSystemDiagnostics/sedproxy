@@ -3,7 +3,6 @@
 \docType{package}
 \name{sedproxy}
 \alias{sedproxy}
-\alias{sedproxy-package}
 \title{sedproxy: Simulation of Sediment Archived Climate Proxy Records}
 \description{
 The sedproxy package provides functions to simulate sediment archived proxies
