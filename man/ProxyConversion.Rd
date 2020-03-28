@@ -4,11 +4,17 @@
 \alias{ProxyConversion}
 \title{Convert between Temperature in Degrees C and Proxy Units}
 \usage{
-ProxyConversion(temperature = NULL, proxy.value = NULL,
-  calibration.type = "identity", slp.int.means = NULL,
-  slp.int.vcov = NULL, calibration = switch(calibration.type, identity
-  = NA, Uk37 = "Mueller global", MgCa = "Ten planktonic species_350-500"),
-  point.or.sample = c("point", "sample"), n = 1)
+ProxyConversion(
+  temperature = NULL,
+  proxy.value = NULL,
+  calibration.type = "identity",
+  slp.int.means = NULL,
+  slp.int.vcov = NULL,
+  calibration = switch(calibration.type, identity = NA, Uk37 = "Mueller global", MgCa =
+    "Ten planktonic species_350-500"),
+  point.or.sample = c("point", "sample"),
+  n = 1
+)
 }
 \arguments{
 \item{temperature}{Temperature in degrees C}

@@ -4,9 +4,13 @@
 \alias{growth_rate_l09_R}
 \title{Foraminifer Growth Rate Function from FAME 1.0}
 \usage{
-growth_rate_l09_R(nm_foram = c("sacculifer", "bulloides", "pachy_d",
-  "siphonifera", "universa", "pachy_s", "dutertrei", "ruber"), input_T,
-  norm = FALSE, min.growth.thresh = 0)
+growth_rate_l09_R(
+  nm_foram = c("sacculifer", "bulloides", "pachy_d", "siphonifera", "universa",
+    "pachy_s", "dutertrei", "ruber"),
+  input_T,
+  norm = FALSE,
+  min.growth.thresh = 0
+)
 }
 \arguments{
 \item{nm_foram}{Name of foram.}
