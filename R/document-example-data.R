@@ -106,3 +106,24 @@ NULL
 #'   \item{\code{Default}}{character Default values for arguments}
 #'}
 "param.tab"
+
+
+#' @title gisp2 ice core data at annual resolution 
+#' @description gisp2 ice core data interpolated to annual resolution 
+#' @format A data frame with 49885 rows and 3 variables:
+#' \describe{
+#'   \item{\code{age.yr.bp}}{Age in years BP}
+#'   \item{\code{temperature}}{temperature in deg C}
+#'   \item{\code{temperature.rescaled}}{temperature rescaled to resemble 
+#'   a d18O record as in Löwemark et al 2008} 
+#'}
+#' @details GISP2 data from Alley, R.B.. 2004. GISP2 Ice Core Temperature and
+#' Accumulation Data. IGBP PAGES/World Data Center for Paleoclimatology Data
+#' Contribution Series 2004-013. NOAA/NGDC Paleoclimatology Program, Boulder CO,
+#' USA. Interpolated to annual resolution and additionally rescaled to resemble
+#' a d18O record. As in Fig.2 of Löwemark, L., Konstantinou, K. I. and Steinke,
+#' S.: Bias in foraminiferal multispecies reconstructions of paleohydrographic
+#' conditions caused by foraminiferal abundance variations and bioturbational
+#' mixing: A model approach, Marine Geology, 256(1–4), 101–106,
+#' doi:10.1016/j.margeo.2008.10.005, 2008.
+"gisp2.ann"

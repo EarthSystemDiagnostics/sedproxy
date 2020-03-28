@@ -14,8 +14,8 @@ output:
 
 ## Introduction
 
-`sedproxy` provides a forward model for sediment archived climate proxies. It is based on work described in Laepple and Huybers (2013). A manuscript is in review at Climate of the Past Discussions, which more fully describes the forward model and its applications [(Dolman and Laepple, in review)](https://www.clim-past-discuss.net/cp-2018-13/).
 
+`sedproxy` provides a forward model for sediment archived climate proxies. The forward model and its applications are described in detail in [(Dolman and Laepple, CP 2018)](https://www.clim-past.net/14/1851/2018/cp-14-1851-2018.html).
 
 Please contact Dr Andrew Dolman <<andrew.dolman@awi.de>>, or Dr Thomas Laepple <<tlaepple@awi.de>>, at the Alfred-Wegener-Institute, Helmholtz Centre for Polar and Marine Research, Germany, for more information.
 
@@ -25,7 +25,7 @@ This work was supported by German Federal Ministry of Education and Research (BM
 
 ## Installation
 
-**sedproxy** can be installed directly from bitbucket
+**sedproxy** can be installed directly from github
 
 
 ```r
@@ -183,14 +183,14 @@ PFM$everything
 ##  1       4334         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ##  2       4527         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ##  3       4576         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
+##  4       4721         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
+##  5       4914         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
 ##  6       4994         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
+##  7       5092         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ##  8       5156         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
 ##  9       5254         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
 ## 10       5318         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-## # ... with 14,035 more rows
+## # … with 14,035 more rows
 ```
 
 **Simple plotting**
