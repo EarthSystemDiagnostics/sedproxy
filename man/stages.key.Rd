@@ -4,7 +4,8 @@
 \name{stages.key}
 \alias{stages.key}
 \title{Description of proxy stages}
-\format{A data frame with 13 rows and 6 variables:
+\format{
+A data frame with 13 rows and 6 variables:
 \tabular{ll}{
   \cr  \code{stage}  \tab proxy stage
   \cr  \code{label}  \tab label for proxy stage
@@ -12,7 +13,8 @@
   \cr  \code{plot.order}  \tab default plotting order of stages
   \cr  \code{plotting.colour}  \tab default colour for plotting
   \cr  \code{plotting.alpha}  \tab default alpha level for plotting
-}}
+}
+}
 \usage{
 stages.key
 }

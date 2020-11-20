@@ -4,7 +4,9 @@
 \name{N41.t21k.climate}
 \alias{N41.t21k.climate}
 \title{Climate (surface temperature) at core MD97-2141 from TraCE-21ka}
-\format{A matrix with 22040 rows and 12 columns}
+\format{
+A matrix with 22040 rows and 12 columns
+}
 \source{
 Liu, Z., Otto-Bliesner, B. L., He, F., Brady, E. C., Tomas, R.,
 Clark, P. U., … Cheng, J. (2009).

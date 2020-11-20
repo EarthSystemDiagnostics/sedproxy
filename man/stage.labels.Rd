@@ -4,7 +4,9 @@
 \name{stage.labels}
 \alias{stage.labels}
 \title{Labels for proxy stages}
-\format{A named character vector}
+\format{
+A named character vector
+}
 \usage{
 stage.labels
 }

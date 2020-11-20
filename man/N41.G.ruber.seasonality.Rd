@@ -4,7 +4,9 @@
 \name{N41.G.ruber.seasonality}
 \alias{N41.G.ruber.seasonality}
 \title{Seasonality of Globigerinoides ruber at core MD97-2141}
-\format{A vector of 12 values}
+\format{
+A vector of 12 values
+}
 \source{
 Fraile, I., Schulz, M., Mulitza, S., & Kucera, M. (2008).
 Predicting the global distribution of planktonic foraminifera using a

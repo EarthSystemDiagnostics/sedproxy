@@ -4,13 +4,15 @@
 \name{param.tab}
 \alias{param.tab}
 \title{sedproxy parameters}
-\format{A data frame with 12 rows and 4 variables:
+\format{
+A data frame with 12 rows and 4 variables:
 \describe{
   \item{\code{Function argument}}{character Argument name in \code{ClimToProxyClim}}
   \item{\code{Description}}{character Description of argument and corresponding variable/parameter}
   \item{\code{Possible sources}}{character Source or possible sources of values for arguments}
   \item{\code{Default}}{character Default values for arguments}
-}}
+}
+}
 \usage{
 param.tab
 }

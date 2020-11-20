@@ -137,7 +137,8 @@
 #'    \item{observed.proxy}{True observed proxy (when supplied)}
 #' }
 #'
-#'@importFrom dplyr tbl_df rename
+#'@importFrom tibble as_tibble 
+#'@importFrom dplyr rename
 #'@export
 #'
 #'@examples
@@ -657,15 +658,20 @@ ClimToProxyClim <- function(clim.signal,
 
   # Add items to output list -----------
   out$timepoints = timepoints
-  out$clim.signal.ann = rowSums(clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]) / ncol(clim.signal)
+  out$n.samples = n.samples
+  out$clim.signal.ann = rowSums(
+    # clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]
+    clim.signal[match(timepoints, time(clim.signal)), , drop = FALSE]
+    ) / ncol(clim.signal)
   #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
 
   # Organise output -------
   simulated.proxy <-
-    dplyr::tbl_df(out[c(
+    tibble::as_tibble(out[c(
       "timepoints",
+      "n.samples",
       "clim.signal.ann",
       "clim.timepoints.ssr",
       "proxy.bt",
@@ -690,7 +696,7 @@ ClimToProxyClim <- function(clim.signal,
   }
 
 
-  smoothed.signal <- dplyr::tbl_df(out[c(
+  smoothed.signal <- tibble::as_tibble(out[c(
     "timepoints.smoothed",
     "clim.signal.smoothed"
   )])
@@ -837,19 +843,21 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE)
 
   df$timepoints <- PFM$timepoints
+  df$n.samples <- PFM$n.samples
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
-  df <- dplyr::tbl_df(df)
-  df <- tidyr::gather(df, stage, value, -timepoints, -replicate)
+  df <- tibble::as_tibble(df)
+  df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
 
   df2 <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints,
+    n.samples = PFM$n.samples,
     proxy.bt = PFM$proxy.bt,
     proxy.bt.sb = PFM$proxy.bt.sb,
     clim.signal.ann = PFM$clim.signal.ann,
     clim.timepoints.ssr = PFM$clim.timepoints.ssr,
     stringsAsFactors = FALSE)
-  df2 <- tidyr::gather(df2, stage, value, -timepoints, -replicate)
+  df2 <- tidyr::gather(df2, stage, value, -timepoints, -n.samples, -replicate)
 
   df.smoothed <- data.frame(
     replicate = 1,

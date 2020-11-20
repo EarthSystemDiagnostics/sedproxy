@@ -4,7 +4,9 @@
 \name{scussolini.tab1}
 \alias{scussolini.tab1}
 \title{Scussolini et al. (2013) Table 1}
-\format{A dataframe with 22 rows and 6 columns}
+\format{
+A dataframe with 22 rows and 6 columns
+}
 \source{
 Scussolini, P., van Sebille, E., & Durgadoo, J. V. (2013).
 Paleo Agulhas rings enter the subtropical gyre during the penultimate

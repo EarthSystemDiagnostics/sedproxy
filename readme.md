@@ -177,20 +177,20 @@ PFM$everything
 ```
 
 ```
-## # A tibble: 14,045 x 6
-##    timepoints replicate stage             value scale       label          
-##         <dbl>     <dbl> <chr>             <dbl> <chr>       <chr>          
-##  1       4334         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  2       4527         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  3       4576         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  4       4721         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
-##  5       4914         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
-##  6       4994         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
-##  7       5092         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-##  8       5156         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Aliasing Y
-##  9       5254         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-## 10       5318         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Aliasing Y
-## # … with 14,035 more rows
+## # A tibble: 14,045 x 7
+##    timepoints n.samples replicate stage           value scale      label        
+##         <dbl>     <dbl>     <dbl> <chr>           <dbl> <chr>      <chr>        
+##  1       4334        30         1 proxy.bt.sb.sa~  27.7 Proxy uni~ (4) +Aliasin~
+##  2       4527        30         1 proxy.bt.sb.sa~  27.7 Proxy uni~ (4) +Aliasin~
+##  3       4576        30         1 proxy.bt.sb.sa~  27.7 Proxy uni~ (4) +Aliasin~
+##  4       4721        30         1 proxy.bt.sb.sa~  27.6 Proxy uni~ (4) +Aliasin~
+##  5       4914        30         1 proxy.bt.sb.sa~  27.6 Proxy uni~ (4) +Aliasin~
+##  6       4994        30         1 proxy.bt.sb.sa~  27.6 Proxy uni~ (4) +Aliasin~
+##  7       5092        30         1 proxy.bt.sb.sa~  27.7 Proxy uni~ (4) +Aliasin~
+##  8       5156        30         1 proxy.bt.sb.sa~  27.6 Proxy uni~ (4) +Aliasin~
+##  9       5254        30         1 proxy.bt.sb.sa~  27.7 Proxy uni~ (4) +Aliasin~
+## 10       5318        30         1 proxy.bt.sb.sa~  27.7 Proxy uni~ (4) +Aliasin~
+## # ... with 14,035 more rows
 ```
 
 **Simple plotting**
@@ -206,8 +206,8 @@ PFM %>%
 ```
 
 ```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha',
-## which will replace the existing scale.
+## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
+## will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/default_plot-1.svg)<!-- -->
@@ -227,8 +227,8 @@ PFM %>%
 ```
 
 ```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha',
-## which will replace the existing scale.
+## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
+## will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/plot_reps-1.svg)<!-- -->
@@ -250,8 +250,8 @@ The initial input climate signal can be converted into "proxy units" if a `calib
 ```
 
 ```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha',
-## which will replace the existing scale.
+## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
+## will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/MgCa_plot-1.svg)<!-- -->
