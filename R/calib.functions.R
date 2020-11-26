@@ -81,7 +81,7 @@ ProxyConversion <- function(temperature = NULL, proxy.value = NULL,
   ## Get calibration parameters
   if (pct != "identity"){
 
-    prs <- calibration.parameters
+    prs <- sedproxy::calibration.parameters
     cfs.vcov <- prs[prs$calibration.type == pct & prs$calibration == calibration, ]
     #if (is.null(calibration)) calibration <- 1
     if (is.null(slp.int.means)){
