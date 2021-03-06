@@ -36,11 +36,11 @@
 #'
 #'
 #' ## Back-transformation with same calibration
-#' ProxyConversion(proxy.value = as.vector(CalibUk37(temperature = c(21, 22), point.or.sample = "point"))
+#' ProxyConversion(proxy.value = as.vector(ProxyConversion(temperature = c(21, 22), calibration.type = "Uk37", point.or.sample = "point"))
 #'            , point.or.sample = "point", calibration.type = "Uk37")
 #'
 #' ## Back-transformation with random calibration
-#' ProxyConversion(proxy.value = as.vector(CalibUk37(temperature = c(21, 22), point.or.sample = "point"))
+#' ProxyConversion(proxy.value = as.vector(ProxyConversion(temperature = c(21, 22), calibration.type = "Uk37", point.or.sample = "point"))
 #'            , n = 5, point.or.sample = "sample", calibration.type = "Uk37")
 #'
 #' ## Incompatible arguments

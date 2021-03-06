@@ -1,3 +1,5 @@
+library(dplyr)
+
 ## Create key and label lookup tables
 stages.key <- dplyr::tibble(
   stage = c(
@@ -90,11 +92,11 @@ stages.key <- dplyr::tibble(
 stage.labels <- stages.key$label
 names(stage.labels) <- stages.key$stage
 
-devtools::use_data(stages.key, stage.labels, overwrite = TRUE)
+usethis::use_data(stages.key, stage.labels, overwrite = TRUE)
 
 # import parameter description table
 param.tab <- readr::read_delim("data-raw/parameter-descriptions.csv", delim = ";")
-devtools::use_data(param.tab, overwrite = TRUE)
+usethis::use_data(param.tab, overwrite = TRUE)
 
 
 # create .rd format tables
@@ -170,10 +172,11 @@ Uk37.pars <- list(mueller.uk37 = structure(list(
 .Names = c("means", "vcov")))
 
 
-CalibrationParameters <- list(MgCa = climproxycalibration::MgCa.foram.pars,
-                              Uk37 = Uk37.pars)
+# CalibrationParameters <- list(MgCa = climproxycalibration::MgCa.foram.pars,
+#                               Uk37 = Uk37.pars)
 
 
 #devtools::use_data(Uk37.pars, overwrite == TRUE)
 #devtools::use_data(MgCa.foram.pars, overwrite == TRUE)
-devtools::use_data(calibration.parameters, overwrite == TRUE)
+usethis::use_data(calibration.parameters, overwrite == TRUE)
+#usethis::use_data(CalibrationParameters, overwrite == TRUE)

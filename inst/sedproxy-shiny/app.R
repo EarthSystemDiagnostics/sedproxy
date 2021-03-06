@@ -138,7 +138,6 @@ library(ggplot2)
 #'    \item{observed.proxy}{True observed proxy (when supplied)}
 #' }
 #'
-#'@importFrom tibble as_tibble 
 #'@importFrom dplyr rename
 #'@export
 #'
@@ -670,7 +669,7 @@ ClimToProxyClim <- function(clim.signal,
 
   # Organise output -------
   simulated.proxy <-
-    tibble::as_tibble(out[c(
+    dplyr::as_tibble(out[c(
       "timepoints",
       "n.samples",
       "clim.signal.ann",
@@ -697,7 +696,7 @@ ClimToProxyClim <- function(clim.signal,
   }
 
 
-  smoothed.signal <- tibble::as_tibble(out[c(
+  smoothed.signal <- dplyr::as_tibble(out[c(
     "timepoints.smoothed",
     "clim.signal.smoothed"
   )])
@@ -846,7 +845,7 @@ MakePFMDataframe <- function(PFM){
   df$timepoints <- PFM$timepoints
   df$n.samples <- PFM$n.samples
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
-  df <- tibble::as_tibble(df)
+  df <- dplyr::as_tibble(df)
   df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
 
   df2 <- data.frame(
@@ -894,7 +893,7 @@ MakePFMDataframe <- function(PFM){
 #' @examples
 #' library(ggplot2)
 #' set.seed(26052017)
-#' clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+#' clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15)
 #'
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),

@@ -6,3 +6,6 @@
 ^inst/extdata
 ^docs$
 ^R/zzz.R
+^data-raw$
+^Readme\.Rmd$
+^Readme\.md$

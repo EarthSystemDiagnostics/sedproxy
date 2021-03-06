@@ -36,7 +36,7 @@ Plot forward modelled sedimentary proxies
 \examples{
 library(ggplot2)
 set.seed(26052017)
-clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15)
 
 PFM <- ClimToProxyClim(clim.signal = clim.in,
                        timepoints = round(N41.proxy$Published.age),
