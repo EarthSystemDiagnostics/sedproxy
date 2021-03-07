@@ -10,7 +10,7 @@ PlotPFMs(
   plot.stages = c("default"),
   max.replicates = 5,
   colr.palette = "default",
-  alpha.palette = "default",
+  alpha.palette = NULL,
   levl.labels = "default"
 )
 }

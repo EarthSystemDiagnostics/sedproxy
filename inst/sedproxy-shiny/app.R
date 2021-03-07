@@ -735,7 +735,7 @@ ClimToProxyClim <- function(clim.signal,
 
     # Do this in all cases, not just if n.replicates == 1
     out$reconstructed.climate <-
-      ProxyConversion(proxy.value = out$simulated.proxy,
+      ProxyConversion(proxy.value = out$simulated.proxy.cal.err,
                       calibration.type = calibration.type,
                       calibration = calibration,
                       point.or.sample = "point", n = 1,
@@ -743,7 +743,7 @@ ClimToProxyClim <- function(clim.signal,
 
   }else{
     out$simulated.proxy.cal.err <- out$simulated.proxy
-    out$reconstructed.climate <- out$simulated.proxy
+    out$reconstructed.climate <- out$simulated.proxy.cal.err
   }
 
   simulated.proxy$simulated.proxy.cal.err <- out$simulated.proxy.cal.err[, 1, drop = TRUE]
@@ -918,7 +918,7 @@ PlotPFMs <- function(PFMs,
                      plot.stages = c("default"),
                      max.replicates = 5,
                      colr.palette = "default",
-                     alpha.palette = "default",
+                     alpha.palette = NULL,
                      levl.labels = "default"){
 
   PFMs.in <- PFMs
@@ -953,9 +953,13 @@ PlotPFMs <- function(PFMs,
       structure(sedproxy::stages.key$plotting.colour,
                 .Names = sedproxy::stages.key$stage)
 
-  if (alpha.palette[1] == "default") alpha.palette  <-
+  # if (alpha.palette[1] == "default") alpha.palette  <-
+  #     structure(sedproxy::stages.key$plotting.alpha,
+  #               .Names = sedproxy::stages.key$stage)
+   
+  if (is.null(alpha.palette)) alpha.palette  <-
       structure(sedproxy::stages.key$plotting.alpha,
-                .Names = sedproxy::stages.key$stage)
+              .Names = sedproxy::stages.key$stage)
 
   if (levl.labels[1] == "default") levl.labels  <-
       structure(sedproxy::stages.key$label,
@@ -1008,34 +1012,26 @@ PlotPFMs <- function(PFMs,
   p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
                                colour = stage, alpha = stage,
                                linetype = as.factor(replicate))) +
-    #geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
     geom_line() +
     theme_bw() +
     theme(panel.grid.minor = element_blank(), legend.position = "top") +
-    # guides(colour = guide_legend(label.position = "top",
-    #                              label.hjust = 1,
-    #                              nrow = 1, byrow = TRUE,
-    #                              override.aes = list(alpha = 1))) +
-    guides(colour = guide_legend(#label.position = "top",
-                                 #label.hjust = 1,
-                                 ncol = 2,
-                                 #byrow = TRUE,
+    guides(colour = guide_legend(ncol = 2,
                                  override.aes = list(alpha = 1))) +
     labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +
-    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = FALSE)+
-    scale_alpha_manual(guide = FALSE)
+    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = FALSE)#+
+    #scale_alpha_manual(guide = FALSE)
 
   if (is.null(colr.palette) == FALSE)
     p <- p + scale_colour_manual("", values = colr.palette, breaks = names(colr.palette),
-                                 labels = levl.labels)
+                                 labels = levl.labels, guide = FALSE)
 
-  if (is.null(alpha.palette) == FALSE)
+  #if (is.null(alpha.palette) == FALSE)
     p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
                                 labels = levl.labels)
 
   if (cali.attr$calibration.type != "identity"){
-    p <- p + #facet_wrap(~scale, scales = "free_y") +
+    p <- p + 
       facet_wrap( ~ scale, strip.position = "left", scales = "free_y") +
       theme(
         # remove the default y-axis title, "wt"

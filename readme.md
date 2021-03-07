@@ -205,11 +205,6 @@ PFM %>%
 ## Joining, by = c("stage", "scale")
 ```
 
-```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
-## will replace the existing scale.
-```
-
 ![](readme_files/figure-html/default_plot-1.svg)<!-- -->
 
 
@@ -224,11 +219,6 @@ PFM %>%
 
 ```
 ## Joining, by = c("stage", "scale")
-```
-
-```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
-## will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/plot_reps-1.svg)<!-- -->
@@ -247,11 +237,6 @@ The initial input climate signal can be converted into "proxy units" if a `calib
 
 ```
 ## Joining, by = c("stage", "scale")
-```
-
-```
-## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
-## will replace the existing scale.
 ```
 
 ![](readme_files/figure-html/MgCa_plot-1.svg)<!-- -->

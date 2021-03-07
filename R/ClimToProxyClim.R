@@ -734,7 +734,7 @@ ClimToProxyClim <- function(clim.signal,
 
     # Do this in all cases, not just if n.replicates == 1
     out$reconstructed.climate <-
-      ProxyConversion(proxy.value = out$simulated.proxy,
+      ProxyConversion(proxy.value = out$simulated.proxy.cal.err,
                       calibration.type = calibration.type,
                       calibration = calibration,
                       point.or.sample = "point", n = 1,
@@ -742,7 +742,7 @@ ClimToProxyClim <- function(clim.signal,
 
   }else{
     out$simulated.proxy.cal.err <- out$simulated.proxy
-    out$reconstructed.climate <- out$simulated.proxy
+    out$reconstructed.climate <- out$simulated.proxy.cal.err
   }
 
   simulated.proxy$simulated.proxy.cal.err <- out$simulated.proxy.cal.err[, 1, drop = TRUE]

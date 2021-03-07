@@ -1,12 +1,12 @@
 library(sedproxy)
 context("ClimToProxyClim")
-
+# Fast == Slow -----
 test_that("Fast = Slow", {
 
   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
   clim.in <- ts(clim.in, start = -39)
 
-  tpts <- round(seq(40, 22000, length.out = 100))
+  tpts <- round(seq(400, 20000, length.out = 100))
 
   set.seed(26052017)
   PFM.slow <- ClimToProxyClim(clim.signal = clim.in,
@@ -61,7 +61,7 @@ test_that("Fast = Slow", {
                expected = data.frame(PFM.slow.inf$everything))
 })
 
-
+# slow == cached slow ------
 test_that("Slow = Cached slow", {
   load("data/PFM.cache.Rdata")
 
@@ -87,7 +87,7 @@ test_that("Slow = Cached slow", {
                expected = data.frame(PFM.slow$simulated.proxy))
 })
 
-
+# zero mixing ----------
 test_that("zero mixing works", {
 
   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
@@ -125,13 +125,14 @@ test_that("zero mixing works", {
                expected = rowMeans(clim.in)[tpts])
 })
 
+# negative times ---------
 test_that("negative times work", {
 
   set.seed(26052017)
   clim.in <- matrix(rnorm(101*12), ncol = 12)
   clim.in <- ts(clim.in, start = -49)
 
-  tpts <- c(1, 10, 100, 200)-51
+  tpts <- c(10, 100)-51
 
   PFM <- ClimToProxyClim(clim.signal = clim.in,
                          timepoints = tpts,
@@ -149,6 +150,7 @@ test_that("negative times work", {
 
 })
 
+# meas.bias applied repwise ---------
 test_that("meas.bias applied repwise", {
   
   clim.in <- ts(matrix(rep(1, 12*1e04), ncol = 12))
@@ -197,39 +199,56 @@ test_that("meas.bias applied repwise", {
   })
 
 
-# test_that("First rep equal to single rep"){
-#
-#   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
-#   clim.in <- ts(clim.in, start = -39)
-#
-#   tpts <- round(seq(4000, 20000, length.out = 10))
-#
-#   set.seed(26052017)
-#   PFM.slow.1 <- ClimToProxyClim(clim.signal = clim.in,
-#                                 timepoints = tpts,
-#                                 habitat.weights = N41.G.ruber.seasonality,
-#                                 sed.acc.rate = rep(50, length(tpts)),
-#                                 layer.width = 0,
-#                                 sigma.meas = 0.46,
-#                                 sigma.ind = 0,
-#                                 n.samples = 30,
-#                                 n.replicates = 1)
-#   set.seed(26052017)
-#   PFM.slow.2 <- ClimToProxyClim(clim.signal = clim.in,
-#                                 timepoints = tpts,
-#                                 habitat.weights = N41.G.ruber.seasonality,
-#                                 sed.acc.rate = rep(50, length(tpts)),
-#                                 layer.width = 0,
-#                                 sigma.meas = 0.46,
-#                                 sigma.ind = 0,
-#                                 n.samples = 30,
-#                                 n.replicates = 3)
-#
-#   expect_equal(object = dplyr::filter(data.frame(PFM.slow.1$everything), replicate == 1),
-#                expected = dplyr::filter(data.frame(PFM.slow.2$everything), replicate == 1))
-#
-#   expect_equal(object = data.frame(PFM.slow.1$simulated.proxy),
-#                expected = data.frame(PFM.slow.2$simulated.proxy))
-#
-# }
+# cali-err-propagated --------
+
+test_that("calibration error propagated to reconstructed climate", {
+  
+  clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+  clim.in <- ts(clim.in, start = -39)
+  
+  tpts <- round(seq(4000, 20000, length.out = 100))
+  
+  PFM.slow <- ClimToProxyClim(clim.in,
+                              timepoints = tpts,
+                              sed.acc.rate = rep(50, 100),
+                              calibration.type = "MgCa",
+                              n.replicates = 30,
+                              n.samples = Inf)
+  #PlotPFMs(PFM.slow)
+ 
+  PFM.fast <- ClimToProxyClim(clim.in,
+                              calibration.type = "Uk37",
+                              timepoints = tpts,
+                              n.replicates = 30,
+                              n.samples = Inf)
+  
+  
+  #PlotPFMs(PFM.fast)
+  
+  PFM.identity <- ClimToProxyClim(clim.in,
+                              calibration.type = "identity",
+                              timepoints = tpts,
+                              n.replicates = 30,
+                              n.samples = Inf)
+  
+  #PlotPFMs(PFM.identity)
+  
+  
+  
+  PFM.sub.slow <- PFM.slow$everything[PFM.slow$everything$stage == "reconstructed.climate", ]
+  PFM.sub.fast <- PFM.fast$everything[PFM.fast$everything$stage == "reconstructed.climate", ]
+  PFM.sub.identity <- PFM.identity$everything[PFM.identity$everything$stage == "reconstructed.climate", ]
+  
+  sd.cal.slow <- sd(tapply(PFM.sub.slow$value, PFM.sub.slow$replicate, mean))
+  sd.cal.fast <- sd(tapply(PFM.sub.fast$value, PFM.sub.fast$replicate, mean))
+  sd.cal.identity <- sd(tapply(PFM.sub.identity$value, PFM.sub.identity$replicate, mean))
+  
+  expect_gt(sd.cal.slow, 1e-03)
+  expect_gt(sd.cal.fast, 1e-03)
+  expect_equal(sd.cal.identity, 0)
+  
+})
+
+
+
 
