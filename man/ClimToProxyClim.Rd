@@ -26,6 +26,7 @@ ClimToProxyClim(
   scale.noise = switch(calibration.type, identity = FALSE, Uk37 = TRUE, MgCa = TRUE),
   n.samples = Inf,
   n.replicates = 1,
+  top.of.core = 0,
   n.bd = 3
 )
 }

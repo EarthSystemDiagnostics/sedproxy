@@ -1,12 +1,12 @@
 library(sedproxy)
 context("ClimToProxyClim")
 
-test_that("Fast = Slow", {
+test_that("Fast = Slow if no mixed layer points", {
 
   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
   clim.in <- ts(clim.in, start = -39)
 
-  tpts <- round(seq(40, 22000, length.out = 100))
+  tpts <- round(seq(400, 22000, length.out = 100))
 
   set.seed(26052017)
   PFM.slow <- ClimToProxyClim(clim.signal = clim.in,
@@ -87,10 +87,11 @@ test_that("Slow = Cached slow", {
                expected = data.frame(PFM.slow$simulated.proxy))
 })
 
-
+# zero mixing -----
 test_that("zero mixing works", {
 
   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+  #clim.in <- cbind(1:22040)
   clim.in <- ts(clim.in, start = 1)
 
   tpts <- round(seq(4000, 20000, length.out = 10))
@@ -98,7 +99,7 @@ test_that("zero mixing works", {
   set.seed(26052017)
   PFM.slow <- ClimToProxyClim(clim.signal = clim.in,
                               timepoints = tpts,
-                              habitat.weights = N41.G.ruber.seasonality,
+                              #habitat.weights = rep(1/12, 12),
                               sed.acc.rate = rep(50, length(tpts)),
                               layer.width = 0,
                               bio.depth = 0,
@@ -109,7 +110,7 @@ test_that("zero mixing works", {
 
   PFM.fast <- ClimToProxyClim(clim.signal = clim.in,
                               timepoints = tpts,
-                              habitat.weights = rep(1/12, 12),
+                              #habitat.weights = rep(1/12, 12),
                               sed.acc.rate = 50,
                               layer.width = 0,
                               bio.depth = 0,
@@ -125,7 +126,8 @@ test_that("zero mixing works", {
                expected = rowMeans(clim.in)[tpts])
 })
 
-test_that("negative times work", {
+# negative times --------
+test_that("negative times work -fast", {
 
   set.seed(26052017)
   clim.in <- matrix(rnorm(101*12), ncol = 12)
@@ -136,9 +138,10 @@ test_that("negative times work", {
   PFM <- ClimToProxyClim(clim.signal = clim.in,
                          timepoints = tpts,
                          calibration.type = "identity",
-                         sed.acc.rate = rep(50, length(tpts)),
+                         sed.acc.rate = 50,
                          bio.depth = 0, layer.width = 0,
-                         n.samples = 30, n.replicates = 10, n.bd = 3)
+                         n.samples = 30, n.replicates = 10, n.bd = 3,
+                         top.of.core = -49)
 
   PFM$simulated.proxy$clim.signal.ann
   rowMeans(clim.in[time(clim.in)%in%tpts,])
@@ -149,6 +152,32 @@ test_that("negative times work", {
 
 })
 
+test_that("negative times work - slow", {
+  
+  set.seed(26052017)
+  clim.in <- matrix(rnorm(101*12), ncol = 12)
+  clim.in <- ts(clim.in, start = -49)
+  
+  tpts <- c(1, 10, 100, 200)-51
+  
+  PFM <- ClimToProxyClim(clim.signal = clim.in,
+                         timepoints = tpts,
+                         calibration.type = "identity",
+                         sed.acc.rate = rep(50, length(tpts)),
+                         bio.depth = 0, layer.width = 0,
+                         n.samples = 30, n.replicates = 10, n.bd = 3,
+                         top.of.core = -49)
+  
+  PFM$simulated.proxy$clim.signal.ann
+  rowMeans(clim.in[time(clim.in)%in%tpts,])
+  
+  
+  expect_equal(object = PFM$simulated.proxy$clim.signal.ann,
+               expected = rowMeans(clim.in[time(clim.in)%in%tpts,]))
+  
+})
+
+# mean bias repwise -----
 test_that("meas.bias applied repwise", {
   
   clim.in <- ts(matrix(rep(1, 12*1e04), ncol = 12))
