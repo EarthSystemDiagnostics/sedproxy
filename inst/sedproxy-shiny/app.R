@@ -96,6 +96,10 @@ library(ggplot2)
 #'   defaults to zero.
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
+#' @param n.bd Number of multiples of the bioturbation width at which to truncate
+#' the bioturbation filter
+#' @param top.of.core The theoretical minimum age at the top of the core, ie.
+#' the year the core was sampled, defaults to the start of clim.in
 #' @inheritParams ProxyConversion
 #'
 #' @return \code{ClimToProxyClim} returns a list with three elements:
@@ -192,7 +196,7 @@ ClimToProxyClim <- function(clim.signal,
                                                  MgCa = TRUE),
                             n.samples = Inf,
                             n.replicates = 1,
-                            top.of.core = 0,
+                            top.of.core = NULL,
                             n.bd = 3) {
   # Check inputs --------
 
@@ -226,6 +230,13 @@ ClimToProxyClim <- function(clim.signal,
          a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
+  
+  if (is.null(top.of.core)){
+    top.of.core <- time(clim.signal)[1]
+  }else{
+    if (top.of.core < time(clim.signal)[1]) stop("top.of.core cannot be younger than the start of clim.signal")
+  }
+  
 
   # Convert to proxy units if requested --------
   calibration.type <- match.arg(calibration.type)
@@ -266,8 +277,8 @@ ClimToProxyClim <- function(clim.signal,
   bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
   layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
 
-  max.min.windows <- cbind(max = timepoints + n.bd * bio.depth.timesteps,
-                           min = timepoints - bio.depth.timesteps - layer.width.years / 2)
+  max.min.windows <- cbind(max = ceiling(timepoints + n.bd * bio.depth.timesteps),
+                           min = floor(timepoints - bio.depth.timesteps - layer.width.years / 2))
 
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
   min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
@@ -526,7 +537,7 @@ ClimToProxyClim <- function(clim.signal,
     
     timepoints.adj <- timepoints
     
-    max.min.windows <- max.min.windows[valid.inds, ] 
+    max.min.windows <- max.min.windows[valid.inds, , drop = FALSE] 
     
     
     # set mixed layer sed.acc.rate to the lowest
@@ -548,8 +559,8 @@ ClimToProxyClim <- function(clim.signal,
     
     
     max.min.windows[mixed.layer.inds, ] <-
-    cbind((n.bd+1) * bio.depth.timesteps[mixed.layer.inds] + 
-            layer.width.years[mixed.layer.inds] / 2, min.clim.signal.i)
+    cbind(ceiling((n.bd+1) * bio.depth.timesteps[mixed.layer.inds] + 
+            layer.width.years[mixed.layer.inds] / 2), top.of.core)
 
     }
    

@@ -1,6 +1,7 @@
 library(sedproxy)
 context("ClimToProxyClim")
 
+# Fast = Slow if no mixed layer points ------
 test_that("Fast = Slow if no mixed layer points", {
 
   clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
@@ -266,6 +267,71 @@ test_that("mixed layer modelled", {
                expected = 0)
 })
 
+test_that("mixed layer, varying sed.acc.rate", {
+  
+  ## Does not work with varying S
+  
+  clim.in <- cbind(1:22040)
+  clim.in <- ts(clim.in, start = 1)
+  
+  tpts <- round(seq(10, 5000, length.out = 10))
+  s.rates <- c(6,6,6,2,2,2, 2,2,2,2)
+  #s.rates <- rep(2.2, 10)
+  
+  set.seed(26052017)
+  PFM.slow <- ClimToProxyClim(clim.signal = clim.in,
+                              timepoints = tpts,
+                              #habitat.weights = rep(1/12, 12),
+                              sed.acc.rate = s.rates,
+                              layer.width = 0,
+                              bio.depth = 10,
+                              sigma.meas = 0.46,
+                              sigma.ind = 0,
+                              n.samples = 30,
+                              n.replicates = 1)
+  
+  # PlotPFMs(PFM.slow) +
+  #  ggplot2::geom_vline(xintercept = 1000* 10 / min(s.rates[1:4]))
+  # 
+  expect_equal(object = max(diff(PFM.slow$simulated.proxy$proxy.bt)),
+               expected = 0)
+})
+
+# example from paper --------
+test_that("example from paper works", {
+  
+  load("data/PFM.ex.Rdata")
+  PFM.cache <- PFM.ex
+  clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+  clim.in <- ts(clim.in, start = 1)
+  
+  
+  tpts <- N41.proxy$Published.age
+  s.rates <- N41.proxy$Sed.acc.rate.cm.ka
+  
+  
+  set.seed(26052017)
+  PFM.ex <- ClimToProxyClim(clim.signal = clim.in,
+                              timepoints = tpts,
+                              habitat.weights = N41.G.ruber.seasonality,
+                              sed.acc.rate = s.rates,
+                              layer.width = 1,
+                              bio.depth = 10,
+                              sigma.meas = 0.46,
+                              sigma.ind = 0,
+                              n.samples = 30,
+                              n.replicates = 1)
+  
+  
+  #save(PFM.ex, file = "tests/testthat/data/PFM.ex.Rdata")
+  
+  expect_equal(object = data.frame(PFM.cache$simulated.proxy),
+               expected = data.frame(PFM.ex$simulated.proxy))
+  
+  # PlotPFMs(PFM.slow) 
+  
+  
+})
 
 
 
