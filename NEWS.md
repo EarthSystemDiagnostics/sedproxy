@@ -1,3 +1,6 @@
+# sedproxy 0.7.0
+* feature - allow simulation of proxy in mixed layer
+
 # sedproxy 0.6.6
 * bugfix - allow duplicated requested timepoints
 * additionally include n.samples in output
