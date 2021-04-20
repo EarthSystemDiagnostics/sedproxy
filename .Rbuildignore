@@ -9,3 +9,5 @@
 ^data-raw$
 ^Readme\.Rmd$
 ^Readme\.md$
+^doc$
+^Meta$

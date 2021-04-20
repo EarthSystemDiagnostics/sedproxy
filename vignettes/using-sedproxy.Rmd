@@ -4,7 +4,7 @@ author: "Andrew M. Dolman"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using sedproxy}
+  %\VignetteIndexEntry{Sedproxy: Simulation of Sediment Archived Climate Proxy Records.}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
