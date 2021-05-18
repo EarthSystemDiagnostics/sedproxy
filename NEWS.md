@@ -1,3 +1,6 @@
+# sedproxy 0.7.1
+* set growth to zero at temperatures below -2°C in growth_rate_l09_R (FAME)
+
 # sedproxy 0.7.0
 * feature - allow simulation of proxy in mixed layer
 

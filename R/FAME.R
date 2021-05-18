@@ -25,9 +25,10 @@
 #'
 #' @examples
 #' growth_rate_l09_R(nm_foram = 'ruber', input_T = (c(280, 290)), norm = 1)
-growth_rate_l09_R <- function(nm_foram = c("sacculifer", "bulloides",
-  "pachy_d", "siphonifera", "universa", "pachy_s", "dutertrei",
-  "ruber"), input_T, norm = FALSE, min.growth.thresh = 0) {
+growth_rate_l09_R <- function(nm_foram = c(
+  "sacculifer", "bulloides", "pachy_d", "siphonifera", "universa", "pachy_s",
+  "dutertrei", "ruber"),
+  input_T, norm = FALSE, min.growth.thresh = 0) {
   # Growth rate in day^-1 ...  Inputs: foram name as string
   # input_T temperature in °K
 
@@ -42,10 +43,10 @@ growth_rate_l09_R <- function(nm_foram = c("sacculifer", "bulloides",
     {
       if (TAL > 0) {
         (mut * exp(TA/293 - TA/input_T)/(1 + exp(TAL/input_T -
-          TAL/TL) + exp(TAH/TH - TAH/input_T)))
+                                                   TAL/TL) + exp(TAH/TH - TAH/input_T)))
       } else {
         (mut * exp(TA/293 - TA/input_T)/(2 + exp(TAH/TH -
-          TAH/input_T)))
+                                                   TAH/input_T)))
       }
     }
   })
@@ -57,6 +58,10 @@ growth_rate_l09_R <- function(nm_foram = c("sacculifer", "bulloides",
   if (norm == TRUE)  {
     out <- out / max_func
   }
+
+  out[input_T < -2 + 273.15] <- 0
+
+
   colnames(out) <- colnames(input_T)
   return(out)
 }
