@@ -1,3 +1,13 @@
+# sedproxy 0.7.1
+* set growth to zero at temperatures below -2°C in growth_rate_l09_R (FAME)
+
+# sedproxy 0.7.0
+* feature - allow simulation of proxy in mixed layer
+
+# sedproxy 0.6.6
+* bugfix - allow duplicated requested timepoints
+* additionally include n.samples in output
+
 # sedproxy 0.6.5
 
 * bugfix - fix case where bio.depth and layer width both == 0, single row of clim.signal should be used for each requested timepoint

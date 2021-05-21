@@ -4,7 +4,8 @@
 \name{N41.proxy.details}
 \alias{N41.proxy.details}
 \title{Metadata for datset \code{N41.proxy}}
-\format{A data frame with 1 rows and 17 variables:
+\format{
+A data frame with 1 rows and 17 variables:
 \tabular{ll}{
    \cr \code{Number} \tab Proxy ID number from Shakun et al. (2012)
    \cr \code{ID.no} \tab Proxy ID number from Shakun et al. (2012) with prefix "N"
@@ -23,7 +24,8 @@
    \cr \code{Notes} \tab
    \cr \code{Geo.cluster} \tab Coarse geographic location
    \cr \code{Archive.type} \tab Type of proxy archive
-}}
+}
+}
 \source{
 Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
 Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing

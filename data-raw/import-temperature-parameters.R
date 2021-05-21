@@ -5,4 +5,4 @@ taxa.temperature.prefs <- readr::read_delim("data-raw/temperature-parameters.csv
                 Tmax = ifelse(is.na(Tmax), Inf, Tmax),
                 ID = paste(Taxon, Source, sep = " "))
 
-devtools::use_data(taxa.temperature.prefs, overwrite = T)
+usethis::use_data(taxa.temperature.prefs, overwrite = T)

@@ -12,8 +12,8 @@ ClimToProxyClim(
     "Ten planktonic species_350-500"),
   slp.int.means = NULL,
   slp.int.vcov = NULL,
-  noise.type = switch(calibration.type, identity = "additive", Uk37 = "additive", MgCa =
-    "multiplicative"),
+  noise.type = switch(calibration.type, identity = "additive", Uk37 = "additive", MgCa
+    = "multiplicative"),
   plot.sig.res = 100,
   habitat.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
   habitat.wt.args = NULL,
@@ -26,6 +26,7 @@ ClimToProxyClim(
   scale.noise = switch(calibration.type, identity = FALSE, Uk37 = TRUE, MgCa = TRUE),
   n.samples = Inf,
   n.replicates = 1,
+  top.of.core = NULL,
   n.bd = 3
 )
 }
@@ -106,6 +107,12 @@ to Inf for non-discrete proxies, e.g. for Uk’37.}
 
 \item{n.replicates}{Number of replicate proxy time-series to simulate from
 the climate signal}
+
+\item{top.of.core}{The theoretical minimum age at the top of the core, ie.
+the year the core was sampled, defaults to the start of clim.in}
+
+\item{n.bd}{Number of multiples of the bioturbation width at which to truncate
+the bioturbation filter}
 }
 \value{
 \code{ClimToProxyClim} returns a list with three elements:

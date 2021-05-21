@@ -4,12 +4,14 @@
 \name{N41.proxy}
 \alias{N41.proxy}
 \title{Mg/Ca proxy based temperature reconctruction for core MD97-2141}
-\format{A data frame with 216 rows and 4 variables:
+\format{
+A data frame with 216 rows and 4 variables:
 \tabular{ll}{
   \cr \code{Published.age} \tab Age in yr BP
   \cr \code{Published.temperature} \tab Reconstructed temperature in degrees C
   \cr \code{Sed.acc.rate.cm.ka} \tab Sediment accumulation rate in cm per kyr
-  }}
+  }
+}
 \source{
 Original reference: Rosenthal, Y., Oppo, D. W., & Linsley, B. K.
 (2003). The amplitude and phasing of climate change during the last

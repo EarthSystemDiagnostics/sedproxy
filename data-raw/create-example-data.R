@@ -25,12 +25,12 @@ N41.G.ruber.seasonality <- ecusdata::shak.fraile.seasonality %>%
   gather() %>%
   .[["value"]]
 
-devtools::use_data(N41.t21k.climate, N41.proxy, N41.proxy.details, N41.G.ruber.seasonality, overwrite = TRUE)
+usethis::use_data(N41.t21k.climate, N41.proxy, N41.proxy.details, N41.G.ruber.seasonality, overwrite = TRUE)
 
 
 # Scussolini data
 scussolini.tab1 <- ecusdata::scussolini.tab1
-devtools::use_data(scussolini.tab1, overwrite = TRUE)
+usethis::use_data(scussolini.tab1, overwrite = TRUE)
 
 
 # Rescaled Gisp2 from Löwemark, L., Konstantinou, K. I. and Steinke, S.: Bias in

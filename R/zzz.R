@@ -9,5 +9,5 @@ obj <- paste0(
   sep = "\n",
   collapse = "\n"
 )
-readr::write_file(obj, path = "inst/sedproxy-shiny/app.R")
+readr::write_file(obj, file = "inst/sedproxy-shiny/app.R")
 

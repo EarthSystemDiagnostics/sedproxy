@@ -96,6 +96,10 @@ library(ggplot2)
 #'   defaults to zero.
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
+#' @param n.bd Number of multiples of the bioturbation width at which to truncate
+#' the bioturbation filter
+#' @param top.of.core The theoretical minimum age at the top of the core, ie.
+#' the year the core was sampled, defaults to the start of clim.in
 #' @inheritParams ProxyConversion
 #'
 #' @return \code{ClimToProxyClim} returns a list with three elements:
@@ -138,7 +142,7 @@ library(ggplot2)
 #'    \item{observed.proxy}{True observed proxy (when supplied)}
 #' }
 #'
-#'@importFrom dplyr tbl_df rename
+#'@importFrom dplyr rename
 #'@export
 #'
 #'@examples
@@ -192,6 +196,7 @@ ClimToProxyClim <- function(clim.signal,
                                                  MgCa = TRUE),
                             n.samples = Inf,
                             n.replicates = 1,
+                            top.of.core = NULL,
                             n.bd = 3) {
   # Check inputs --------
 
@@ -225,6 +230,13 @@ ClimToProxyClim <- function(clim.signal,
          a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
+  
+  if (is.null(top.of.core)){
+    top.of.core <- time(clim.signal)[1]
+  }else{
+    if (top.of.core < time(clim.signal)[1]) stop("top.of.core cannot be younger than the start of clim.signal")
+  }
+  
 
   # Convert to proxy units if requested --------
   calibration.type <- match.arg(calibration.type)
@@ -265,35 +277,13 @@ ClimToProxyClim <- function(clim.signal,
   bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
   layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
 
-  max.min.windows <- cbind(max = timepoints + n.bd * bio.depth.timesteps,
-                           min = timepoints - bio.depth.timesteps - layer.width.years / 2)
+  max.min.windows <- cbind(max = ceiling(timepoints + n.bd * bio.depth.timesteps),
+                           min = floor(timepoints - bio.depth.timesteps - layer.width.years / 2))
 
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
   min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
 
-  if (any(max.ind))
-    warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
-                   paste(timepoints[max.ind], collapse = ", "),
-                   " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
-
-  if (any(max.min.windows[,"min"] < min.clim.signal.i))
-    warning(paste0("One or more requested timepoints is too recent. Bioturbation window(s) for timepoint(s) ",
-                   timepoints[max.min.windows[, "min"] < min.clim.signal.i],
-                   " extend(s) above start of input climate signal. Returning pseudo-proxy for valid timepoints."))
-
-
-  valid.inds <- max.ind == FALSE & min.ind == FALSE
-  timepoints <- timepoints[valid.inds]
-  n.timepoints <- length(timepoints)
-
-  max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
-
-  # Scale sigma.ind by n.samples and create combined error term
-  sigma.ind.scl <- ifelse(is.finite(n.samples),
-                          sigma.ind / sqrt(n.samples), 0)
-
-  sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
-
+ 
 
 # Use Rapid or Slow version ----------------------
 
@@ -303,11 +293,62 @@ ClimToProxyClim <- function(clim.signal,
 
     # Rapid ------
     message("Using Rapid version")
+    
+    # Find mixed layer points ------
+    # keep points in the mixed layer as well as those below but still inside time-signal
+    tpts.above.core.top <- timepoints < top.of.core
+    valid.inds <- max.ind == FALSE & tpts.above.core.top == FALSE
+    
+    # identify mixed layer
+    mixed.layer.inds <-  min.ind == TRUE & tpts.above.core.top == FALSE
+    mixed.layer.inds <- mixed.layer.inds[valid.inds]
+    
+    if (any(max.ind))
+      warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
+                     paste(timepoints[max.ind], collapse = ", "),
+                     " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
+    
+    if (any(max.min.windows[,"min"] < min.clim.signal.i))
+      warning(paste0("Timepoint(s) ",
+                     paste(timepoints[mixed.layer.inds], collapse = ", "),
+                     " are in the mixed layer"))
+    
+    if (any(tpts.above.core.top))
+      warning(paste0("One or more requested timepoints is too recent. Timepoint(s) ",
+                       paste(timepoints[tpts.above.core.top], collapse = ", "),
+                       " are more recent than the top of the core."))
+    
+    # remove too old or young timepoints
+    timepoints <- timepoints[valid.inds]
+    n.timepoints <- length(timepoints)
+    
+    # adjusted timepoints for the mixed layer
+    # in the mixed layer the bioturbation window is centred around the
+    # bottom of the mixed layer
+    timepoints.adj <- timepoints
+    timepoints.adj[mixed.layer.inds] <- 1 + bio.depth.timesteps + layer.width.years / 2
+    
+    #max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
+    
+    # # reset mixed window for mixed layer points
+    # max.min.windows[mixed.layer.inds, ] <- 
+    #   c((n.bd+1) * bio.depth.timesteps + layer.width.years / 2, 0)
+    
+    # Scale sigma.ind by n.samples and create combined error term
+    sigma.ind.scl <- ifelse(is.finite(n.samples),
+                            sigma.ind / sqrt(n.samples), 0)
+    
+    sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
+    
+    
+    
+    
     # Ensure seasonal productivities are weights
     habitat.weights <- habitat.weights / sum(habitat.weights)
 
 
     # Get relative bioturbation window ----------
+    #browser()
 
     first.tp <- -bio.depth.timesteps - layer.width.years / 2
     last.tp <- n.bd * bio.depth.timesteps
@@ -351,8 +392,10 @@ ClimToProxyClim <- function(clim.signal,
     out <- sapply(1:n.timepoints, function(tp) {
 
       # Get portion of clim.signal corresponding to bioturbation window for this timepoint -------
-      clim.sig.window <- proxy.clim.signal[bioturb.window + timepoints[tp] - min.clim.signal.i+1, , drop = FALSE]
-
+      clim.sig.window <-
+        proxy.clim.signal[(bioturb.window + timepoints.adj[tp] - min.clim.signal.i +
+                            1), , drop = FALSE]
+      
       # Calculate mean clim.signal -------
 
       # Just bioturbation
@@ -393,7 +436,57 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
     })
   }else{
+    
 # Slow ----
+    #browser()
+    # Find mixed layer points ------
+    # keep points in the mixed layer as well as those below but still inside time-signal
+    tpts.above.core.top <- timepoints < top.of.core
+   
+    # identify mixed layer
+    # find oldest timepoint in mixed layer
+    
+    oldest.in.mix <- which.max(timepoints[min.ind == TRUE])
+    
+    if (length(oldest.in.mix)!=0) {
+      mixed.layer.inds <- timepoints <= timepoints[oldest.in.mix] & tpts.above.core.top == FALSE
+      #mixed.layer.inds <- mixed.layer.inds[tpts.above.core.top == FALSE]
+    } else {
+      mixed.layer.inds <- rep(FALSE, n.timepoints)
+    }
+    
+    
+    valid.inds <- max.ind == FALSE & tpts.above.core.top == FALSE
+    
+   
+    if (any(max.ind))
+      warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
+                     paste(timepoints[max.ind], collapse = ", "),
+                     " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
+    
+    if (any(mixed.layer.inds))
+      warning(paste0("Timepoint(s) ",
+                     paste(timepoints[mixed.layer.inds], collapse = ", "),
+                     " are in the mixed layer"))
+    
+    if (any(tpts.above.core.top))
+      warning(paste0("One or more requested timepoints is too recent. Timepoint(s) ",
+                     paste(timepoints[tpts.above.core.top], collapse = ", "),
+                     " are more recent than the top of the core."))
+    
+    
+    timepoints <- timepoints[valid.inds]
+    n.timepoints <- length(timepoints)
+    mixed.layer.inds <- mixed.layer.inds[valid.inds]
+    
+    
+    # Scale sigma.ind by n.samples and create combined error term
+    sigma.ind.scl <- ifelse(is.finite(n.samples),
+                            sigma.ind / sqrt(n.samples), 0)
+    
+    sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
+    
+    
 
     # Create vectors from "scalar" inputs
     if (length(sed.acc.rate) == 1) {
@@ -441,7 +534,36 @@ ClimToProxyClim <- function(clim.signal,
                                 nrow = nrow(clim.signal), byrow = TRUE)
     }
 
+    
+    timepoints.adj <- timepoints
+    
+    max.min.windows <- max.min.windows[valid.inds, , drop = FALSE] 
+    
+    
+    # set mixed layer sed.acc.rate to the lowest
+    if(any(mixed.layer.inds)){
+      sed.acc.rate[mixed.layer.inds] <- min(sed.acc.rate[mixed.layer.inds])
+      
+    # reset mixed window for mixed layer points
+    bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
+    layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
+    
+    
+    # adjusted timepoints for the mixed layer
+    # in the mixed layer the bioturbation window is centred around the
+    # bottom of the mixed layer
+    
+    timepoints.adj[mixed.layer.inds] <- 1 + 
+      bio.depth.timesteps[mixed.layer.inds] + 
+      layer.width.years[mixed.layer.inds] / 2
+    
+    
+    max.min.windows[mixed.layer.inds, ] <-
+    cbind(ceiling((n.bd+1) * bio.depth.timesteps[mixed.layer.inds] + 
+            layer.width.years[mixed.layer.inds] / 2), top.of.core)
 
+    }
+   
     # For each timepoint ------
     out <- sapply(1:n.timepoints, function(tp) {
 
@@ -451,20 +573,24 @@ ClimToProxyClim <- function(clim.signal,
       bioturb.window <- first.tp:last.tp
 
       # Get bioturbation weights --------
-      bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints[tp],
+      bioturb.weights <- BioturbationWeights(z = bioturb.window, focal.z = timepoints.adj[tp],
                                              layer.width = layer.width[tp], sed.acc.rate = sed.acc.rate[tp],
                                              bio.depth = bio.depth)
 
-      clim.sig.window <-  proxy.clim.signal[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
+      
+      clim.sig.window <-  proxy.clim.signal[which(time(clim.signal)%in%(first.tp:last.tp)), , drop = FALSE]
 
+      
 
       # Get bioturbation X no-seasonality weights matrix ---------
       biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
       biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
-
+      #browser()
+      
+      
       # Get bioturbation X seasonality weights matrix ---------
-      habitat.weights <- habitat.weights[first.tp:last.tp - min.clim.signal.i+1, , drop = FALSE]
+      habitat.weights <- habitat.weights[which(time(clim.signal)%in%(first.tp:last.tp+1)), , drop = FALSE]
       habitat.weights <- habitat.weights / sum(habitat.weights)
       clim.sig.weights <- bioturb.weights * habitat.weights
       clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
@@ -658,15 +784,20 @@ ClimToProxyClim <- function(clim.signal,
 
   # Add items to output list -----------
   out$timepoints = timepoints
-  out$clim.signal.ann = rowSums(clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]) / ncol(clim.signal)
+  out$n.samples = n.samples
+  out$clim.signal.ann = rowSums(
+    # clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]
+    clim.signal[match(timepoints, time(clim.signal)), , drop = FALSE]
+    ) / ncol(clim.signal)
   #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
   out$clim.signal.smoothed = clim.signal.smoothed
 
   # Organise output -------
   simulated.proxy <-
-    dplyr::tbl_df(out[c(
+    dplyr::as_tibble(out[c(
       "timepoints",
+      "n.samples",
       "clim.signal.ann",
       "clim.timepoints.ssr",
       "proxy.bt",
@@ -691,7 +822,7 @@ ClimToProxyClim <- function(clim.signal,
   }
 
 
-  smoothed.signal <- dplyr::tbl_df(out[c(
+  smoothed.signal <- dplyr::as_tibble(out[c(
     "timepoints.smoothed",
     "clim.signal.smoothed"
   )])
@@ -838,19 +969,21 @@ MakePFMDataframe <- function(PFM){
     stringsAsFactors = FALSE)
 
   df$timepoints <- PFM$timepoints
+  df$n.samples <- PFM$n.samples
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
-  df <- dplyr::tbl_df(df)
-  df <- tidyr::gather(df, stage, value, -timepoints, -replicate)
+  df <- dplyr::as_tibble(df)
+  df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
 
   df2 <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints,
+    n.samples = PFM$n.samples,
     proxy.bt = PFM$proxy.bt,
     proxy.bt.sb = PFM$proxy.bt.sb,
     clim.signal.ann = PFM$clim.signal.ann,
     clim.timepoints.ssr = PFM$clim.timepoints.ssr,
     stringsAsFactors = FALSE)
-  df2 <- tidyr::gather(df2, stage, value, -timepoints, -replicate)
+  df2 <- tidyr::gather(df2, stage, value, -timepoints, -n.samples, -replicate)
 
   df.smoothed <- data.frame(
     replicate = 1,
@@ -886,7 +1019,7 @@ MakePFMDataframe <- function(PFM){
 #' @examples
 #' library(ggplot2)
 #' set.seed(26052017)
-#' clim.in <- N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15
+#' clim.in <- ts(N41.t21k.climate[nrow(N41.t21k.climate):1,] - 273.15)
 #'
 #' PFM <- ClimToProxyClim(clim.signal = clim.in,
 #'                        timepoints = round(N41.proxy$Published.age),
@@ -1100,7 +1233,10 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
       (z >= -C & z <= C) * (lam*(1/lam-exp(-lam*C-lam*z)/lam))/(2*C)  +
       (z > C) * (lam*(exp(lam*C-lam*z)/lam-exp(-lam*C-lam*z)/lam))/(2*C)
   }
-  fz <- fz / sum(fz, na.rm = T)
+  if (sum(fz) == 0){fz}else{
+    fz <- fz / sum(fz, na.rm = T)
+  }
+  
   return(fz)
 }
 # Objects

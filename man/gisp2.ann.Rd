@@ -4,13 +4,15 @@
 \name{gisp2.ann}
 \alias{gisp2.ann}
 \title{gisp2 ice core data at annual resolution}
-\format{A data frame with 49885 rows and 3 variables:
+\format{
+A data frame with 49885 rows and 3 variables:
 \describe{
   \item{\code{age.yr.bp}}{Age in years BP}
   \item{\code{temperature}}{temperature in deg C}
   \item{\code{temperature.rescaled}}{temperature rescaled to resemble 
   a d18O record as in Löwemark et al 2008} 
-}}
+}
+}
 \usage{
 gisp2.ann
 }
