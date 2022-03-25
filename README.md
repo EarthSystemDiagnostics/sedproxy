@@ -1,10 +1,7 @@
 
 # Sedproxy: Simulation of Sediment Archived Climate Proxy Records.
 
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
+------------------------------------------------------------------------
 
 ## Introduction
 
@@ -203,7 +200,7 @@ PFM %>%
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-![](man/figures/README-default_plot-1.svg)<!-- -->
+<img src="man/figures/README-default_plot-1.svg" width="100%" />
 
 **Plot 5 replicates of the final simulated proxy**
 
@@ -217,7 +214,7 @@ PFM %>%
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-![](man/figures/README-plot_reps-1.svg)<!-- -->
+<img src="man/figures/README-plot_reps-1.svg" width="100%" />
 
 **Conversion to proxy units**
 
@@ -231,7 +228,7 @@ Sensor stage of the proxy system.
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-![](man/figures/README-MgCa_plot-1.svg)<!-- -->
+<img src="man/figures/README-MgCa_plot-1.svg" width="100%" />
 
 ## Literature cited
 
