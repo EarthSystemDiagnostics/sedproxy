@@ -328,7 +328,8 @@ test_that("example from paper works", {
   expect_equal(object = data.frame(PFM.cache$simulated.proxy),
                expected = data.frame(PFM.ex$simulated.proxy))
   
-  # PlotPFMs(PFM.slow) 
+  p <- PlotPFMs(PFM.ex) 
+  testthat::expect_equal(class(p), c("gg", "ggplot"))
   
   
 })

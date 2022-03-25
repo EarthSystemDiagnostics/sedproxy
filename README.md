@@ -200,9 +200,6 @@ PFM %>%
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-    ## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-    ## use `guide = "none"` instead.
-
 ![](README_files/figure-gfm/default_plot-1.svg)<!-- -->
 
 **Plot 5 replicates of the final simulated proxy**
@@ -217,9 +214,6 @@ PFM %>%
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-    ## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-    ## use `guide = "none"` instead.
-
 ![](README_files/figure-gfm/plot_reps-1.svg)<!-- -->
 
 **Conversion to proxy units**
@@ -233,9 +227,6 @@ Sensor stage of the proxy system.
     ## Joining, by = c("stage", "scale")
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
-
-    ## Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
-    ## use `guide = "none"` instead.
 
 ![](README_files/figure-gfm/MgCa_plot-1.svg)<!-- -->
 

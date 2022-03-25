@@ -1,3 +1,6 @@
+# sedproxy 0.7.2
+* modifications to pass R CMD check
+
 # sedproxy 0.7.1
 * set growth to zero at temperatures below -2°C in growth_rate_l09_R (FAME)
 

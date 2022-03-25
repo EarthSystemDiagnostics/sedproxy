@@ -11,6 +11,7 @@
 #'
 #' @import ggplot2
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #' @export PlotPFMs
 #'
 #' @examples
@@ -120,7 +121,7 @@ PlotPFMs <- function(PFMs,
   switch(stage.order,
          seq = PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE),
          var = {
-           var.order <- tapply(PFMs$value, PFMs$stage, FUN = var)
+           var.order <- tapply(PFMs$value, PFMs$stage, FUN = stats::var)
            var.order <- rank(var.order, ties.method = "first")
            var.order <- names(sort(var.order, decreasing = TRUE))
            PFMs$stage <- factor(PFMs$stage,
@@ -128,7 +129,7 @@ PlotPFMs <- function(PFMs,
            })
 
 
-  p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
+  p <- ggplot2::ggplot(data = PFMs, aes(x = .data$timepoints, y = .data$value,
                                colour = stage, alpha = stage,
                                linetype = as.factor(replicate))) +
     #geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
@@ -146,8 +147,8 @@ PlotPFMs <- function(PFMs,
                                  override.aes = list(alpha = 1))) +
     labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +
-    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = FALSE)+
-    scale_alpha_manual(guide = FALSE)
+    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = "none")+
+    scale_alpha_manual(guide = "none")
 
   if (is.null(colr.palette) == FALSE)
     p <- p + scale_colour_manual("", values = colr.palette, breaks = names(colr.palette),

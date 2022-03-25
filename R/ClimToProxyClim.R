@@ -13,7 +13,7 @@
 #'   2. Bioturbation of the sediment archived proxy. For each requested
 #'   timepoint, the simulated proxy consists of a weighted mean of the climate
 #'   signal over a time window that is determined by the sediment accumulation
-#'   rate \{sed.acc.rate} and the bioturbation depth \{bio.depth} which defaults
+#'   rate \emph{sed.acc.rate} and the bioturbation depth \emph{bio.depth} which defaults
 #'   to 10 cm. The weights are given by the depth solution to an impulse
 #'   response function (Berger and Heath, 1968).
 #'
@@ -35,7 +35,7 @@
 #'   proxy record. Bias is simulated as a Gaussian random variable with mean =
 #'   0, standard deviation = \code{meas.bias}. The same randomly generated bias
 #'   value is applied to all timepoints in a simulated proxy record, when
-#'   multiple replicate proxies are generated (\{n.replicates} > 1) each
+#'   multiple replicate proxies are generated (\emph{n.replicates} > 1) each
 #'   replicate has a different bias applied.
 #'
 #'   \code{ClimToProxyClim} returns one or more replicates of the final
@@ -93,6 +93,8 @@
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 #'   defaults to zero.
+#' @param scale.noise Scale noise to proxy units. Defaults to TRUE if 
+#' calibration.type is not "identity"
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
 #' @param n.bd Number of multiples of the bioturbation width at which to truncate
@@ -141,8 +143,9 @@
 #'    \item{observed.proxy}{True observed proxy (when supplied)}
 #' }
 #'
-#'@importFrom dplyr rename
-#'@export
+#' @importFrom dplyr rename
+#' @importFrom rlang .data
+#' @export
 #'
 #'@examples
 #' library(ggplot2)
@@ -217,7 +220,7 @@ ClimToProxyClim <- function(clim.signal,
     stop("n.samples cannot be a mix of finite and infinite")
 
   stopifnot(is.matrix(clim.signal))
-  if (is.ts(clim.signal)==FALSE)
+  if (stats::is.ts(clim.signal)==FALSE)
     stop("Since version 0.3.1 of sedproxy, ClimToProxyClim requires clim.signal to be a ts object")
   stopifnot(length(sed.acc.rate) == n.timepoints |
               length(sed.acc.rate) == 1)
@@ -231,9 +234,9 @@ ClimToProxyClim <- function(clim.signal,
 
   
   if (is.null(top.of.core)){
-    top.of.core <- time(clim.signal)[1]
+    top.of.core <- stats::time(clim.signal)[1]
   }else{
-    if (top.of.core < time(clim.signal)[1]) stop("top.of.core cannot be younger than the start of clim.signal")
+    if (top.of.core < stats::time(clim.signal)[1]) stop("top.of.core cannot be younger than the start of clim.signal")
   }
   
 
@@ -255,8 +258,8 @@ ClimToProxyClim <- function(clim.signal,
   }
 
   # Calculate timepoint invariant values ------
-  max.clim.signal.i <- end(clim.signal)[1]
-  min.clim.signal.i <- start(clim.signal)[1]
+  max.clim.signal.i <- stats::end(clim.signal)[1]
+  min.clim.signal.i <- stats::start(clim.signal)[1]
 
   # Create smoothed climate signal --------
   if (is.na(plot.sig.res)) {
@@ -577,7 +580,7 @@ ClimToProxyClim <- function(clim.signal,
                                              bio.depth = bio.depth)
 
       
-      clim.sig.window <-  proxy.clim.signal[which(time(clim.signal)%in%(first.tp:last.tp)), , drop = FALSE]
+      clim.sig.window <-  proxy.clim.signal[which(stats::time(clim.signal)%in%(first.tp:last.tp)), , drop = FALSE]
 
       
 
@@ -589,7 +592,7 @@ ClimToProxyClim <- function(clim.signal,
       
       
       # Get bioturbation X seasonality weights matrix ---------
-      habitat.weights <- habitat.weights[which(time(clim.signal)%in%(first.tp:last.tp+1)), , drop = FALSE]
+      habitat.weights <- habitat.weights[which(stats::time(clim.signal)%in%(first.tp:last.tp+1)), , drop = FALSE]
       habitat.weights <- habitat.weights / sum(habitat.weights)
       clim.sig.weights <- bioturb.weights * habitat.weights
       clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
@@ -786,7 +789,7 @@ ClimToProxyClim <- function(clim.signal,
   out$n.samples = n.samples
   out$clim.signal.ann = rowSums(
     # clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]
-    clim.signal[match(timepoints, time(clim.signal)), , drop = FALSE]
+    clim.signal[match(timepoints, stats::time(clim.signal)), , drop = FALSE]
     ) / ncol(clim.signal)
   #out$sed.acc.rate = sed.acc.rate
   out$timepoints.smoothed = timepoints.smoothed
@@ -885,7 +888,7 @@ ClimToProxyClim <- function(clim.signal,
           calibration
         }
 
-      cp <- data.frame(sedproxy::calibration.parameters)
+      cp <- data.frame(calibration.parameters)
       cfs.vcov <- cp[cp$calibration.type == calibration.type &
                        cp$calibration == calibration,]
       matrix(c(cfs.vcov$slope, cfs.vcov$intercept),
@@ -915,9 +918,9 @@ ClimToProxyClim <- function(clim.signal,
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
 
-  if (is.ts(climate.matrix)) {
+  if (stats::is.ts(climate.matrix)) {
     rel.wind <- 1:width -round(width/2)
-    strt <- start(climate.matrix)[1]
+    strt <- stats::start(climate.matrix)[1]
     n.row <- nrow(climate.matrix)
     sapply(timepoints, function(tp){
       inds <- rel.wind + tp - strt + 1
@@ -953,6 +956,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 #' @return a dataframe
 #' @importFrom dplyr bind_rows filter
 #' @importFrom tidyr gather
+#' @importFrom rlang .data
 #' @keywords internal
 MakePFMDataframe <- function(PFM){
   df <- data.frame(
@@ -971,8 +975,9 @@ MakePFMDataframe <- function(PFM){
   df$n.samples <- PFM$n.samples
   df$replicate <- rep(1:ncol(PFM$proxy.bt.sb.inf.b), each = length(PFM$timepoints))
   df <- dplyr::as_tibble(df)
-  df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
-
+  #df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
+  df <- tidyr::pivot_longer(df, cols = tidyr::contains(c("proxy", "climate")),
+                          names_to = "stage", values_to = "value")
   df2 <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints,
@@ -982,8 +987,10 @@ MakePFMDataframe <- function(PFM){
     clim.signal.ann = PFM$clim.signal.ann,
     clim.timepoints.ssr = PFM$clim.timepoints.ssr,
     stringsAsFactors = FALSE)
-  df2 <- tidyr::gather(df2, stage, value, -timepoints, -n.samples, -replicate)
-
+  #df2 <- tidyr::gather(df2, stage, value, -timepoints, -n.samples, -replicate)
+  df2 <- tidyr::pivot_longer(df2, cols = tidyr::contains(c("proxy", "clim")),
+                             names_to = "stage", values_to = "value")
+  
   df.smoothed <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints.smoothed,
@@ -993,8 +1000,8 @@ MakePFMDataframe <- function(PFM){
 
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
-  rtn <- droplevels(dplyr::filter(rtn, stats::complete.cases(value)))
-  rtn <- dplyr::left_join(rtn, dplyr::select(sedproxy::stages.key, stage, scale, label), by = "stage")
+  rtn <- droplevels(dplyr::filter(rtn, stats::complete.cases(.data$value)))
+  rtn <- dplyr::left_join(rtn, dplyr::select(sedproxy::stages.key, stage, scale, .data$label), by = "stage")
   #rtn <- select(rtn, -plotting.colour, -plotting.alpha)
 
   return(rtn)

@@ -47,7 +47,6 @@ The model data are in "time-forward" order so we need to reverse the order when 
 
 ```{r knitr_options}
 knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      tidy = TRUE,
                       fig.width = 6, fig.height = 4)
 ```
 

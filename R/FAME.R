@@ -35,7 +35,7 @@ growth_rate_l09_R <- function(nm_foram = c(
   # Optional input norm is a normalization factor
 
   # mut, TA, TL, TH, TAL, TAH = l09_cnsts_dic[nm_foram]
-  pars <- sedproxy::l09_cnsts_dic[[nm_foram]]
+  pars <- l09_cnsts_dic[[nm_foram]]
   names(pars) <- c("mut", "TA", "TL", "TH", "TAL", "TAH")
   pars <- as.list(pars)
 
@@ -51,7 +51,7 @@ growth_rate_l09_R <- function(nm_foram = c(
     }
   })
 
-  max_func = sedproxy::l09_maxgrowth_dic[[nm_foram]]
+  max_func = l09_maxgrowth_dic[[nm_foram]]
 
   out[out < min.growth.thresh * max_func] <- 0
 

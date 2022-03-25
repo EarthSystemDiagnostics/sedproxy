@@ -1,16 +1,16 @@
 Package: sedproxy
 Title: Simulation of Sediment Archived Climate Proxy Records
-Version: 0.7.1
+Version: 0.7.2
 Authors@R: c(person("Thomas", "Laepple", email = "tlaepple@awi.de", role = c("aut")), 
     person("Andrew", "Dolman", email = "andrew.dolman@awi.de", role = c("aut", "cre")))
 Description: Simulation of Sediment Archived Climate Proxy Records.
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends:
     R (>= 3.5.0)
-Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny, readr
+Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny, readr, rlang
 Suggests:
     testthat,
     knitr,
