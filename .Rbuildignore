@@ -11,3 +11,6 @@
 ^Readme\.md$
 ^doc$
 ^Meta$
+^\.github$
+^_pkgdown\.yml$
+^pkgdown$

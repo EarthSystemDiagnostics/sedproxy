@@ -978,7 +978,8 @@ MakePFMDataframe <- function(PFM){
   df <- dplyr::as_tibble(df)
   #df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
   df <- tidyr::pivot_longer(df, cols = tidyr::contains(c("proxy", "climate")),
-                          names_to = "stage", values_to = "value")
+                          names_to = "stage", values_to = "value")  
+  df <- dplyr::arrange(df, .data$replicate, .data$stage, .data$timepoints)
   df2 <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints,
@@ -991,7 +992,7 @@ MakePFMDataframe <- function(PFM){
   #df2 <- tidyr::gather(df2, stage, value, -timepoints, -n.samples, -replicate)
   df2 <- tidyr::pivot_longer(df2, cols = tidyr::contains(c("proxy", "clim")),
                              names_to = "stage", values_to = "value")
-  
+  df2 <- dplyr::arrange(df2, .data$replicate, .data$stage, .data$timepoints)
   df.smoothed <- data.frame(
     replicate = 1,
     timepoints = PFM$timepoints.smoothed,

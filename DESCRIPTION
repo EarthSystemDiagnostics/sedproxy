@@ -17,3 +17,4 @@ Suggests:
     rmarkdown,
     tidyverse
 VignetteBuilder: knitr
+URL: https://earthsystemdiagnostics.github.io/sedproxy/
