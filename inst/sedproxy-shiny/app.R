@@ -1163,7 +1163,7 @@ PlotPFMs <- function(PFMs,
     alpha.breaks = names(alpha.palette)
   )
   
-  pal.df <- dplyr::filter(pal.df, colr.breaks %in% unique(PFMs$stage))
+  pal.df <- dplyr::filter(pal.df, .data$colr.breaks %in% unique(PFMs$stage))
   
   if (is.null(colr.palette) == FALSE)
     p <- p + scale_colour_manual("", values = pal.df$colr.palette, breaks = pal.df$colr.breaks,

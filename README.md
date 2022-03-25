@@ -20,7 +20,7 @@ Research (BMBF) as Research for Sustainability initiative
 [FONA](https://www.fona.de/) through the
 [PalMod](https://www.palmod.de/) project (FKZ: 01LP1509C).
 
-![](inst/sedproxy-shiny/www/PalMod_Logo_RGB.png)
+![](man/figures/PalMod_Logo_RGB.png)
 
 ## Installation
 
@@ -51,7 +51,7 @@ library(sedproxy)
 ShinySedproxy()
 ```
 
-![](inst/extdata/sedproxy-screenshot.png)
+![](man/figures/sedproxy-screenshot.png)
 
 An online version of the Shiny app is hosted at
 [shinyapps.io](https://limnolrgy.shinyapps.io/sedproxy-shiny/)
