@@ -1,7 +1,10 @@
 
 # Sedproxy: Simulation of Sediment Archived Climate Proxy Records.
 
-------------------------------------------------------------------------
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ## Introduction
 
