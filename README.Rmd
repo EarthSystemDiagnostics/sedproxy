@@ -4,14 +4,15 @@ output: github_document
 
 # Sedproxy: Simulation of Sediment Archived Climate Proxy Records.
 
+-------
+
 
 ```{r knitr_setup, echo=FALSE}
-knitr::opts_chunk$set(dev = "svg")
+knitr::opts_chunk$set(dev = "svg",
+                      fig.path = "man/figures/README-",
+                      out.width = "100%")
 ```
 
-<!-- badges: start -->
-  [![R-CMD-check](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
 
 ## Introduction
 

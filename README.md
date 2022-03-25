@@ -203,7 +203,7 @@ PFM %>%
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-![](README_files/figure-gfm/default_plot-1.svg)<!-- -->
+![](man/figures/README-default_plot-1.svg)<!-- -->
 
 **Plot 5 replicates of the final simulated proxy**
 
@@ -217,7 +217,7 @@ PFM %>%
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-![](README_files/figure-gfm/plot_reps-1.svg)<!-- -->
+![](man/figures/README-plot_reps-1.svg)<!-- -->
 
 **Conversion to proxy units**
 
@@ -231,7 +231,7 @@ Sensor stage of the proxy system.
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
-![](README_files/figure-gfm/MgCa_plot-1.svg)<!-- -->
+![](man/figures/README-MgCa_plot-1.svg)<!-- -->
 
 ## Literature cited
 
