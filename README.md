@@ -4,7 +4,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/EarthSystemDiagnostics/sedproxy/actions/workflows/test-coverage.yaml)
+[![codecov](https://codecov.io/gh/EarthSystemDiagnostics/sedproxy/branch/master/graph/badge.svg?token=hht8uueIsX)](https://codecov.io/gh/EarthSystemDiagnostics/sedproxy)
 <!-- badges: end -->
 
 ## Introduction
