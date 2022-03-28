@@ -76,8 +76,11 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><strong>sedproxy</strong> can be installed directly from github</p>
+<p><strong>sedproxy</strong> will soon be installable from CRAN</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"sedproxy"</span><span class="op">)</span></code></pre></div>
+<p>In the mean time the development version can be installed directly from GitHub</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="op">}</span>
@@ -89,7 +92,7 @@
 </h2>
 <p>A Shiny app provides a graphical user interface to the main <code>sedproxy</code> function <code>ClimToProxyClim</code>. Currently this app forward models a proxy from a randomly generated input climate and serves only to illustrate the functionality of <code>sedproxy</code>. The user can alter the parameters of the forward model and observe the results graphically. In future versions it may be possible to load input climates and other input parameters from a file and to save the output.</p>
 <p>To run the Shiny app enter the following in the R terminal:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://earthsystemdiagnostics.github.io/sedproxy/">sedproxy</a></span><span class="op">)</span>
 <span class="fu"><a href="reference/ShinySedproxy.html">ShinySedproxy</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/sedproxy-screenshot.png"></p>
@@ -101,11 +104,11 @@
 </h2>
 <p><code>sedproxy</code> includes example data for a single sediment core and location: core number 41 in the Shakun et al. (2012) compilation (MD97-2141, Rosenthal et al. 2003). The climate signal is taken from the <a href="http://www.cgd.ucar.edu/ccr/TraCE/" class="external-link">TraCE-21ka</a> Simulation of Transient Climate Evolution over the last 21,000 years, using the grid cell closest to core MD97-2141. Seasonality of <em>G.ruber</em>, the Foraminifera for which test Mg/Ca ratios were measured, is taken from the model of Fraile et al (2008). Sediment accumulation rates were estimated from the depth and age data associated with core MD97-2141, with a minimum rate of 0.2 * the mean rate.</p>
 <p><strong>The MD97-2141 core</strong></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://earthsystemdiagnostics.github.io/sedproxy/">sedproxy</a></span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N41.proxy.details</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">mutate_if</a></span><span class="op">(</span><span class="va">is.numeric</span>, <span class="va">round</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html" class="external-link">gather</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -188,7 +191,7 @@
 </table>
 <p><strong>Input climate signal</strong></p>
 <p>The first 5 rows:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">-</span><span class="fl">273.15</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">.</span>, format <span class="op">=</span> <span class="st">"markdown"</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <table class="table">
@@ -281,7 +284,7 @@
 </table>
 <p><strong>Actual proxy record</strong></p>
 <p>Core MD97-2141 (Rosenthal et al. 2003)</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">N41.proxy</span><span class="op">)</span>, format <span class="op">=</span> <span class="st">"markdown"</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -336,7 +339,7 @@
 <a class="anchor" aria-label="anchor" href="#function-climtoproxyclim"></a>
 </h2>
 <p><code>ClimToProxyClim</code> is the main function in package <code>sedproxy</code>. It simulates a sediment archived proxy from an assumed true climate signal, the sediment accumulation rate, seasonality of the encoding organism/process, and the number of samples per timepoint.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">26052017</span><span class="op">)</span>
 <span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="va">N41.t21k.climate</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">-</span> <span class="fl">273.15</span>
 
@@ -354,46 +357,46 @@
                        sigma.ind <span class="op">=</span> <span class="fl">2</span>,
                        n.samples <span class="op">=</span> <span class="fl">30</span>,
                        n.replicates <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 14,045 x 7</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="do">##    timepoints n.samples replicate stage             value scale       label     </span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;     </span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       4334        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       4527        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       4576        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       4721        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       4914        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       4994        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       5092        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       5156        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       5254        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       5318        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="do">## # ... with 14,035 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 14,045 x 7</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">##    timepoints n.samples replicate stage             value scale       label     </span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;     </span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       4334        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       4527        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       4576        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       4721        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       4914        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       4994        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       5092        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       5156        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       5254        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       5318        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">## # ... with 14,035 more rows</span></span></code></pre></div>
 <p><strong>Simple plotting</strong></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PFM</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="reference/PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span>max.replicates <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Joining, by = c("stage", "scale")</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="do">## will replace the existing scale.</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Joining, by = c("stage", "scale")</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="do">## will replace the existing scale.</span></span></code></pre></div>
 <p><img src="reference/figures/README-default_plot-1.svg" width="100%"></p>
 <p><strong>Plot 5 replicates of the final simulated proxy</strong></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PFM</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="co">#filter(stage == "simulated.proxy") %&gt;% </span>
   <span class="fu"><a href="reference/PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">.</span>, max.replicates <span class="op">=</span> <span class="fl">5</span>, plot.stages <span class="op">=</span> <span class="st">"simulated.proxy"</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Joining, by = c("stage", "scale")</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">## will replace the existing scale.</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Joining, by = c("stage", "scale")</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">## will replace the existing scale.</span></span></code></pre></div>
 <p><img src="reference/figures/README-plot_reps-1.svg" width="100%"></p>
 <p><strong>Conversion to proxy units</strong></p>
 <p>The initial input climate signal can be converted into “proxy units” if a <code>calibration.type</code> is specified. This simulates the Environment -&gt; Sensor stage of the proxy system.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Rescaling noise</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Joining, by = c("stage", "scale")</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="do">## will replace the existing scale.</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Rescaling noise</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Joining, by = c("stage", "scale")</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="do">## will replace the existing scale.</span></span></code></pre></div>
 <p><img src="reference/figures/README-MgCa_plot-1.svg" width="100%"></p>
 </div>
 <div class="section level2">
