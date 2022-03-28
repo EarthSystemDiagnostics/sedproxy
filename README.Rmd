@@ -29,7 +29,13 @@ This work was supported by German Federal Ministry of Education and Research (BM
 
 ## Installation
 
-**sedproxy** can be installed directly from github
+**sedproxy** will soon be installable from CRAN
+
+```{r, eval=FALSE}
+install.packages("sedproxy")
+```
+
+In the mean time the development version can be installed directly from GitHub
 
 ```{r, eval=FALSE}
 if (!require("devtools")) {

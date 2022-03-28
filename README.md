@@ -28,7 +28,14 @@ Research (BMBF) as Research for Sustainability initiative
 
 ## Installation
 
-**sedproxy** can be installed directly from github
+**sedproxy** will soon be installable from CRAN
+
+``` r
+install.packages("sedproxy")
+```
+
+In the mean time the development version can be installed directly from
+GitHub
 
 ``` r
 if (!require("devtools")) {
