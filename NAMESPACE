@@ -2,10 +2,10 @@
 
 export(BioturbationWeights)
 export(ClimToProxyClim)
+export(ForamGrowthfT)
 export(PlotPFMs)
 export(ProxyConversion)
 export(ShinySedproxy)
-export(growth_rate_l09_R)
 import(ggplot2)
 importFrom(dplyr,bind_rows)
 importFrom(dplyr,filter)
