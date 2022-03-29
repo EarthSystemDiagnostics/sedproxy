@@ -6,11 +6,12 @@ Authors@R: c(person("Thomas", "Laepple", email = "tlaepple@awi.de", role = c("au
 Description: Simulation of Sediment Archived Climate Proxy Records.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-gb
 LazyData: true
 RoxygenNote: 7.1.2
 Depends:
     R (>= 4.0.0)
-Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny, readr, rlang
+Imports: stats, mvtnorm, dplyr, tidyr, ggplot2, shiny, readr, rlang
 Suggests:
     testthat,
     knitr,

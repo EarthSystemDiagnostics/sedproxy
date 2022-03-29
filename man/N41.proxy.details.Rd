@@ -30,7 +30,7 @@ A data frame with 1 rows and 17 variables:
 Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
 Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing
 carbon dioxide concentrations during the last deglaciation. Nature,
-484(7392), 49–54. \url{https://doi.org/10.1038/nature10915}
+484(7392), 49–54. \doi{10.1038/nature10915}
 }
 \usage{
 N41.proxy.details

@@ -13,7 +13,7 @@
 #' \code{\link{N41.t21k.climate}}
 NULL
 
-#' @title Mg/Ca proxy based temperature reconctruction for core MD97-2141
+#' @title Mg/Ca proxy based temperature reconstruction for core MD97-2141
 #' @description Mg/Ca proxy based temperature reconstruction for core MD97-2141, originally published in
 #' Rosenthal et al. (2003), extracted from Shakun et al. (2012).
 #' @format A data frame with 216 rows and 4 variables:
@@ -22,11 +22,11 @@ NULL
 #'   \cr \code{Published.temperature} \tab Reconstructed temperature in degrees C
 #'   \cr \code{Sed.acc.rate.cm.ka} \tab Sediment accumulation rate in cm per kyr
 #'   }
-#' @details Published age and publishe temperature were extracted from
+#' @details Published age and published temperature were extracted from
 #' Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
 #' Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing
 #' carbon dioxide concentrations during the last deglaciation. Nature,
-#' 484(7392), 49–54. \url{https://doi.org/10.1038/nature10915}.
+#' 484(7392), 49–54. \doi{10.1038/nature10915}.
 #'
 #' Sediment accumulation rates were estimated by fitting splines to the published
 #' age and depth estimates.
@@ -34,7 +34,7 @@ NULL
 #' @source Original reference: Rosenthal, Y., Oppo, D. W., & Linsley, B. K.
 #' (2003). The amplitude and phasing of climate change during the last
 #' deglaciation in the Sulu Sea, western equatorial Pacific. Geophysical
-#' Research Letters, 30(8), 1428. \url{https://doi.org/10.1029/2002GL016612}.
+#' Research Letters, 30(8), 1428. \doi{10.1029/2002GL016612}.
 #'
 "N41.proxy"
 
@@ -63,7 +63,7 @@ NULL
 #' @source Shakun, J. D., Clark, P. U., He, F., Marcott, S. A.,
 #' Mix, A. C., Liu, Z., … Bard, E. (2012). Global warming preceded by increasing
 #' carbon dioxide concentrations during the last deglaciation. Nature,
-#' 484(7392), 49–54. \url{https://doi.org/10.1038/nature10915}
+#' 484(7392), 49–54. \doi{10.1038/nature10915}
 "N41.proxy.details"
 
 #' @title Seasonality of Globigerinoides ruber at core MD97-2141

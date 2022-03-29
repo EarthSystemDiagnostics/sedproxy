@@ -1195,7 +1195,7 @@ PlotPFMs <- function(PFMs,
 
 #' Bioturbation weights
 #' @description For a given focal depth (or time), this function returns the probability
-#' that material collected from that depth was orignially deposited at depth(s)
+#' that material collected from that depth was originally deposited at depth(s)
 #' z. In other words, that the material would have been found at depth z if there
 #' had been no bioturbation. It is the convolution of the depth solution from
 #' Berger and Heath (1968) with a uniform distribution to account for the width
