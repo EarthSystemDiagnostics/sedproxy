@@ -94,7 +94,7 @@ library(ggplot2)
 #'   time-series. Each replicate proxy time-series has a constant bias added,
 #'   drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 #'   defaults to zero.
-#' @param scale.noise Scale noise to proxy units. Defaults to TRUE if 
+#' @param scale.noise Scale noise to proxy units. Defaults to TRUE if
 #' calibration.type is not "identity"
 #' @param n.replicates Number of replicate proxy time-series to simulate from
 #'   the climate signal
@@ -103,8 +103,7 @@ library(ggplot2)
 #' @param top.of.core The theoretical minimum age at the top of the core, ie.
 #' the year the core was sampled, defaults to the start of clim.in
 #' @inheritParams ProxyConversion
-#'
-#' @return \code{ClimToProxyClim} returns a list with three elements:
+#' @return \code{ClimToProxyClim} returns an object of class "sedproxy.pfm", a list with three elements:
 #'
 #'   1. a dataframe \code{simulated.proxy}
 #'   2. a dataframe \code{smoothed.signal}
@@ -233,13 +232,13 @@ ClimToProxyClim <- function(clim.signal,
          a matrix of weights of the same dimensions as the input climate signal, or a function.
          Function names should be given unquoted, e.g. dnorm, not \"dnorm\"")
 
-  
+
   if (is.null(top.of.core)){
     top.of.core <- stats::time(clim.signal)[1]
   }else{
     if (top.of.core < stats::time(clim.signal)[1]) stop("top.of.core cannot be younger than the start of clim.signal")
   }
-  
+
 
   # Convert to proxy units if requested --------
   calibration.type <- match.arg(calibration.type)
@@ -286,7 +285,7 @@ ClimToProxyClim <- function(clim.signal,
   max.ind <- max.min.windows[,"max"] >= max.clim.signal.i
   min.ind <- max.min.windows[,"min"] <  min.clim.signal.i
 
- 
+
 
 # Use Rapid or Slow version ----------------------
 
@@ -296,56 +295,56 @@ ClimToProxyClim <- function(clim.signal,
 
     # Rapid ------
     message("Using Rapid version")
-    
+
     # Find mixed layer points ------
     # keep points in the mixed layer as well as those below but still inside time-signal
     tpts.above.core.top <- timepoints < top.of.core
     valid.inds <- max.ind == FALSE & tpts.above.core.top == FALSE
-    
+
     # identify mixed layer
     mixed.layer.inds <-  min.ind == TRUE & tpts.above.core.top == FALSE
     mixed.layer.inds <- mixed.layer.inds[valid.inds]
-    
+
     if (any(max.ind))
       warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
                      paste(timepoints[max.ind], collapse = ", "),
                      " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
-    
+
     if (any(max.min.windows[,"min"] < min.clim.signal.i))
       warning(paste0("Timepoint(s) ",
                      paste(timepoints[mixed.layer.inds], collapse = ", "),
                      " are in the mixed layer"))
-    
+
     if (any(tpts.above.core.top))
       warning(paste0("One or more requested timepoints is too recent. Timepoint(s) ",
                        paste(timepoints[tpts.above.core.top], collapse = ", "),
                        " are more recent than the top of the core."))
-    
+
     # remove too old or young timepoints
     timepoints <- timepoints[valid.inds]
     n.timepoints <- length(timepoints)
-    
+
     # adjusted timepoints for the mixed layer
     # in the mixed layer the bioturbation window is centred around the
     # bottom of the mixed layer
     timepoints.adj <- timepoints
     timepoints.adj[mixed.layer.inds] <- 1 + bio.depth.timesteps + layer.width.years / 2
-    
+
     #max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
-    
+
     # # reset mixed window for mixed layer points
-    # max.min.windows[mixed.layer.inds, ] <- 
+    # max.min.windows[mixed.layer.inds, ] <-
     #   c((n.bd+1) * bio.depth.timesteps + layer.width.years / 2, 0)
-    
+
     # Scale sigma.ind by n.samples and create combined error term
     sigma.ind.scl <- ifelse(is.finite(n.samples),
                             sigma.ind / sqrt(n.samples), 0)
-    
+
     sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
-    
-    
-    
-    
+
+
+
+
     # Ensure seasonal productivities are weights
     habitat.weights <- habitat.weights / sum(habitat.weights)
 
@@ -398,7 +397,7 @@ ClimToProxyClim <- function(clim.signal,
       clim.sig.window <-
         proxy.clim.signal[(bioturb.window + timepoints.adj[tp] - min.clim.signal.i +
                             1), , drop = FALSE]
-      
+
       # Calculate mean clim.signal -------
 
       # Just bioturbation
@@ -439,57 +438,57 @@ ClimToProxyClim <- function(clim.signal,
         proxy.bt.sb.sampYM = proxy.bt.sb.sampYM)
     })
   }else{
-    
+
 # Slow ----
     #browser()
     # Find mixed layer points ------
     # keep points in the mixed layer as well as those below but still inside time-signal
     tpts.above.core.top <- timepoints < top.of.core
-   
+
     # identify mixed layer
     # find oldest timepoint in mixed layer
-    
+
     oldest.in.mix <- which.max(timepoints[min.ind == TRUE])
-    
+
     if (length(oldest.in.mix)!=0) {
       mixed.layer.inds <- timepoints <= timepoints[oldest.in.mix] & tpts.above.core.top == FALSE
       #mixed.layer.inds <- mixed.layer.inds[tpts.above.core.top == FALSE]
     } else {
       mixed.layer.inds <- rep(FALSE, n.timepoints)
     }
-    
-    
+
+
     valid.inds <- max.ind == FALSE & tpts.above.core.top == FALSE
-    
-   
+
+
     if (any(max.ind))
       warning(paste0("One or more requested timepoints is too old. Bioturbation window(s) for timepoint(s) ",
                      paste(timepoints[max.ind], collapse = ", "),
                      " extend(s) beyond end of input climate signal. Returning pseudo-proxy for valid timepoints."))
-    
+
     if (any(mixed.layer.inds))
       warning(paste0("Timepoint(s) ",
                      paste(timepoints[mixed.layer.inds], collapse = ", "),
                      " are in the mixed layer"))
-    
+
     if (any(tpts.above.core.top))
       warning(paste0("One or more requested timepoints is too recent. Timepoint(s) ",
                      paste(timepoints[tpts.above.core.top], collapse = ", "),
                      " are more recent than the top of the core."))
-    
-    
+
+
     timepoints <- timepoints[valid.inds]
     n.timepoints <- length(timepoints)
     mixed.layer.inds <- mixed.layer.inds[valid.inds]
-    
-    
+
+
     # Scale sigma.ind by n.samples and create combined error term
     sigma.ind.scl <- ifelse(is.finite(n.samples),
                             sigma.ind / sqrt(n.samples), 0)
-    
+
     sigma.meas.ind <- sqrt(sigma.meas^2 + sigma.ind.scl^2)
-    
-    
+
+
 
     # Create vectors from "scalar" inputs
     if (length(sed.acc.rate) == 1) {
@@ -537,36 +536,36 @@ ClimToProxyClim <- function(clim.signal,
                                 nrow = nrow(clim.signal), byrow = TRUE)
     }
 
-    
+
     timepoints.adj <- timepoints
-    
-    max.min.windows <- max.min.windows[valid.inds, , drop = FALSE] 
-    
-    
+
+    max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
+
+
     # set mixed layer sed.acc.rate to the lowest
     if(any(mixed.layer.inds)){
       sed.acc.rate[mixed.layer.inds] <- min(sed.acc.rate[mixed.layer.inds])
-      
+
     # reset mixed window for mixed layer points
     bio.depth.timesteps <- round(1000 * bio.depth / sed.acc.rate)
     layer.width.years <- ceiling(1000 * layer.width / sed.acc.rate)
-    
-    
+
+
     # adjusted timepoints for the mixed layer
     # in the mixed layer the bioturbation window is centred around the
     # bottom of the mixed layer
-    
-    timepoints.adj[mixed.layer.inds] <- 1 + 
-      bio.depth.timesteps[mixed.layer.inds] + 
+
+    timepoints.adj[mixed.layer.inds] <- 1 +
+      bio.depth.timesteps[mixed.layer.inds] +
       layer.width.years[mixed.layer.inds] / 2
-    
-    
+
+
     max.min.windows[mixed.layer.inds, ] <-
-    cbind(ceiling((n.bd+1) * bio.depth.timesteps[mixed.layer.inds] + 
+    cbind(ceiling((n.bd+1) * bio.depth.timesteps[mixed.layer.inds] +
             layer.width.years[mixed.layer.inds] / 2), top.of.core)
 
     }
-   
+
     # For each timepoint ------
     out <- sapply(1:n.timepoints, function(tp) {
 
@@ -580,18 +579,18 @@ ClimToProxyClim <- function(clim.signal,
                                              layer.width = layer.width[tp], sed.acc.rate = sed.acc.rate[tp],
                                              bio.depth = bio.depth)
 
-      
+
       clim.sig.window <-  proxy.clim.signal[which(stats::time(clim.signal)%in%(first.tp:last.tp)), , drop = FALSE]
 
-      
+
 
       # Get bioturbation X no-seasonality weights matrix ---------
       biot.sig.weights <- bioturb.weights %o% rep(1, ncol(proxy.clim.signal))
       biot.sig.weights <- biot.sig.weights / sum(biot.sig.weights)
 
       #browser()
-      
-      
+
+
       # Get bioturbation X seasonality weights matrix ---------
       habitat.weights <- habitat.weights[which(stats::time(clim.signal)%in%(first.tp:last.tp+1)), , drop = FALSE]
       habitat.weights <- habitat.weights / sum(habitat.weights)
@@ -738,7 +737,7 @@ ClimToProxyClim <- function(clim.signal,
     }
 
     # Add bias and noise to finite sample --------
-    
+
     out$proxy.bt.sb.sampYM.b <- sweep(out$proxy.bt.sb.sampYM, 2, bias, FUN = "+")
     out$proxy.bt.sb.sampYM.b.n <- out$proxy.bt.sb.sampYM.b + noise
 
@@ -978,7 +977,7 @@ MakePFMDataframe <- function(PFM){
   df <- dplyr::as_tibble(df)
   #df <- tidyr::gather(df, stage, value, -timepoints, -n.samples, -replicate)
   df <- tidyr::pivot_longer(df, cols = tidyr::contains(c("proxy", "climate")),
-                          names_to = "stage", values_to = "value")  
+                          names_to = "stage", values_to = "value")
   df <- dplyr::arrange(df, .data$replicate, .data$stage, .data$timepoints)
   df2 <- data.frame(
     replicate = 1,
@@ -1023,6 +1022,7 @@ MakePFMDataframe <- function(PFM){
 #' @import ggplot2
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
+#' @return a ggplot object of class "gg" "ggplot"
 #' @export PlotPFMs
 #'
 #' @examples
@@ -1055,10 +1055,10 @@ PlotPFMs <- function(PFMs,
                      colr.palette = "default",
                      alpha.palette = "default",
                      levl.labels = "default"){
-  
+
   PFMs.in <- PFMs
   if ("sedproxy.pfm" %in% class(PFMs.in)) PFMs <- PFMs.in$everything
-  
+
   if(exists("replicate", where = PFMs)){
     rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "observed.proxy"),
                              replicate == 1)
@@ -1067,41 +1067,41 @@ PlotPFMs <- function(PFMs,
     rug.dat$replicate <- 1
     PFMs$replicate <- 1
   }
-  
+
   if(exists("Location", where = PFMs)==FALSE){
     PFMs$Location <- ""
   }
-  
+
   if(exists("ID.no", where = PFMs)==FALSE){
     PFMs$ID.no <- ""
   }
   if(exists("Proxy", where = PFMs)==FALSE){
     PFMs$Proxy <- ""
   }
-  
+
   # assign default asthetic mappings
-  
+
   breaks <- sedproxy::stages.key$stage
-  
+
   if (colr.palette[1] == "default")
     colr.palette  <-
     structure(sedproxy::stages.key$plotting.colour,
               .Names = sedproxy::stages.key$stage)
-  
+
   if (alpha.palette[1] == "default") alpha.palette  <-
     structure(sedproxy::stages.key$plotting.alpha,
               .Names = sedproxy::stages.key$stage)
-  
+
   if (levl.labels[1] == "default") levl.labels  <-
     structure(sedproxy::stages.key$label,
               .Names = sedproxy::stages.key$stage)
-  
+
   cali.attr <- attr(PFMs, "calibration.pars")
-  
+
   if (is.null(cali.attr)) {
     cali.attr <- list(calibration.type = "identity")
   }
-  
+
   if (plot.stages[1] == "default") {
     if (cali.attr$calibration.type == "identity"){
       plotting.levels <- c(
@@ -1119,14 +1119,14 @@ PlotPFMs <- function(PFMs,
   } else{
     plotting.levels <- plot.stages
   }
-  
+
   PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
                         replicate <= max.replicates)
-  
-  
+
+
   # match scaling flag
   PFMs <- dplyr::left_join(PFMs, sedproxy::stages.key[, c("stage", "scale")])
-  
+
   #set factor level ordering for stages
   stage.order <- match.arg(stage.order)
   switch(stage.order,
@@ -1138,15 +1138,15 @@ PlotPFMs <- function(PFMs,
            PFMs$stage <- factor(PFMs$stage,
                                 levels = var.order, ordered = TRUE)
          })
-  
-  
+
+
   p <- ggplot2::ggplot(data = PFMs, aes(x = .data$timepoints, y = .data$value,
                                         colour = stage, alpha = stage,
                                         linetype = as.factor(replicate))) +
     geom_line() +
     theme_bw() +
     theme(panel.grid.minor = element_blank(), legend.position = "top") +
-    
+
     guides(colour = guide_legend(
       ncol = 2,
       override.aes = list(alpha = 1))) +
@@ -1154,25 +1154,25 @@ PlotPFMs <- function(PFMs,
          y = expression("Proxy value")) +
     scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = "none")+
     scale_alpha_manual(guide = "none")
-  
+
   pal.df <- data.frame(
-    colr.palette = colr.palette, 
+    colr.palette = colr.palette,
     colr.breaks = names(colr.palette),
     labels = levl.labels,
     alpha.palette = alpha.palette,
     alpha.breaks = names(alpha.palette)
   )
-  
+
   pal.df <- dplyr::filter(pal.df, .data$colr.breaks %in% unique(PFMs$stage))
-  
+
   if (is.null(colr.palette) == FALSE)
     p <- p + scale_colour_manual("", values = pal.df$colr.palette, breaks = pal.df$colr.breaks,
                                  labels = pal.df$labels)
-  
+
   if (is.null(alpha.palette) == FALSE)
     p <- p + scale_alpha_manual("", values = pal.df$alpha.palette, breaks = pal.df$alpha.breaks,
                                 labels = pal.df$labels)
-  
+
   if (cali.attr$calibration.type != "identity"){
     p <- p + #facet_wrap(~scale, scales = "free_y") +
       facet_wrap( ~ scale, strip.position = "left", scales = "free_y") +
@@ -1183,7 +1183,7 @@ PlotPFMs <- function(PFMs,
         strip.background = element_rect(fill = 'transparent', colour = 'transparent'),
         strip.placement = 'outside')
   }
-  
+
   return(p)
 }
 
@@ -1206,7 +1206,7 @@ PlotPFMs <- function(PFMs,
 #' @param focal.z The depth (or time) for which source dates are wanted
 #' @param scale Whether to scale depths by sediment accumulation rate to give
 #' positions in terms of time. Defaults to time.
-#' @return a vector of weights
+#' @return a numerical vector of weights.
 #' @export
 #' @references Berger, W. H., & Heath, G. R. (1968).
 #' Vertical mixing in pelagic sediments.
@@ -1250,7 +1250,7 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
   if (sum(fz) == 0){fz}else{
     fz <- fz / sum(fz, na.rm = T)
   }
-  
+
   return(fz)
 }
 # Objects

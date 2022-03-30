@@ -12,6 +12,7 @@
 #' @import ggplot2
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
+#' @return a ggplot object of class "gg" "ggplot"
 #' @export PlotPFMs
 #'
 #' @examples
@@ -44,10 +45,10 @@ PlotPFMs <- function(PFMs,
                      colr.palette = "default",
                      alpha.palette = "default",
                      levl.labels = "default"){
-  
+
   PFMs.in <- PFMs
   if ("sedproxy.pfm" %in% class(PFMs.in)) PFMs <- PFMs.in$everything
-  
+
   if(exists("replicate", where = PFMs)){
     rug.dat <- dplyr::filter(PFMs, stage %in% c("simulated.proxy", "observed.proxy"),
                              replicate == 1)
@@ -56,41 +57,41 @@ PlotPFMs <- function(PFMs,
     rug.dat$replicate <- 1
     PFMs$replicate <- 1
   }
-  
+
   if(exists("Location", where = PFMs)==FALSE){
     PFMs$Location <- ""
   }
-  
+
   if(exists("ID.no", where = PFMs)==FALSE){
     PFMs$ID.no <- ""
   }
   if(exists("Proxy", where = PFMs)==FALSE){
     PFMs$Proxy <- ""
   }
-  
+
   # assign default asthetic mappings
-  
+
   breaks <- sedproxy::stages.key$stage
-  
+
   if (colr.palette[1] == "default")
     colr.palette  <-
     structure(sedproxy::stages.key$plotting.colour,
               .Names = sedproxy::stages.key$stage)
-  
+
   if (alpha.palette[1] == "default") alpha.palette  <-
     structure(sedproxy::stages.key$plotting.alpha,
               .Names = sedproxy::stages.key$stage)
-  
+
   if (levl.labels[1] == "default") levl.labels  <-
     structure(sedproxy::stages.key$label,
               .Names = sedproxy::stages.key$stage)
-  
+
   cali.attr <- attr(PFMs, "calibration.pars")
-  
+
   if (is.null(cali.attr)) {
     cali.attr <- list(calibration.type = "identity")
   }
-  
+
   if (plot.stages[1] == "default") {
     if (cali.attr$calibration.type == "identity"){
       plotting.levels <- c(
@@ -108,14 +109,14 @@ PlotPFMs <- function(PFMs,
   } else{
     plotting.levels <- plot.stages
   }
-  
+
   PFMs <- dplyr::filter(PFMs, stage %in% plotting.levels,
                         replicate <= max.replicates)
-  
-  
+
+
   # match scaling flag
   PFMs <- dplyr::left_join(PFMs, sedproxy::stages.key[, c("stage", "scale")])
-  
+
   #set factor level ordering for stages
   stage.order <- match.arg(stage.order)
   switch(stage.order,
@@ -127,15 +128,15 @@ PlotPFMs <- function(PFMs,
            PFMs$stage <- factor(PFMs$stage,
                                 levels = var.order, ordered = TRUE)
          })
-  
-  
+
+
   p <- ggplot2::ggplot(data = PFMs, aes(x = .data$timepoints, y = .data$value,
                                         colour = stage, alpha = stage,
                                         linetype = as.factor(replicate))) +
     geom_line() +
     theme_bw() +
     theme(panel.grid.minor = element_blank(), legend.position = "top") +
-    
+
     guides(colour = guide_legend(
       ncol = 2,
       override.aes = list(alpha = 1))) +
@@ -143,25 +144,25 @@ PlotPFMs <- function(PFMs,
          y = expression("Proxy value")) +
     scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = "none")+
     scale_alpha_manual(guide = "none")
-  
+
   pal.df <- data.frame(
-    colr.palette = colr.palette, 
+    colr.palette = colr.palette,
     colr.breaks = names(colr.palette),
     labels = levl.labels,
     alpha.palette = alpha.palette,
     alpha.breaks = names(alpha.palette)
   )
-  
+
   pal.df <- dplyr::filter(pal.df, .data$colr.breaks %in% unique(PFMs$stage))
-  
+
   if (is.null(colr.palette) == FALSE)
     p <- p + scale_colour_manual("", values = pal.df$colr.palette, breaks = pal.df$colr.breaks,
                                  labels = pal.df$labels)
-  
+
   if (is.null(alpha.palette) == FALSE)
     p <- p + scale_alpha_manual("", values = pal.df$alpha.palette, breaks = pal.df$alpha.breaks,
                                 labels = pal.df$labels)
-  
+
   if (cali.attr$calibration.type != "identity"){
     p <- p + #facet_wrap(~scale, scales = "free_y") +
       facet_wrap( ~ scale, strip.position = "left", scales = "free_y") +
@@ -172,7 +173,7 @@ PlotPFMs <- function(PFMs,
         strip.background = element_rect(fill = 'transparent', colour = 'transparent'),
         strip.placement = 'outside')
   }
-  
+
   return(p)
 }
 

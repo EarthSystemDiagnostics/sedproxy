@@ -24,11 +24,12 @@ the maximum growth rate for that taxon. For example in Roche et al (2018) a cuto
 0.1 was used, meaning all growth rates less than 0.1*max were set to zero.}
 }
 \value{
-Growth rate/day
+A numerical vector or matrix with the same dimensions as the object
+  passed to temperature_K. Units are daily growth rate, unless norm == TRUE.
 }
 \description{
 Implements the function for foraminifer growth rate as a function of
-temperature from Lombard et al. (2009) with parametrization from FAME 1.0 
+temperature from Lombard et al. (2009) with parametrization from FAME 1.0
 (Roche et al, 2018).
 }
 \examples{

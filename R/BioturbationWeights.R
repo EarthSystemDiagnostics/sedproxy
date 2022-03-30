@@ -11,7 +11,7 @@
 #' @param focal.z The depth (or time) for which source dates are wanted
 #' @param scale Whether to scale depths by sediment accumulation rate to give
 #' positions in terms of time. Defaults to time.
-#' @return a vector of weights
+#' @return a numerical vector of weights.
 #' @export
 #' @references Berger, W. H., & Heath, G. R. (1968).
 #' Vertical mixing in pelagic sediments.
@@ -55,6 +55,6 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
   if (sum(fz) == 0){fz}else{
     fz <- fz / sum(fz, na.rm = T)
   }
-  
+
   return(fz)
 }

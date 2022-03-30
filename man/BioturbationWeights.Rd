@@ -34,7 +34,7 @@ to 50 cm per ka. Either a single value, or vector of same length as
 positions in terms of time. Defaults to time.}
 }
 \value{
-a vector of weights
+a numerical vector of weights.
 }
 \description{
 For a given focal depth (or time), this function returns the probability

@@ -118,7 +118,7 @@ the year the core was sampled, defaults to the start of clim.in}
 the bioturbation filter}
 }
 \value{
-\code{ClimToProxyClim} returns a list with three elements:
+\code{ClimToProxyClim} returns an object of class "sedproxy.pfm", a list with three elements:
 \enumerate{
 \item a dataframe \code{simulated.proxy}
 \item a dataframe \code{smoothed.signal}
