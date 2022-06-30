@@ -917,8 +917,10 @@ ClimToProxyClim <- function(clim.signal,
 
 ChunkMatrix <- function(timepoints, width, climate.matrix){
 
+  rel.wind <- 1:width -ceiling(width/2)
+  
   if (stats::is.ts(climate.matrix)) {
-    rel.wind <- 1:width -round(width/2)
+    
     strt <- stats::start(climate.matrix)[1]
     n.row <- nrow(climate.matrix)
     sapply(timepoints, function(tp){
@@ -929,11 +931,9 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
     })}else{
     max.clim.signal.i <- nrow(climate.matrix)
 
-    rel.wind <- 1:width -round(width/2)
-
     sapply(timepoints, function(tp){
 
-      avg.window.i.1 <- (rel.wind) + tp
+      avg.window.i.1 <- (rel.wind) + tp 
 
       if (max(avg.window.i.1) > max.clim.signal.i) {
         warning("In ChunkMatrix: window extends below end of clim.signal")

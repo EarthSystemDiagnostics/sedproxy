@@ -43,7 +43,7 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
 
   z <- z - focal.z + mdy
 
-  if (mdy <= 1){
+  if (mdy <= 1 & lwy > 0){
     fz <- stats::dunif(z, -C, C)
   }else if (lwy == 0){
     fz <- stats::dexp(z, 1/mdy)

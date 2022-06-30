@@ -1,3 +1,7 @@
+# sedproxy 0.7.4
+* fix bug in ChunkMatrix where if a single timepoint is selected it would be off by one
+* fix bug in BioturbationWeights to allow very small mixing depths with zero layer thickness
+
 # sedproxy 0.7.3
 * refactor and rename growth rate function to be more intuitive
 
