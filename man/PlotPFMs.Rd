@@ -30,6 +30,9 @@ either sequentially, "seq", or in order of variance, "var". Defaults to var.}
 
 \item{levl.labels}{Labels for the proxy stages}
 }
+\value{
+a ggplot object of class "gg" "ggplot"
+}
 \description{
 Plot forward modelled sedimentary proxies
 }

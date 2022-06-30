@@ -1,19 +1,26 @@
 Package: sedproxy
 Title: Simulation of Sediment Archived Climate Proxy Records
-Version: 0.7.1
+Version: 0.7.3
 Authors@R: c(person("Thomas", "Laepple", email = "tlaepple@awi.de", role = c("aut")), 
     person("Andrew", "Dolman", email = "andrew.dolman@awi.de", role = c("aut", "cre")))
-Description: Simulation of Sediment Archived Climate Proxy Records.
-License: file LICENSE
+Description: Proxy forward modelling for sediment archived climate proxies such 
+  as Mg/Ca, d18O or Alkenones. The user provides a hypothesised "true" past climate, 
+  such as output from a climate model, and details of the sedimentation rate and 
+  sampling scheme of a sediment core. Sedproxy returns simulated proxy records. 
+  Implements the methods described in Dolman and Laepple (2018) 
+  <doi:10.5194/cp-14-1851-2018>.
+License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-gb
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Depends:
-    R (>= 3.5.0)
-Imports: stats, mvtnorm, dplyr, plyr, tidyr, ggplot2, shiny, readr
+    R (>= 4.0.0)
+Imports: stats, mvtnorm, dplyr, tidyr, ggplot2, shiny, readr, rlang
 Suggests:
     testthat,
     knitr,
     rmarkdown,
     tidyverse
 VignetteBuilder: knitr
+URL: https://earthsystemdiagnostics.github.io/sedproxy/, https://github.com/EarthSystemDiagnostics/sedproxy

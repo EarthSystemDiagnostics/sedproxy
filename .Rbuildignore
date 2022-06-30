@@ -11,3 +11,9 @@
 ^Readme\.md$
 ^doc$
 ^Meta$
+^\.github$
+^_pkgdown\.yml$
+^pkgdown$
+^cran-comments\.md$
+^LICENSE\.md$
+^CRAN-SUBMISSION$

@@ -11,7 +11,6 @@ vignette: >
 
 ```{r knitr_options}
 knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      tidy = TRUE,
                       fig.width = 6, fig.height = 4)
 ```
 

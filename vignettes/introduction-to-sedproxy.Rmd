@@ -16,7 +16,7 @@ vignette: >
 
 A proxy forward model is a numerical model that takes a hypothetical "true" climate time-series and simulates the processes of proxy creation and retrieval. The output is a simulated proxy time-series that should resemble what a true proxy would look like given our assumed true climate.
 
-**sedproxy** is an R package that implements a forward model for climate proxies archived in marine sediments. The model is described in Dolman, A. M. and Laepple, T.: Sedproxy: a forward model for sediment-archived climate proxies, Climate of the Past, 14(12), 1851–1868, doi:https://doi.org/10.5194/cp-14-1851-2018, 2018.
+**sedproxy** is an R package that implements a forward model for climate proxies archived in marine sediments. The model is described in Dolman, A. M. and Laepple, T.: Sedproxy: a forward model for sediment-archived climate proxies, Climate of the Past, 14(12), 1851–1868, https://doi.org/10.5194/cp-14-1851-2018, 2018.
 
 
 The tutorial is intended to get you started using sedproxy and to illustrate some of its possible applications. 
@@ -47,7 +47,6 @@ The model data are in "time-forward" order so we need to reverse the order when 
 
 ```{r knitr_options}
 knitr::opts_chunk$set(echo=TRUE, message = FALSE, warning = FALSE,
-                      tidy = TRUE,
                       fig.width = 6, fig.height = 4)
 ```
 
@@ -307,10 +306,10 @@ mean.error %>%
 
 # Cited literature
 
-Dolman, A. M. and Laepple, T.: Sedproxy: a forward model for sediment-archived climate proxies, Climate of the Past, 14(12), 1851–1868, doi:https://doi.org/10.5194/cp-14-1851-2018, 2018.
+Dolman, A. M. and Laepple, T.: Sedproxy: a forward model for sediment-archived climate proxies, Climate of the Past, 14(12), 1851–1868, https://doi.org/10.5194/cp-14-1851-2018, 2018.
 
-Rosenthal, Y., Oppo, D. W. and Linsley, B. K.: The amplitude and phasing of climate change during the last deglaciation in the Sulu Sea, western equatorial Pacific, Geophys. Res. Lett., 30(8), 1428, doi:10.1029/2002GL016612, 2003.
+Rosenthal, Y., Oppo, D. W. and Linsley, B. K.: The amplitude and phasing of climate change during the last deglaciation in the Sulu Sea, western equatorial Pacific, Geophys. Res. Lett., 30(8), 1428,   https://doi.org/10.1029/2002GL016612, 2003.
 
-Shakun, J. D., Clark, P. U., He, F., Marcott, S. A., Mix, A. C., Liu, Z., Otto-Bliesner, B., Schmittner, A. and Bard, E.: Global warming preceded by increasing carbon dioxide concentrations during the last deglaciation, Nature, 484(7392), 49–54, doi:10.1038/nature10915, 2012.
+Shakun, J. D., Clark, P. U., He, F., Marcott, S. A., Mix, A. C., Liu, Z., Otto-Bliesner, B., Schmittner, A. and Bard, E.: Global warming preceded by increasing carbon dioxide concentrations during the last deglaciation, Nature, 484(7392), 49–54, https://doi.org/10.1038/nature10915, 2012.
 
 

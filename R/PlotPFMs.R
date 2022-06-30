@@ -11,6 +11,8 @@
 #'
 #' @import ggplot2
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
+#' @return a ggplot object of class "gg" "ggplot"
 #' @export PlotPFMs
 #'
 #' @examples
@@ -73,16 +75,16 @@ PlotPFMs <- function(PFMs,
 
   if (colr.palette[1] == "default")
     colr.palette  <-
-      structure(sedproxy::stages.key$plotting.colour,
-                .Names = sedproxy::stages.key$stage)
+    structure(sedproxy::stages.key$plotting.colour,
+              .Names = sedproxy::stages.key$stage)
 
   if (alpha.palette[1] == "default") alpha.palette  <-
-      structure(sedproxy::stages.key$plotting.alpha,
-                .Names = sedproxy::stages.key$stage)
+    structure(sedproxy::stages.key$plotting.alpha,
+              .Names = sedproxy::stages.key$stage)
 
   if (levl.labels[1] == "default") levl.labels  <-
-      structure(sedproxy::stages.key$label,
-                .Names = sedproxy::stages.key$stage)
+    structure(sedproxy::stages.key$label,
+              .Names = sedproxy::stages.key$stage)
 
   cali.attr <- attr(PFMs, "calibration.pars")
 
@@ -101,7 +103,7 @@ PlotPFMs <- function(PFMs,
           "proxy.bt.sb.sampYM",  "simulated.proxy",  "simulated.proxy.cal.err", "reconstructed.climate", "observed.proxy"
         )
       }
-    } else if (plot.stages == "all") {
+  } else if (plot.stages == "all") {
     plotting.levels <- sedproxy::stages.key$stage
     plotting.levels <- subset(plotting.levels, plotting.levels %in% c("clim.signal.ann", "clim.timepoints.ssr") == FALSE)
   } else{
@@ -120,42 +122,46 @@ PlotPFMs <- function(PFMs,
   switch(stage.order,
          seq = PFMs$stage <- factor(PFMs$stage, levels = plotting.levels, ordered = TRUE),
          var = {
-           var.order <- tapply(PFMs$value, PFMs$stage, FUN = var)
+           var.order <- tapply(PFMs$value, PFMs$stage, FUN = stats::var)
            var.order <- rank(var.order, ties.method = "first")
            var.order <- names(sort(var.order, decreasing = TRUE))
            PFMs$stage <- factor(PFMs$stage,
                                 levels = var.order, ordered = TRUE)
-           })
+         })
 
 
-  p <- ggplot2::ggplot(data = PFMs, aes(x = timepoints, y = value,
-                               colour = stage, alpha = stage,
-                               linetype = as.factor(replicate))) +
-    #geom_rug(data = rug.dat, sides = "b", colour = "Darkgrey") +
+  p <- ggplot2::ggplot(data = PFMs, aes(x = .data$timepoints, y = .data$value,
+                                        colour = stage, alpha = stage,
+                                        linetype = as.factor(replicate))) +
     geom_line() +
     theme_bw() +
     theme(panel.grid.minor = element_blank(), legend.position = "top") +
-    # guides(colour = guide_legend(label.position = "top",
-    #                              label.hjust = 1,
-    #                              nrow = 1, byrow = TRUE,
-    #                              override.aes = list(alpha = 1))) +
-    guides(colour = guide_legend(#label.position = "top",
-                                 #label.hjust = 1,
-                                 ncol = 2,
-                                 #byrow = TRUE,
-                                 override.aes = list(alpha = 1))) +
+
+    guides(colour = guide_legend(
+      ncol = 2,
+      override.aes = list(alpha = 1))) +
     labs(x = expression("Timepoints"),
          y = expression("Proxy value")) +
-    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = FALSE)+
-    scale_alpha_manual(guide = FALSE)
+    scale_linetype_manual(values = rep(1, 13*length(unique(PFMs$replicate))), guide = "none")+
+    scale_alpha_manual(guide = "none")
+
+  pal.df <- data.frame(
+    colr.palette = colr.palette,
+    colr.breaks = names(colr.palette),
+    labels = levl.labels,
+    alpha.palette = alpha.palette,
+    alpha.breaks = names(alpha.palette)
+  )
+
+  pal.df <- dplyr::filter(pal.df, .data$colr.breaks %in% unique(PFMs$stage))
 
   if (is.null(colr.palette) == FALSE)
-    p <- p + scale_colour_manual("", values = colr.palette, breaks = names(colr.palette),
-                                 labels = levl.labels)
+    p <- p + scale_colour_manual("", values = pal.df$colr.palette, breaks = pal.df$colr.breaks,
+                                 labels = pal.df$labels)
 
   if (is.null(alpha.palette) == FALSE)
-    p <- p + scale_alpha_manual("", values = alpha.palette, breaks = names(alpha.palette),
-                                labels = levl.labels)
+    p <- p + scale_alpha_manual("", values = pal.df$alpha.palette, breaks = pal.df$alpha.breaks,
+                                labels = pal.df$labels)
 
   if (cali.attr$calibration.type != "identity"){
     p <- p + #facet_wrap(~scale, scales = "free_y") +
@@ -170,6 +176,7 @@ PlotPFMs <- function(PFMs,
 
   return(p)
 }
+
 
 
 

@@ -101,6 +101,9 @@ time-series. Each replicate proxy time-series has a constant bias added,
 drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 defaults to zero.}
 
+\item{scale.noise}{Scale noise to proxy units. Defaults to TRUE if
+calibration.type is not "identity"}
+
 \item{n.samples}{Number of e.g. Foraminifera sampled per timepoint, this can
 be either a single number, or a vector of length = timepoints. Can be set
 to Inf for non-discrete proxies, e.g. for Uk’37.}
@@ -115,7 +118,7 @@ the year the core was sampled, defaults to the start of clim.in}
 the bioturbation filter}
 }
 \value{
-\code{ClimToProxyClim} returns a list with three elements:
+\code{ClimToProxyClim} returns an object of class "sedproxy.pfm", a list with three elements:
 \enumerate{
 \item a dataframe \code{simulated.proxy}
 \item a dataframe \code{smoothed.signal}
@@ -156,7 +159,44 @@ climate resolution and column "value" giving the values.
 }
 }
 \description{
+\code{ClimToProxyClim} simulates the creation of a proxy climate
+record from a climate signal that is assumed to be true.
 
+The following aspects of proxy creation are currently modelled.
+\enumerate{
+\item Seasonal bias in the encoding of a proxy due to the interaction between
+climate seasonality and any seasonality in the life cycle of the organism
+encoding the climate signal (e.g. Foraminifera for Mg/Ca ratios, or
+phytoplankton for Alkenone unsaturation indices).
+\item Bioturbation of the sediment archived proxy. For each requested
+timepoint, the simulated proxy consists of a weighted mean of the climate
+signal over a time window that is determined by the sediment accumulation
+rate \emph{sed.acc.rate} and the bioturbation depth \emph{bio.depth} which defaults
+to 10 cm. The weights are given by the depth solution to an impulse
+response function (Berger and Heath, 1968).
+\item Aliasing of seasonal and inter-annual climate variation onto to
+bioturbated (smoothed) signal. For proxies measured on a small number of
+discrete particles both seasonal and inter-annual climate variation is
+aliased into the proxy record. For example, Foraminifera have a life-cycle
+of approximately 1 month, so they record something like the mean
+temperature from a single month. If Mg/Ca is measured on e.g.
+\code{n.samples} = 30 individuals, the measured proxy signal is a mean of
+30 distinct monthly mean temperatures and will thus be a stochastic sample
+of the true mean climate.
+\item Measurement noise/error is added as a pure Gaussian white noise process
+with mean = 0, standard deviation =
+\code{sqrt(sigma.meas^2 + sigma.ind^2/n.samples)}.
+\item Additionally, a random \emph{bias} can be added to each realisation of a
+proxy record. Bias is simulated as a Gaussian random variable with mean =
+0, standard deviation = \code{meas.bias}. The same randomly generated bias
+value is applied to all timepoints in a simulated proxy record, when
+multiple replicate proxies are generated (\emph{n.replicates} > 1) each
+replicate has a different bias applied.
+}
+
+\code{ClimToProxyClim} returns one or more replicates of the final
+simulated proxy as well as several intermediate stages (see section
+\strong{Value} below).
 }
 \examples{
 library(ggplot2)

@@ -19,9 +19,6 @@ ScaleError(
 \arguments{
 \item{point.or.sample}{}
 }
-\value{
-
-}
 \description{
 Title
 }

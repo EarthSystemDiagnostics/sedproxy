@@ -371,8 +371,9 @@ server <- function(input, output) {
   timepoints <- eventReactive(input$run.pfm, {
     #res <- 100
     tp <- seq(1, input$clim.signal.length, by = input$t.res)
-    t.min <-
-      ceiling(1000 * input$bio.depth / input$sed.acc.rate) + 1
+    # t.min <-
+    #   ceiling(1000 * input$bio.depth / input$sed.acc.rate) + 1
+    t.min <- min(tp)
     t.max <- input$clim.signal.length - 3 * t.min
     tp <- tp[tp > t.min & tp < t.max]
     return(tp)

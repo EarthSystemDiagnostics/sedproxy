@@ -1,3 +1,10 @@
+# sedproxy 0.7.3
+* refactor and rename growth rate function to be more intuitive
+
+# sedproxy 0.7.2
+* modifications to pass R CMD check
+* depend on R >= 4.0.0
+
 # sedproxy 0.7.1
 * set growth to zero at temperatures below -2°C in growth_rate_l09_R (FAME)
 

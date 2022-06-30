@@ -56,19 +56,41 @@ Valid entries for calibration are: "Ten planktonic species_350-500", "G. aequila
 \examples{
 # From temperature to UK'37
 ## With fixed calibration
-ProxyConversion(temperature = c(10, 20), point.or.sample = "point", calibration.type = "Uk37")
+ProxyConversion(temperature = c(10, 20), point.or.sample = "point",
+                calibration.type = "Uk37")
 
 ## With random calibration, 5 replicates
-ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample", calibration.type = "Uk37")
+ProxyConversion(temperature = c(1, 2), n = 5, point.or.sample = "sample",
+                calibration.type = "Uk37")
 
 
 ## Back-transformation with same calibration
-ProxyConversion(proxy.value = as.vector(ProxyConversion(temperature = c(21, 22), calibration.type = "Uk37", point.or.sample = "point"))
-           , point.or.sample = "point", calibration.type = "Uk37")
+ProxyConversion(
+  proxy.value = as.vector(
+    ProxyConversion(
+      temperature = c(21, 22),
+      calibration.type = "Uk37",
+      point.or.sample = "point"
+    )
+  ),
+  point.or.sample = "point",
+  calibration.type = "Uk37"
+)
 
 ## Back-transformation with random calibration
-ProxyConversion(proxy.value = as.vector(ProxyConversion(temperature = c(21, 22), calibration.type = "Uk37", point.or.sample = "point"))
-           , n = 5, point.or.sample = "sample", calibration.type = "Uk37")
+ProxyConversion(
+  proxy.value = as.vector(
+    ProxyConversion(
+      temperature = c(21, 22),
+      calibration.type = "Uk37",
+     point.or.sample = "point"
+    )
+  )
+  ,
+  n = 5,
+  point.or.sample = "sample",
+  calibration.type = "Uk37"
+)
 
 ## Incompatible arguments
 \dontrun{

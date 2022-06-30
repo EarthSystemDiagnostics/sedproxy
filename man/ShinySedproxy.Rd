@@ -6,6 +6,9 @@
 \usage{
 ShinySedproxy()
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Launches the shiny app GUI interface to sedproxy
 }

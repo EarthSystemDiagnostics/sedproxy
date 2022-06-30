@@ -1,6 +1,6 @@
 #' Bioturbation weights
 #' @description For a given focal depth (or time), this function returns the probability
-#' that material collected from that depth was orignially deposited at depth(s)
+#' that material collected from that depth was originally deposited at depth(s)
 #' z. In other words, that the material would have been found at depth z if there
 #' had been no bioturbation. It is the convolution of the depth solution from
 #' Berger and Heath (1968) with a uniform distribution to account for the width
@@ -11,7 +11,7 @@
 #' @param focal.z The depth (or time) for which source dates are wanted
 #' @param scale Whether to scale depths by sediment accumulation rate to give
 #' positions in terms of time. Defaults to time.
-#' @return a vector of weights
+#' @return a numerical vector of weights.
 #' @export
 #' @references Berger, W. H., & Heath, G. R. (1968).
 #' Vertical mixing in pelagic sediments.
@@ -44,9 +44,9 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
   z <- z - focal.z + mdy
 
   if (mdy <= 1){
-    fz <- dunif(z, -C, C)
+    fz <- stats::dunif(z, -C, C)
   }else if (lwy == 0){
-    fz <- dexp(z, 1/mdy)
+    fz <- stats::dexp(z, 1/mdy)
   }else{
     fz <- (z < -C) * 0 +
       (z >= -C & z <= C) * (lam*(1/lam-exp(-lam*C-lam*z)/lam))/(2*C)  +
@@ -55,6 +55,6 @@ BioturbationWeights <- function(z, focal.z, layer.width=1, sed.acc.rate, bio.dep
   if (sum(fz) == 0){fz}else{
     fz <- fz / sum(fz, na.rm = T)
   }
-  
+
   return(fz)
 }
