@@ -447,10 +447,11 @@ ClimToProxyClim <- function(clim.signal,
     # identify mixed layer
     # find oldest timepoint in mixed layer
 
-    oldest.in.mix <- which.max(timepoints[min.ind == TRUE])
+    oldest.in.mix <- timepoints[min.ind == TRUE]
 
     if (length(oldest.in.mix)!=0) {
-      mixed.layer.inds <- timepoints <= timepoints[oldest.in.mix] & tpts.above.core.top == FALSE
+      mixed.layer.inds <- min.ind == TRUE & tpts.above.core.top == FALSE
+      #mixed.layer.inds <- timepoints <= timepoints[timepoints[min.ind == TRUE]] & tpts.above.core.top == FALSE
       #mixed.layer.inds <- mixed.layer.inds[tpts.above.core.top == FALSE]
     } else {
       mixed.layer.inds <- rep(FALSE, n.timepoints)
@@ -918,9 +919,9 @@ ClimToProxyClim <- function(clim.signal,
 ChunkMatrix <- function(timepoints, width, climate.matrix){
 
   rel.wind <- 1:width -ceiling(width/2)
-  
+
   if (stats::is.ts(climate.matrix)) {
-    
+
     strt <- stats::start(climate.matrix)[1]
     n.row <- nrow(climate.matrix)
     sapply(timepoints, function(tp){
@@ -933,7 +934,7 @@ ChunkMatrix <- function(timepoints, width, climate.matrix){
 
     sapply(timepoints, function(tp){
 
-      avg.window.i.1 <- (rel.wind) + tp 
+      avg.window.i.1 <- (rel.wind) + tp
 
       if (max(avg.window.i.1) > max.clim.signal.i) {
         warning("In ChunkMatrix: window extends below end of clim.signal")
