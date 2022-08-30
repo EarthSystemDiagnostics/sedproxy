@@ -34,7 +34,7 @@ replicate has a different bias applied.
 
 ClimToProxyClim returns one or more replicates of the final
 simulated proxy as well as several intermediate stages (see section
-Value below)."><title>Simulate sediment archived proxy records from an input climate signal. — ClimToProxyClim • sedproxy</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simulate sediment archived proxy records from an input climate signal. — ClimToProxyClim"><meta property="og:description" content="ClimToProxyClim simulates the creation of a proxy climate
+Value below)."><title>Simulate sediment archived proxy records from an input climate signal. — ClimToProxyClim • sedproxy</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simulate sediment archived proxy records from an input climate signal. — ClimToProxyClim"><meta property="og:description" content="ClimToProxyClim simulates the creation of a proxy climate
 record from a climate signal that is assumed to be true.
 The following aspects of proxy creation are currently modelled.
 Seasonal bias in the encoding of a proxy due to the interaction between
@@ -80,7 +80,7 @@ Value below)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
     
     <a class="navbar-brand me-2" href="../index.html">sedproxy</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -160,31 +160,31 @@ simulated proxy as well as several intermediate stages (see section
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ClimToProxyClim</span><span class="op">(</span>
-  <span class="va">clim.signal</span>,
-  <span class="va">timepoints</span>,
-  calibration.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"identity"</span>, <span class="st">"Uk37"</span>, <span class="st">"MgCa"</span><span class="op">)</span>,
-  calibration <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">calibration.type</span>, identity <span class="op">=</span> <span class="cn">NA</span>, Uk37 <span class="op">=</span> <span class="st">"Mueller global"</span>, MgCa <span class="op">=</span>
-    <span class="st">"Ten planktonic species_350-500"</span><span class="op">)</span>,
-  slp.int.means <span class="op">=</span> <span class="cn">NULL</span>,
-  slp.int.vcov <span class="op">=</span> <span class="cn">NULL</span>,
-  noise.type <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">calibration.type</span>, identity <span class="op">=</span> <span class="st">"additive"</span>, Uk37 <span class="op">=</span> <span class="st">"additive"</span>, MgCa
-    <span class="op">=</span> <span class="st">"multiplicative"</span><span class="op">)</span>,
-  plot.sig.res <span class="op">=</span> <span class="fl">100</span>,
-  habitat.weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">clim.signal</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">clim.signal</span><span class="op">)</span><span class="op">)</span>,
-  habitat.wt.args <span class="op">=</span> <span class="cn">NULL</span>,
-  bio.depth <span class="op">=</span> <span class="fl">10</span>,
-  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-  layer.width <span class="op">=</span> <span class="fl">1</span>,
-  sigma.meas <span class="op">=</span> <span class="fl">0</span>,
-  sigma.ind <span class="op">=</span> <span class="fl">0</span>,
-  meas.bias <span class="op">=</span> <span class="fl">0</span>,
-  scale.noise <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">calibration.type</span>, identity <span class="op">=</span> <span class="cn">FALSE</span>, Uk37 <span class="op">=</span> <span class="cn">TRUE</span>, MgCa <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-  n.samples <span class="op">=</span> <span class="cn">Inf</span>,
-  n.replicates <span class="op">=</span> <span class="fl">1</span>,
-  top.of.core <span class="op">=</span> <span class="cn">NULL</span>,
-  n.bd <span class="op">=</span> <span class="fl">3</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ClimToProxyClim</span><span class="op">(</span></span>
+<span>  <span class="va">clim.signal</span>,</span>
+<span>  <span class="va">timepoints</span>,</span>
+<span>  calibration.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"identity"</span>, <span class="st">"Uk37"</span>, <span class="st">"MgCa"</span><span class="op">)</span>,</span>
+<span>  calibration <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">calibration.type</span>, identity <span class="op">=</span> <span class="cn">NA</span>, Uk37 <span class="op">=</span> <span class="st">"Mueller global"</span>, MgCa <span class="op">=</span></span>
+<span>    <span class="st">"Ten planktonic species_350-500"</span><span class="op">)</span>,</span>
+<span>  slp.int.means <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  slp.int.vcov <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  noise.type <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">calibration.type</span>, identity <span class="op">=</span> <span class="st">"additive"</span>, Uk37 <span class="op">=</span> <span class="st">"additive"</span>, MgCa</span>
+<span>    <span class="op">=</span> <span class="st">"multiplicative"</span><span class="op">)</span>,</span>
+<span>  plot.sig.res <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  habitat.weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">clim.signal</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">clim.signal</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  habitat.wt.args <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  bio.depth <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  layer.width <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  sigma.meas <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  sigma.ind <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  meas.bias <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  scale.noise <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">calibration.type</span>, identity <span class="op">=</span> <span class="cn">FALSE</span>, Uk37 <span class="op">=</span> <span class="cn">TRUE</span>, MgCa <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  n.samples <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  n.replicates <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  top.of.core <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n.bd <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -195,21 +195,33 @@ output or instrumental record. A <code><a href="https://rdrr.io/r/stats/ts.html"
 years x 12 (months) x n habitats (e.g. depths) matrix of temperatures. The
 time series should be at annual resolution and in reverse, i.e. "most
 recent timepoint first" order.</p></dd>
+
+
 <dt>timepoints</dt>
 <dd><p>The timepoints for which the proxy record is to be modelled</p></dd>
+
+
 <dt>calibration.type</dt>
 <dd><p>Type of proxy, e.g. Uk'37 or MgCa, to which the
 clim.signal is converted before the archiving and measurement of the proxy
 is simulated. Defaults to "identity" which means no conversion takes place.</p></dd>
+
+
 <dt>calibration</dt>
 <dd><p>The name of a specific calibration for which calibration parameters
 are provided by sedproxy. Currently applies only to calibration.type MgCa.</p></dd>
+
+
 <dt>slp.int.means</dt>
 <dd><p>Optional user supplied vector of values for the slope
 and intercept of the calibration function. Overides the defaults.</p></dd>
+
+
 <dt>slp.int.vcov</dt>
 <dd><p>Optional user supplied variance covariance matrix
 calibration parameters. Overides the defaults.</p></dd>
+
+
 <dt>noise.type</dt>
 <dd><p>Determines whether additive or multiplicative measurement
 noise is added. The appropriate type depends on the units of the proxy.
@@ -218,11 +230,15 @@ calibration types. Can be overidden with a string, "additive" or
 "multiplicative" in the case that pre-converted climate signal and
 measurement noise values are used in combination with an "identity"
 calibration type.</p></dd>
+
+
 <dt>plot.sig.res</dt>
 <dd><p>The resolution, in years, of the smoothed (block
 averaged) version of the input climate signal returned for plotting. This
 does not affect what the proxy model uses as input. If set to NA, no
 smoothed climate output is generated, this can speed up some simulations.</p></dd>
+
+
 <dt>habitat.weights</dt>
 <dd><p>Production weights for the proxy / proxy-carrier
 either as a vector of values with length = ncol(clim.signal), i.e. 1 weight
@@ -230,69 +246,106 @@ for each month x habitat combination, a matrix of the same dimensions as the
 input climate signal matrix, or a function that produces an index of
 productivity as a function of temperature.
 Defaults to a vector of length = ncol(clim.signal) of equal weights.</p></dd>
+
+
 <dt>habitat.wt.args</dt>
 <dd><p>A named list of parameter values to be passed to
 a function named in habitat.weights.</p></dd>
+
+
 <dt>bio.depth</dt>
 <dd><p>Depth of the bioturbated layer in cm, defaults to 10 cm.</p></dd>
+
+
 <dt>sed.acc.rate</dt>
 <dd><p>Sediment accumulation rate in cm per 1000 years. Defaults
 to 50 cm per ka. Either a single value, or vector of same length as
 "timepoints"</p></dd>
+
+
 <dt>layer.width</dt>
 <dd><p>the width of the sediment layer from which samples were
 taken, e.g. foraminifera were picked or alkenones were extracted, in cm.
 Defaults to 1 cm. If bio.depth and layer.width are both set to zero,
 each timepoint samples from a single year of the clim.signal, equivalent to
 sampling an annually laminated sediment core.</p></dd>
+
+
 <dt>sigma.meas</dt>
 <dd><p>The standard deviation of the measurement error
 added to each simulated proxy value.</p></dd>
+
+
 <dt>sigma.ind</dt>
 <dd><p>The standard deviation of error between individuals
 (e.g. Forams) not otherwise modelled. This could included "vital effects" or
 aliasing of depth habitat variation not modelled via a depth resolved input
 climate signal and habitat weights. sigma.ind is scaled by n.samples
 before being combined with sigma.meas.</p></dd>
+
+
 <dt>meas.bias</dt>
 <dd><p>The amount of bias to add to each simulated proxy
 time-series. Each replicate proxy time-series has a constant bias added,
 drawn from a normal distribution with mean = 0, sd = meas.bias. Bias
 defaults to zero.</p></dd>
+
+
 <dt>scale.noise</dt>
 <dd><p>Scale noise to proxy units. Defaults to TRUE if
 calibration.type is not "identity"</p></dd>
+
+
 <dt>n.samples</dt>
 <dd><p>Number of e.g. Foraminifera sampled per timepoint, this can
 be either a single number, or a vector of length = timepoints. Can be set
 to Inf for non-discrete proxies, e.g. for Uk’37.</p></dd>
+
+
 <dt>n.replicates</dt>
 <dd><p>Number of replicate proxy time-series to simulate from
 the climate signal</p></dd>
+
+
 <dt>top.of.core</dt>
 <dd><p>The theoretical minimum age at the top of the core, ie.
 the year the core was sampled, defaults to the start of clim.in</p></dd>
+
+
 <dt>n.bd</dt>
 <dd><p>Number of multiples of the bioturbation width at which to truncate
 the bioturbation filter</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>ClimToProxyClim</code> returns an object of class "sedproxy.pfm", a list with three elements:</p><ol><li><p>a dataframe <code>simulated.proxy</code></p></li>
+    
+
+<p><code>ClimToProxyClim</code> returns an object of class "sedproxy.pfm", a list with three elements:</p><ol><li><p>a dataframe <code>simulated.proxy</code></p></li>
 <li><p>a dataframe <code>smoothed.signal</code></p></li>
 <li><p>a dataframe <code>everything</code></p></li>
 </ol><p>The dataframe <code>simulated.proxy</code> contains a single realisation of the
 final forward modelled proxy, as well as the intermediate stages and the
-original climate signal at the requested timepoints.
-The dataframe <code>smoothed.signal</code> contains a block averaged version the
+original climate signal at the requested timepoints.</p>
+
+
+<p>The dataframe <code>smoothed.signal</code> contains a block averaged version the
 input climate signal, defaults to 100 year means but this is set by the
 parameter plot.sig.res. This is useful for plotting against the
-resulting simulated proxy.
-The dataframe <code>everything</code> contains all of the above but with multiple
+resulting simulated proxy.</p>
+
+
+<p>The dataframe <code>everything</code> contains all of the above but with multiple
 replicates of the pseudo-proxy records if requested. The data are in
 "long form", with the column "stage" inidcating the proxy stage or input
-climate resolution and column "value" giving the values.
-<strong>Named elements of the returned proxy record:</strong></p><dl><dt>timepoints</dt>
+climate resolution and column "value" giving the values.</p>
+
+
+<p><strong>Named elements of the returned proxy record:</strong></p>
+
+
+
+<dl><dt>timepoints</dt>
 <dd><p>Requested timepoints</p></dd>
 
 <dt>clim.signal.ann</dt>
@@ -339,40 +392,40 @@ climate resolution and column "value" giving the values.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">26052017</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">-</span> <span class="fl">273.15</span>, start <span class="op">=</span> <span class="op">-</span><span class="fl">39</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">PFM</span> <span class="op">&lt;-</span> <span class="fu">ClimToProxyClim</span><span class="op">(</span>clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
-<span class="r-in">                       timepoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">N41.proxy</span><span class="op">$</span><span class="va">Published.age</span><span class="op">)</span>,</span>
-<span class="r-in">                       calibration.type <span class="op">=</span> <span class="st">"identity"</span>,</span>
-<span class="r-in">                       habitat.weights <span class="op">=</span> <span class="va">N41.G.ruber.seasonality</span>,</span>
-<span class="r-in">                       sed.acc.rate <span class="op">=</span> <span class="va">N41.proxy</span><span class="op">$</span><span class="va">Sed.acc.rate.cm.ka</span>,</span>
-<span class="r-in">                       layer.width <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                       sigma.meas <span class="op">=</span> <span class="fl">0.46</span>,</span>
-<span class="r-in">                       sigma.ind <span class="op">=</span> <span class="fl">0</span>, n.samples <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span class="r-in">                       plot.sig.res <span class="op">=</span> <span class="fl">10</span>, meas.bias <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                       n.replicates <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span>, max.replicates <span class="op">=</span> <span class="fl">1</span>, stage.order <span class="op">=</span> <span class="st">"seq"</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">stage</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">26052017</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">-</span> <span class="fl">273.15</span>, start <span class="op">=</span> <span class="op">-</span><span class="fl">39</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">PFM</span> <span class="op">&lt;-</span> <span class="fu">ClimToProxyClim</span><span class="op">(</span>clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span></span>
+<span class="r-in"><span>                       timepoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">N41.proxy</span><span class="op">$</span><span class="va">Published.age</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                       calibration.type <span class="op">=</span> <span class="st">"identity"</span>,</span></span>
+<span class="r-in"><span>                       habitat.weights <span class="op">=</span> <span class="va">N41.G.ruber.seasonality</span>,</span></span>
+<span class="r-in"><span>                       sed.acc.rate <span class="op">=</span> <span class="va">N41.proxy</span><span class="op">$</span><span class="va">Sed.acc.rate.cm.ka</span>,</span></span>
+<span class="r-in"><span>                       layer.width <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                       sigma.meas <span class="op">=</span> <span class="fl">0.46</span>,</span></span>
+<span class="r-in"><span>                       sigma.ind <span class="op">=</span> <span class="fl">0</span>, n.samples <span class="op">=</span> <span class="cn">Inf</span>,</span></span>
+<span class="r-in"><span>                       plot.sig.res <span class="op">=</span> <span class="fl">10</span>, meas.bias <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                       n.replicates <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span>, max.replicates <span class="op">=</span> <span class="fl">1</span>, stage.order <span class="op">=</span> <span class="st">"seq"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">stage</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining, by = c("stage", "scale")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> will replace the existing scale.</span>
 <span class="r-plt img"><img src="ClimToProxyClim-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span>, max.replicates <span class="op">=</span> <span class="fl">1</span>, stage.order <span class="op">=</span> <span class="st">"var"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span>, max.replicates <span class="op">=</span> <span class="fl">1</span>, stage.order <span class="op">=</span> <span class="st">"var"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining, by = c("stage", "scale")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> will replace the existing scale.</span>
 <span class="r-plt img"><img src="ClimToProxyClim-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span>, stage.order <span class="op">=</span> <span class="st">"var"</span>, plot.stages <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">$</span><span class="va">everything</span>, stage.order <span class="op">=</span> <span class="st">"var"</span>, plot.stages <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining, by = c("stage", "scale")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for 'alpha' is already present. Adding another scale for 'alpha', which</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> will replace the existing scale.</span>
 <span class="r-plt img"><img src="ClimToProxyClim-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -384,7 +437,7 @@ climate resolution and column "value" giving the values.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer></div>

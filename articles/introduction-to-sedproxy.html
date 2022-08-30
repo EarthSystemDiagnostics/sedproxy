@@ -8,8 +8,8 @@
 <meta name="description" content="sedproxy">
 <title>Introduction to sedproxy • sedproxy</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to sedproxy">
 <meta property="og:description" content="sedproxy">
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">sedproxy</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,11 +71,11 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Introduction to sedproxy</h1>
                         <h4 data-toc-skip class="author">Andrew M. Dolman</h4>
             
-            <h4 data-toc-skip class="date">2022-03-30</h4>
+            <h4 data-toc-skip class="date">2022-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/EarthSystemDiagnostics/sedproxy/blob/HEAD/vignettes/introduction-to-sedproxy.Rmd" class="external-link"><code>vignettes/introduction-to-sedproxy.Rmd</code></a></small>
       <div class="d-none name"><code>introduction-to-sedproxy.Rmd</code></div>
@@ -95,11 +95,11 @@
 </h3>
 <p><strong>sedproxy</strong> can be installed directly from github. Remove the comments marks “#” on the code below to install. If you are doing this tutorial on the RStudio Cloud sedproxy is already installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># if (!require("devtools")) {</span>
-<span class="co">#   install.packages("devtools")</span>
-<span class="co"># }</span>
-<span class="co"># </span>
-<span class="co"># devtools::install_github("EarthSystemDiagnostics/sedproxy")</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># if (!require("devtools")) {</span></span>
+<span><span class="co">#   install.packages("devtools")</span></span>
+<span><span class="co"># }</span></span>
+<span><span class="co"># </span></span>
+<span><span class="co"># devtools::install_github("EarthSystemDiagnostics/sedproxy")</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="the-input-climate">The input climate<a class="anchor" aria-label="anchor" href="#the-input-climate"></a>
@@ -109,18 +109,18 @@
 <p>The sedproxy package contains an example input climate taken from the Trace21k climate model run. It is the closest model grid box to core MD97-2141, from which there is a foraminiferal Mg/Ca record (record 41 in Shakun et al. 2012, Rosenthal et al., 2003).</p>
 <p>The model data are in “time-forward” order so we need to reverse the order when we read it, and convert to °C from Kelvin.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>echo<span class="op">=</span><span class="cn">TRUE</span>, message <span class="op">=</span> <span class="cn">FALSE</span>, warning <span class="op">=</span> <span class="cn">FALSE</span>,
-                      fig.width <span class="op">=</span> <span class="fl">6</span>, fig.height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>echo<span class="op">=</span><span class="cn">TRUE</span>, message <span class="op">=</span> <span class="cn">FALSE</span>, warning <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                      fig.width <span class="op">=</span> <span class="fl">6</span>, fig.height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://earthsystemdiagnostics.github.io/sedproxy/">sedproxy</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://earthsystemdiagnostics.github.io/sedproxy/">sedproxy</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="va">N41.t21k.climate</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">-</span> <span class="fl">273.15</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="va">N41.t21k.climate</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">N41.t21k.climate</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">-</span> <span class="fl">273.15</span></span></code></pre></div>
 <p>Additionally we need to turn it into an R time-series object. The Trace simulation runs to the year 1990 AD, therefore the start time for the input climate is -39 years BP.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">clim.in</span>, start <span class="op">=</span> <span class="op">-</span><span class="fl">39</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">clim.in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">clim.in</span>, start <span class="op">=</span> <span class="op">-</span><span class="fl">39</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="timepoints">Timepoints<a class="anchor" aria-label="anchor" href="#timepoints"></a>
@@ -128,16 +128,16 @@
 <p>The second argument <code>timepoint</code> defines the points in time for which you want to model a proxy value. If you have a real proxy record you can use the estimated ages of your actual samples. Here we will define a regular time-series with a sample every 100 years.</p>
 <p>Because of the bioturbation process, the modelled proxy value at each timepoint depends on values of the input climate both earlier and later in time than the timepoint itself. This time windows spans from 1 “bioturbation width” younger than the timepoint, and 3 bioturbation widths earlier in time. If timepoints are requested that cannot be returned, the model will still run, but with a warning that some timepoints have been omitted.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">req.timepoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20000</span>, by <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">req.timepoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">20000</span>, by <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="habitat-weights">Habitat weights<a class="anchor" aria-label="anchor" href="#habitat-weights"></a>
 </h3>
 <p><code>habitat.weights</code> define the relative abundance or flux of climate signal carriers (e.g. foraminiferal shells) corresponding to the habitats (here months) in the different columns of the input climate. For example, a particular taxa might be more abundant in the warm summer months than during the winter.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">hab.wts</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">pi</span>, <span class="fl">3</span><span class="op">*</span><span class="va">pi</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">/</span><span class="fl">12</span>, length.out <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span>
-<span class="va">hab.wts</span> <span class="op">&lt;-</span> <span class="va">hab.wts</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">hab.wts</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hab.wts</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">hab.wts</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">pi</span>, <span class="fl">3</span><span class="op">*</span><span class="va">pi</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">/</span><span class="fl">12</span>, length.out <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">hab.wts</span> <span class="op">&lt;-</span> <span class="va">hab.wts</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">hab.wts</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hab.wts</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 </div>
 <div class="section level3">
@@ -155,90 +155,90 @@
 <h3 id="running-the-proxy-forward-model">Running the proxy forward model<a class="anchor" aria-label="anchor" href="#running-the-proxy-forward-model"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">PFM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-                       timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-                       habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-                       sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-                       sigma.meas <span class="op">=</span> <span class="fl">0.25</span>,
-                       sigma.ind <span class="op">=</span> <span class="fl">1</span>,
-                       n.samples <span class="op">=</span> <span class="fl">30</span>,
-                       
-                       <span class="co"># this controls the resolution at which the input climate</span>
-                       <span class="co"># is returned and will be plotted later</span>
-                       plot.sig.res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">PFM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>                       timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>                       habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>                       sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>                       sigma.meas <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>                       sigma.ind <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                       n.samples <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>                       </span>
+<span>                       <span class="co"># this controls the resolution at which the input climate</span></span>
+<span>                       <span class="co"># is returned and will be plotted later</span></span>
+<span>                       plot.sig.res <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>There is a plotting function that by default plots all of the modelled stages of proxy creation.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
 <p>If we repeat the call to <code>ClimToProxyClim</code> with n.replicates &gt; 1 we will get multiple realisations of the simulated proxy.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">PFM.5.reps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-                       timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-                       habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-                       sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-                       sigma.meas <span class="op">=</span> <span class="fl">0.25</span>,
-                       sigma.ind <span class="op">=</span> <span class="fl">1</span>,
-                       n.samples <span class="op">=</span> <span class="fl">30</span>,
-                       plot.sig.res <span class="op">=</span> <span class="fl">1</span>,
-                       n.replicates <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">PFM.5.reps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>                       timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>                       habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>                       sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>                       sigma.meas <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>                       sigma.ind <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                       n.samples <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>                       plot.sig.res <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                       n.replicates <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <p>We can plot just the final simulated proxy records.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM.5.reps</span>, plot.stages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simulated.proxy"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/PlotPFMs.html">PlotPFMs</a></span><span class="op">(</span><span class="va">PFM.5.reps</span>, plot.stages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simulated.proxy"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 <p>But they are hard to distinguish, so we will extract the results and make our own custom plot. The output is a list.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">PFM.5.reps</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## $names</span>
-<span class="co">## [1] "simulated.proxy"  "smoothed.signal"  "everything"       "calibration.pars"</span>
-<span class="co">## </span>
-<span class="co">## $class</span>
-<span class="co">## [1] "sedproxy.pfm"</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">PFM.5.reps</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $names</span></span>
+<span><span class="co">## [1] "simulated.proxy"  "smoothed.signal"  "everything"       "calibration.pars"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $class</span></span>
+<span><span class="co">## [1] "sedproxy.pfm"</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">PFM.5.reps</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] TRUE</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">PFM.5.reps</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
 <p>The first element is a dataframe/tibble with only the first replicate. The second is a smoothed version of the climate signal. The poorly named element “everything” is what we want, this contains all the replicate simulated proxies in a large long format dataframe/tibble.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">PFM.5.reps</span><span class="op">$</span><span class="va">everything</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 28,839 × 7</span></span>
-<span class="co">##    timepoints n.samples replicate stage             value scale       label     </span>
-<span class="co">##         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="co">## <span style="color: #BCBCBC;"> 1</span>          1        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 2</span>        101        30         1 proxy.bt.sb.sampY  28.8 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 3</span>        201        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 4</span>        301        30         1 proxy.bt.sb.sampY  28.6 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 5</span>        401        30         1 proxy.bt.sb.sampY  28.6 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 6</span>        501        30         1 proxy.bt.sb.sampY  28.6 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 7</span>        601        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 8</span>        701        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;"> 9</span>        801        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #BCBCBC;">10</span>        901        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span>
-<span class="co">## <span style="color: #949494;"># … with 28,829 more rows</span></span></code></pre>
+<code class="sourceCode R"><span><span class="va">PFM.5.reps</span><span class="op">$</span><span class="va">everything</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 28,839 × 7</span></span></span>
+<span><span class="co">##    timepoints n.samples replicate stage             value scale       label     </span></span>
+<span><span class="co">##         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>          1        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>        101        30         1 proxy.bt.sb.sampY  28.8 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>        201        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>        301        30         1 proxy.bt.sb.sampY  28.8 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>        401        30         1 proxy.bt.sb.sampY  28.6 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>        501        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>        601        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>        701        30         1 proxy.bt.sb.sampY  28.7 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        801        30         1 proxy.bt.sb.sampY  28.6 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>        901        30         1 proxy.bt.sb.sampY  28.8 Proxy units (4) +Alia…</span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 28,829 more rows</span></span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">PFM.5.reps</span><span class="op">$</span><span class="va">everything</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op">==</span> <span class="st">"simulated.proxy"</span>,
-         <span class="va">replicate</span> <span class="op">&lt;=</span> <span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">timepoints</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">PFM.5.reps</span><span class="op">$</span><span class="va">everything</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op">==</span> <span class="st">"simulated.proxy"</span>,</span>
+<span>         <span class="va">replicate</span> <span class="op">&lt;=</span> <span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">timepoints</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-12-1.png" width="576"></p>
 <div class="section level4">
 <h4 id="with-base-r">With base R<a class="anchor" aria-label="anchor" href="#with-base-r"></a>
 </h4>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">reps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">PFM.5.reps</span><span class="op">$</span><span class="va">everything</span>, <span class="va">stage</span> <span class="op">==</span> <span class="st">"simulated.proxy"</span><span class="op">)</span>
-
-  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">value</span><span class="op">~</span><span class="va">timepoints</span>,
-     col <span class="op">=</span> <span class="va">replicate</span>,
-     type <span class="op">=</span> <span class="st">"n"</span>,
-     data <span class="op">=</span> <span class="va">reps</span><span class="op">)</span>
-  
-  <span class="va">n.reps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reps</span><span class="op">$</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">colrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="va">n.reps</span><span class="op">)</span>
-  
-  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reps</span><span class="op">$</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">value</span><span class="op">~</span><span class="va">timepoints</span>,
-     col <span class="op">=</span> <span class="va">colrs</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,
-     data <span class="op">=</span> <span class="va">reps</span><span class="op">[</span><span class="va">reps</span><span class="op">$</span><span class="va">replicate</span> <span class="op">==</span> <span class="va">i</span>,<span class="op">]</span><span class="op">)</span>
-  <span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">reps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">PFM.5.reps</span><span class="op">$</span><span class="va">everything</span>, <span class="va">stage</span> <span class="op">==</span> <span class="st">"simulated.proxy"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">value</span><span class="op">~</span><span class="va">timepoints</span>,</span>
+<span>     col <span class="op">=</span> <span class="va">replicate</span>,</span>
+<span>     type <span class="op">=</span> <span class="st">"n"</span>,</span>
+<span>     data <span class="op">=</span> <span class="va">reps</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">n.reps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reps</span><span class="op">$</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">colrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="va">n.reps</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reps</span><span class="op">$</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">value</span><span class="op">~</span><span class="va">timepoints</span>,</span>
+<span>     col <span class="op">=</span> <span class="va">colrs</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>     data <span class="op">=</span> <span class="va">reps</span><span class="op">[</span><span class="va">reps</span><span class="op">$</span><span class="va">replicate</span> <span class="op">==</span> <span class="va">i</span>,<span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-13-1.png" width="576"></p>
 </div>
 </div>
@@ -247,76 +247,76 @@
 </h3>
 <p>Here we use sedproxy to examine the influence of the number of forams per sample and the number of samples measured per depth/timepoint/sediment slice.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pfm.30</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>
-  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-  <span class="co">#calibration.type = "MgCa",</span>
-  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-  sigma.meas <span class="op">=</span> <span class="fl">0.26</span>, sigma.ind <span class="op">=</span> <span class="fl">2</span>,
-  n.samples <span class="op">=</span> <span class="fl">30</span>,
-  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
-
-<span class="va">pfm.5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>
-  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-  <span class="co">#calibration.type = "MgCa",</span>
-  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-  sigma.meas <span class="op">=</span> <span class="fl">0.26</span>, sigma.ind <span class="op">=</span> <span class="fl">2</span>,
-  n.samples <span class="op">=</span> <span class="fl">5</span>,
-  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
-
-
-<span class="co"># Here we take a shortcut. Instead of actually simulating the measurement of 6 samples at each timepoint we just shrink sigma.meas by sqrt(6) and multiply the number of forams by 6.</span>
-
-<span class="va">pfm.5x6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>
-  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-  <span class="co">#calibration.type = "MgCa",</span>
-  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-  sigma.meas <span class="op">=</span> <span class="fl">0.26</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>,
-  sigma.ind <span class="op">=</span> <span class="fl">2</span>, n.samples <span class="op">=</span> <span class="fl">6</span><span class="op">*</span><span class="fl">5</span>,
-  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
-
-<span class="va">pfm.120</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>
-  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-  <span class="co">#calibration.type = "MgCa",</span>
-  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-  sigma.meas <span class="op">=</span> <span class="fl">0.26</span>,
-  sigma.ind <span class="op">=</span> <span class="fl">2</span>, n.samples <span class="op">=</span> <span class="fl">120</span>,
-  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>
-
-<span class="va">pfm.10x12</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span>
-  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,
-  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,
-  <span class="co">#calibration.type = "MgCa",</span>
-  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,
-  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,
-  sigma.meas <span class="op">=</span> <span class="fl">0.26</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,
-  sigma.ind <span class="op">=</span> <span class="fl">2</span>, n.samples <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="fl">12</span>,
-  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">pfm.30</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span></span>
+<span>  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>  <span class="co">#calibration.type = "MgCa",</span></span>
+<span>  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>  sigma.meas <span class="op">=</span> <span class="fl">0.26</span>, sigma.ind <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  n.samples <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pfm.5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span></span>
+<span>  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>  <span class="co">#calibration.type = "MgCa",</span></span>
+<span>  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>  sigma.meas <span class="op">=</span> <span class="fl">0.26</span>, sigma.ind <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  n.samples <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Here we take a shortcut. Instead of actually simulating the measurement of 6 samples at each timepoint we just shrink sigma.meas by sqrt(6) and multiply the number of forams by 6.</span></span>
+<span></span>
+<span><span class="va">pfm.5x6</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span></span>
+<span>  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>  <span class="co">#calibration.type = "MgCa",</span></span>
+<span>  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>  sigma.meas <span class="op">=</span> <span class="fl">0.26</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>,</span>
+<span>  sigma.ind <span class="op">=</span> <span class="fl">2</span>, n.samples <span class="op">=</span> <span class="fl">6</span><span class="op">*</span><span class="fl">5</span>,</span>
+<span>  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pfm.120</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span></span>
+<span>  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>  <span class="co">#calibration.type = "MgCa",</span></span>
+<span>  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>  sigma.meas <span class="op">=</span> <span class="fl">0.26</span>,</span>
+<span>  sigma.ind <span class="op">=</span> <span class="fl">2</span>, n.samples <span class="op">=</span> <span class="fl">120</span>,</span>
+<span>  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pfm.10x12</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClimToProxyClim.html">ClimToProxyClim</a></span><span class="op">(</span></span>
+<span>  clim.signal <span class="op">=</span> <span class="va">clim.in</span>,</span>
+<span>  timepoints <span class="op">=</span> <span class="va">req.timepoints</span>,</span>
+<span>  <span class="co">#calibration.type = "MgCa",</span></span>
+<span>  sed.acc.rate <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  habitat.weights <span class="op">=</span> <span class="va">hab.wts</span>,</span>
+<span>  sigma.meas <span class="op">=</span> <span class="fl">0.26</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
+<span>  sigma.ind <span class="op">=</span> <span class="fl">2</span>, n.samples <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="fl">12</span>,</span>
+<span>  n.replicates <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span></code></pre></div>
 <p>Combine the three different measurement strategies and plot.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">combined.pfms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span>`5 forams` <span class="op">=</span> <span class="va">pfm.5</span><span class="op">$</span><span class="va">everything</span>,
-                           `30 forams` <span class="op">=</span> <span class="va">pfm.30</span><span class="op">$</span><span class="va">everything</span>, 
-                           <span class="co">#`6*5 forams` = pfm.5x6$everything, </span>
-                           `120 forams` <span class="op">=</span> <span class="va">pfm.120</span><span class="op">$</span><span class="va">everything</span>, 
-                           `10x12 forams` <span class="op">=</span> <span class="va">pfm.10x12</span><span class="op">$</span><span class="va">everything</span>, 
-                           .id <span class="op">=</span> <span class="st">"measurement.strategy"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurement.strategy <span class="op">=</span> 
-           <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">measurement.strategy</span>,
-                  ordered <span class="op">=</span> <span class="cn">TRUE</span>,
-                  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"5 forams"</span>, <span class="st">"30 forams"</span>, <span class="st">"120 forams"</span>, <span class="st">"10x12 forams"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">combined.pfms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simulated.proxy"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">timepoints</span>, y <span class="op">=</span> <span class="va">value</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">measurement.strategy</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">combined.pfms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span>`5 forams` <span class="op">=</span> <span class="va">pfm.5</span><span class="op">$</span><span class="va">everything</span>,</span>
+<span>                           `30 forams` <span class="op">=</span> <span class="va">pfm.30</span><span class="op">$</span><span class="va">everything</span>, </span>
+<span>                           <span class="co">#`6*5 forams` = pfm.5x6$everything, </span></span>
+<span>                           `120 forams` <span class="op">=</span> <span class="va">pfm.120</span><span class="op">$</span><span class="va">everything</span>, </span>
+<span>                           `10x12 forams` <span class="op">=</span> <span class="va">pfm.10x12</span><span class="op">$</span><span class="va">everything</span>, </span>
+<span>                           .id <span class="op">=</span> <span class="st">"measurement.strategy"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurement.strategy <span class="op">=</span> </span>
+<span>           <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">measurement.strategy</span>,</span>
+<span>                  ordered <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"5 forams"</span>, <span class="st">"30 forams"</span>, <span class="st">"120 forams"</span>, <span class="st">"10x12 forams"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">combined.pfms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simulated.proxy"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">timepoints</span>, y <span class="op">=</span> <span class="va">value</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">replicate</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">measurement.strategy</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-15-1.png" width="576"></p>
 </div>
 <div class="section level3">
@@ -324,28 +324,28 @@
 </h3>
 <p>We can take the mean and standard deviation across replicates for each timepoint and plot this instead.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mean.error</span> <span class="op">&lt;-</span> <span class="va">combined.pfms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">stage</span>, <span class="va">timepoints</span>, <span class="va">measurement.strategy</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span>,
-            sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="va">mean.error</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simulated.proxy"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">timepoints</span>, y <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymax <span class="op">=</span> <span class="va">mean</span> <span class="op">+</span> <span class="va">sd</span>, ymin <span class="op">=</span> <span class="va">mean</span> <span class="op">-</span> <span class="va">sd</span><span class="op">)</span>,
-              alpha <span class="op">=</span> <span class="fl">0.2</span>, colour <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">measurement.strategy</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mean.error</span> <span class="op">&lt;-</span> <span class="va">combined.pfms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">stage</span>, <span class="va">timepoints</span>, <span class="va">measurement.strategy</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span>,</span>
+<span>            sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">mean.error</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simulated.proxy"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">timepoints</span>, y <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymax <span class="op">=</span> <span class="va">mean</span> <span class="op">+</span> <span class="va">sd</span>, ymin <span class="op">=</span> <span class="va">mean</span> <span class="op">-</span> <span class="va">sd</span><span class="op">)</span>,</span>
+<span>              alpha <span class="op">=</span> <span class="fl">0.2</span>, colour <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">measurement.strategy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-to-sedproxy_files/figure-html/unnamed-chunk-16-1.png" width="576"></p>
 <p>And finally we can summarise the error for each measurement strategy.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mean.error</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="st">"simulated.proxy"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">stage</span>, <span class="va">measurement.strategy</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mean.error</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stage</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="st">"simulated.proxy"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">stage</span>, <span class="va">measurement.strategy</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">stage</th>
@@ -356,22 +356,22 @@
 <tr class="odd">
 <td align="left">simulated.proxy</td>
 <td align="left">5 forams</td>
-<td align="right">1.0457889</td>
+<td align="right">1.0450346</td>
 </tr>
 <tr class="even">
 <td align="left">simulated.proxy</td>
 <td align="left">30 forams</td>
-<td align="right">0.4881208</td>
+<td align="right">0.4873047</td>
 </tr>
 <tr class="odd">
 <td align="left">simulated.proxy</td>
 <td align="left">120 forams</td>
-<td align="right">0.3313403</td>
+<td align="right">0.3320110</td>
 </tr>
 <tr class="even">
 <td align="left">simulated.proxy</td>
 <td align="left">10x12 forams</td>
-<td align="right">0.2215096</td>
+<td align="right">0.2223096</td>
 </tr>
 </tbody>
 </table>
@@ -396,7 +396,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>
