@@ -28,37 +28,43 @@ Research (BMBF) as Research for Sustainability initiative
 
 ## Installation
 
-**sedproxy** will soon be installable from CRAN
+**sedproxy** is available from CRAN
 
 ``` r
 install.packages("sedproxy")
 ```
 
-In the mean time the development version can be installed directly from
-GitHub
+Or the development version can be installed directly from GitHub
 
 ``` r
-if (!require("devtools")) {
-  install.packages("devtools")
+if (!require("remotes")) {
+  install.packages("remotes")
 }
 
-devtools::install_github("EarthSystemDiagnostics/sedproxy")
+remotes::install_github("EarthSystemDiagnostics/sedproxy")
 ```
 
 ## Shiny app
 
-A Shiny app provides a graphical user interface to the main `sedproxy`
-function `ClimToProxyClim`. Currently this app forward models a proxy
-from a randomly generated input climate and serves only to illustrate
-the functionality of `sedproxy`. The user can alter the parameters of
-the forward model and observe the results graphically. In future
-versions it may be possible to load input climates and other input
-parameters from a file and to save the output.
+A Shiny app is available via an additional package `shinysedproxy` which
+is currently only available on Github
+
+``` r
+remotes::install_github("EarthSystemDiagnostics/shinysedproxy")
+```
+
+It provides a graphical user interface to the main `sedproxy` function
+`ClimToProxyClim`. Currently this app forward models a proxy from a
+randomly generated input climate and serves only to illustrate the
+functionality of `sedproxy`. The user can alter the parameters of the
+forward model and observe the results graphically. In future versions it
+may be possible to load input climates and other input parameters from a
+file and to save the output.
 
 To run the Shiny app enter the following in the R terminal:
 
 ``` r
-library(sedproxy)
+library(shinysedproxy)
 ShinySedproxy()
 ```
 
@@ -188,17 +194,17 @@ PFM$everything
     ## # A tibble: 14,045 x 7
     ##    timepoints n.samples replicate stage             value scale       label     
     ##         <dbl>     <dbl>     <dbl> <chr>             <dbl> <chr>       <chr>     
-    ##  1       4334        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
-    ##  2       4527        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
-    ##  3       4576        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
-    ##  4       4721        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
-    ##  5       4914        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
-    ##  6       4994        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
-    ##  7       5092        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
-    ##  8       5156        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
-    ##  9       5254        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
-    ## 10       5318        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
-    ## # … with 14,035 more rows
+    ##  1       4334        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
+    ##  2       4527        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
+    ##  3       4576        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
+    ##  4       4721        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
+    ##  5       4914        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
+    ##  6       4994        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
+    ##  7       5092        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
+    ##  8       5156        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
+    ##  9       5254        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
+    ## 10       5318        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
+    ## # ... with 14,035 more rows
 
 **Simple plotting**
 
@@ -208,7 +214,6 @@ PFM %>%
 ```
 
     ## Joining, by = c("stage", "scale")
-
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
@@ -223,7 +228,6 @@ PFM %>%
 ```
 
     ## Joining, by = c("stage", "scale")
-
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
@@ -232,13 +236,12 @@ PFM %>%
 **Conversion to proxy units**
 
 The initial input climate signal can be converted into “proxy units” if
-a `calibration.type` is specified. This simulates the Environment ->
+a `calibration.type` is specified. This simulates the Environment -\>
 Sensor stage of the proxy system.
 
     ## Rescaling noise
 
     ## Joining, by = c("stage", "scale")
-
     ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
     ## will replace the existing scale.
 
