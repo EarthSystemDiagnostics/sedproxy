@@ -49,6 +49,8 @@ remotes::install_github("EarthSystemDiagnostics/sedproxy")
 
 A Shiny app is available via an additional package `shinysedproxy` which is currently only available on Github
 
+[shinysedproxy](https://github.com/EarthSystemDiagnostics/shinysedproxy)
+
 
 ```{r, eval=FALSE}
 remotes::install_github("EarthSystemDiagnostics/shinysedproxy")
