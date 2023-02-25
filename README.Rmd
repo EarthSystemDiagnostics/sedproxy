@@ -29,30 +29,39 @@ This work was supported by German Federal Ministry of Education and Research (BM
 
 ## Installation
 
-**sedproxy** will soon be installable from CRAN
+**sedproxy** is available from CRAN
 
 ```{r, eval=FALSE}
 install.packages("sedproxy")
 ```
 
-In the mean time the development version can be installed directly from GitHub
+Or the development version can be installed directly from GitHub
 
 ```{r, eval=FALSE}
-if (!require("devtools")) {
-  install.packages("devtools")
+if (!require("remotes")) {
+  install.packages("remotes")
 }
 
-devtools::install_github("EarthSystemDiagnostics/sedproxy")
+remotes::install_github("EarthSystemDiagnostics/sedproxy")
 ```
 
 ## Shiny app
 
-A Shiny app provides a graphical user interface to the main `sedproxy` function `ClimToProxyClim`. Currently this app forward models a proxy from a randomly generated input climate and serves only to illustrate the functionality of `sedproxy`. The user can alter the parameters of the forward model and observe the results graphically. In future versions it may be possible to load input climates and other input parameters from a file and to save the output.
+A Shiny app is available via an additional package `shinysedproxy` which is currently only available on Github
+
+[shinysedproxy](https://github.com/EarthSystemDiagnostics/shinysedproxy)
+
+
+```{r, eval=FALSE}
+remotes::install_github("EarthSystemDiagnostics/shinysedproxy")
+```
+
+It provides a graphical user interface to the main `sedproxy` function `ClimToProxyClim`. Currently this app forward models a proxy from a randomly generated input climate and serves only to illustrate the functionality of `sedproxy`. The user can alter the parameters of the forward model and observe the results graphically. In future versions it may be possible to load input climates and other input parameters from a file and to save the output.
 
 To run the Shiny app enter the following in the R terminal:
 
 ```{r run_shiny, eval=FALSE}
-library(sedproxy)
+library(shinysedproxy)
 ShinySedproxy()
 ```
 
