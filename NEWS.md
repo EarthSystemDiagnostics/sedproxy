@@ -1,7 +1,7 @@
 # sedproxy 0.7.5
 * depend on R >= 3.5.0
 * remove tidyverse from suggests 
-* move Shiny code to new package shinysedproxy
+* move Shiny code to new package https://github.com/EarthSystemDiagnostics/shinysedproxy
 
 
 # sedproxy 0.7.4
