@@ -581,7 +581,7 @@ ClimToProxyClim <- function(clim.signal,
                                              bio.depth = bio.depth)
 
 
-      clim.sig.window <-  proxy.clim.signal[which(stats::time(clim.signal)%in%(first.tp:last.tp)), , drop = FALSE]
+      clim.sig.window <-  proxy.clim.signal[which(as.numeric(stats::time(clim.signal))%in%(first.tp:last.tp)), , drop = FALSE]
 
 
 
@@ -593,7 +593,7 @@ ClimToProxyClim <- function(clim.signal,
 
 
       # Get bioturbation X seasonality weights matrix ---------
-      habitat.weights <- habitat.weights[which(stats::time(clim.signal)%in%(first.tp:last.tp+1)), , drop = FALSE]
+      habitat.weights <- habitat.weights[which(as.numeric(stats::time(clim.signal))%in%(first.tp:last.tp+1)), , drop = FALSE]
       habitat.weights <- habitat.weights / sum(habitat.weights)
       clim.sig.weights <- bioturb.weights * habitat.weights
       clim.sig.weights <- clim.sig.weights / sum(clim.sig.weights)
@@ -789,7 +789,6 @@ ClimToProxyClim <- function(clim.signal,
   out$timepoints = timepoints
   out$n.samples = n.samples
   out$clim.signal.ann = rowSums(
-    # clim.signal[time(clim.signal) %in% timepoints, , drop = FALSE]
     clim.signal[match(timepoints, stats::time(clim.signal)), , drop = FALSE]
     ) / ncol(clim.signal)
   #out$sed.acc.rate = sed.acc.rate
