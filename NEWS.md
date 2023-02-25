@@ -2,7 +2,7 @@
 * depend on R >= 3.5.0
 * remove tidyverse from suggests 
 * move Shiny code to new package https://github.com/EarthSystemDiagnostics/shinysedproxy
-
+* wrap stat::time() in as.numeric() to speed up %in% comparison
 
 # sedproxy 0.7.4
 * fix bug in ChunkMatrix where if a single timepoint is selected it would be off by one
