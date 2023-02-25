@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   effect-of-climate-dependent-flux: effect-of-climate-dependent-flux.html
   introduction-to-sedproxy: introduction-to-sedproxy.html
-last_built: 2023-02-25T19:28Z
+last_built: 2023-02-25T19:31Z
 urls:
   reference: https://earthsystemdiagnostics.github.io/sedproxy/reference
   article: https://earthsystemdiagnostics.github.io/sedproxy/articles
