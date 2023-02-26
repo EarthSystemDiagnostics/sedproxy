@@ -1,27 +1,46 @@
 ## Resubmission
-This is a resubmission. In this version I have:
+This is a package update to address performance issues on r-devel. 
 
-* Expanded the description in DESCRIPTION to a full paragraph.
+* issue involved comparing a timeseries object and numeric vector with %in%
+* solved by wrapping stat::time() in as.numeric() to speed up %in% comparison
 
-* Checked all exported functions/methods for valid \value tags in their
-.Rd files and added or expanded them where needed. 
+Additional changes
+
+* R version requirement dropped to depend on R >= 3.5.0
+* Remove tidyverse from suggests 
+* To reduce dependencies, Shiny code moved to new package https://github.com/EarthSystemDiagnostics/shinysedproxy
 
 
 ## Checks
 
 ### R CMD check results
 
-0 errors  | 0 warnings  | 0 notes 
+-- R CMD check results ----------- sedproxy 0.7.5 ----
+Duration: 1m 54.9s
+
+0 errors v | 0 warnings v | 0 notes v
+
+R CMD check succeeded
 
 
-### Online checks seem OK:
+### Online checks:
 
-- check_rhub()
+Rhub has not been available for several days.
+
+R CMD Check on Github completes with no errors on the following platforms. 
+
+  - {os: macOS-latest,   r: 'release'}
+  - {os: windows-latest, r: 'release'}
+  - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+  - {os: ubuntu-latest,   r: 'release'}
+  - {os: ubuntu-latest,   r: 'oldrel-1'}
+
+
+
+### Results from prior submission 
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Andrew Dolman <andrew.dolman@awi.de>'
-
-New submission
 
 Possibly misspelled words in DESCRIPTION:
   Alkenones (7:21)
