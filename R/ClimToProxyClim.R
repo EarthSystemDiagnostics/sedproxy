@@ -327,7 +327,9 @@ ClimToProxyClim <- function(clim.signal,
     # in the mixed layer the bioturbation window is centred around the
     # bottom of the mixed layer
     timepoints.adj <- timepoints
-    timepoints.adj[mixed.layer.inds] <- 1 + bio.depth.timesteps + layer.width.years / 2
+    timepoints.adj[mixed.layer.inds] <- min(timepoints.adj) + 
+      bio.depth.timesteps + 
+      layer.width.years / 2
 
     #max.min.windows <- max.min.windows[valid.inds, , drop = FALSE]
 
@@ -555,11 +557,11 @@ ClimToProxyClim <- function(clim.signal,
     # in the mixed layer the bioturbation window is centred around the
     # bottom of the mixed layer
 
-    timepoints.adj[mixed.layer.inds] <- 1 +
+    timepoints.adj[mixed.layer.inds] <- min(timepoints.adj) +
       bio.depth.timesteps[mixed.layer.inds] +
       layer.width.years[mixed.layer.inds] / 2
 
-
+    
     max.min.windows[mixed.layer.inds, ] <-
     cbind(ceiling((n.bd+1) * bio.depth.timesteps[mixed.layer.inds] +
             layer.width.years[mixed.layer.inds] / 2), top.of.core)
