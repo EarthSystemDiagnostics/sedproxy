@@ -1,3 +1,6 @@
+# sedproxy 0.7.5.1
+* fix bug in mixed layer modelling where top of core is assumed to be age == 0
+
 # sedproxy 0.7.5
 * depend on R >= 3.5.0
 * remove tidyverse from suggests 
