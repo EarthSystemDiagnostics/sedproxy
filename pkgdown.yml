@@ -1,11 +1,10 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   effect-of-climate-dependent-flux: effect-of-climate-dependent-flux.html
   introduction-to-sedproxy: introduction-to-sedproxy.html
-last_built: 2023-02-26T16:57Z
+last_built: 2025-02-10T19:20Z
 urls:
   reference: https://earthsystemdiagnostics.github.io/sedproxy/reference
   article: https://earthsystemdiagnostics.github.io/sedproxy/articles
-
