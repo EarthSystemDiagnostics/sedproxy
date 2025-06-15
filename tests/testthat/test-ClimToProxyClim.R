@@ -329,7 +329,8 @@ test_that("example from paper works", {
                expected = data.frame(PFM.ex$simulated.proxy))
   
   p <- PlotPFMs(PFM.ex) 
-  testthat::expect_equal(class(p), c("gg", "ggplot"))
+  testthat::expect_true(ggplot2::is_ggplot(p))
+  
   
   
 })
