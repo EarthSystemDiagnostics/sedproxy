@@ -1,9 +1,8 @@
 #' sedproxy: Simulation of Sediment Archived Climate Proxy Records
 #'
 #' The sedproxy package provides functions to simulate sediment archived proxies
-#' @docType package
 #' @name sedproxy
-NULL
+"_PACKAGE"
 
 #' @title Description of proxy stages
 #' @description A description of the proxy stages in the output of \code{ClimToProxyClim}

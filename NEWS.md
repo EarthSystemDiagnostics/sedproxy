@@ -1,3 +1,8 @@
+# sedproxy 0.7.5.2
+* fixed test for ggplot2 objects to address https://github.com/tidyverse/ggplot2/issues/6498
+* fixed additional warnings for using .data in tidyselect
+* fixed warning for using @docType "package"
+
 # sedproxy 0.7.5.1
 * fix bug in mixed layer modelling where top of core is assumed to be age == 0
 

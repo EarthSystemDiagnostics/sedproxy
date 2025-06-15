@@ -2,8 +2,26 @@
 % Please edit documentation in R/sedproxy.R
 \docType{package}
 \name{sedproxy}
+\alias{sedproxy-package}
 \alias{sedproxy}
 \title{sedproxy: Simulation of Sediment Archived Climate Proxy Records}
 \description{
 The sedproxy package provides functions to simulate sediment archived proxies
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://earthsystemdiagnostics.github.io/sedproxy/}
+  \item \url{https://github.com/EarthSystemDiagnostics/sedproxy}
+}
+
+}
+\author{
+\strong{Maintainer}: Andrew Dolman \email{andrew.dolman@awi.de}
+
+Authors:
+\itemize{
+  \item Thomas Laepple \email{tlaepple@awi.de}
+}
+
 }
