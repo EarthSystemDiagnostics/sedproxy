@@ -1,4 +1,4 @@
-# sedproxy 0.7.5.2
+# sedproxy 0.7.6
 * fixed test for ggplot2 objects to address https://github.com/tidyverse/ggplot2/issues/6498
 * fixed additional warnings for using .data in tidyselect
 * fixed warning for using @docType "package"

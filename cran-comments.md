@@ -1,22 +1,24 @@
 ## Resubmission
-This is a package update to address performance issues on r-devel. 
+This is a package update to address changes to testing for ggplot objects, see 
+https://github.com/tidyverse/ggplot2/issues/6498
 
-* issue involved comparing a timeseries object and numeric vector with %in%
-* solved by wrapping stat::time() in as.numeric() to speed up %in% comparison
+# sedproxy 0.7.5.2
+
+* fixed test for ggplot2 objects to address https://github.com/tidyverse/ggplot2/issues/6498
 
 Additional changes
 
-* R version requirement dropped to depend on R >= 3.5.0
-* Remove tidyverse from suggests 
-* To reduce dependencies, Shiny code moved to new package https://github.com/EarthSystemDiagnostics/shinysedproxy
+* fixed additional warnings for using .data in tidyselect
+* fixed warning for using @docType "package"
+* fix bug in mixed layer modelling where top of core is assumed to be age == 0
 
 
 ## Checks
 
 ### R CMD check results
 
--- R CMD check results ----------- sedproxy 0.7.5 ----
-Duration: 1m 54.9s
+── R CMD check results ────── sedproxy 0.7.5.2 ────
+Duration: 1m 18.2s
 
 0 errors v | 0 warnings v | 0 notes v
 
@@ -25,8 +27,6 @@ R CMD check succeeded
 
 ### Online checks:
 
-Rhub has not been available for several days.
-
 R CMD Check on Github completes with no errors on the following platforms. 
 
   - {os: macOS-latest,   r: 'release'}
@@ -34,6 +34,7 @@ R CMD Check on Github completes with no errors on the following platforms.
   - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
   - {os: ubuntu-latest,   r: 'release'}
   - {os: ubuntu-latest,   r: 'oldrel-1'}
+
 
 
 
