@@ -12,8 +12,8 @@ ClimToProxyClim(
     "Ten planktonic species_350-500"),
   slp.int.means = NULL,
   slp.int.vcov = NULL,
-  noise.type = switch(calibration.type, identity = "additive", Uk37 = "additive", MgCa
-    = "multiplicative"),
+  noise.type = switch(calibration.type, identity = "additive", Uk37 = "additive", MgCa =
+    "multiplicative"),
   plot.sig.res = 100,
   habitat.weights = rep(1/ncol(clim.signal), ncol(clim.signal)),
   habitat.wt.args = NULL,

@@ -193,20 +193,20 @@ PFM <- ClimToProxyClim(clim.signal = clim.in,
 PFM$everything
 ```
 
-    ## # A tibble: 14,045 x 7
+    ## # A tibble: 14,045 × 7
     ##    timepoints n.samples replicate stage             value scale       label     
     ##         <dbl>     <dbl>     <dbl> <chr>             <dbl> <chr>       <chr>     
-    ##  1       4334        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
-    ##  2       4527        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
-    ##  3       4576        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
-    ##  4       4721        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
-    ##  5       4914        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
-    ##  6       4994        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
-    ##  7       5092        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
-    ##  8       5156        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia~
-    ##  9       5254        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
-    ## 10       5318        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia~
-    ## # ... with 14,035 more rows
+    ##  1       4334        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
+    ##  2       4527        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
+    ##  3       4576        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
+    ##  4       4721        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
+    ##  5       4914        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
+    ##  6       4994        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
+    ##  7       5092        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
+    ##  8       5156        30         1 proxy.bt.sb.sampY  27.6 Proxy units (4) +Alia…
+    ##  9       5254        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
+    ## 10       5318        30         1 proxy.bt.sb.sampY  27.7 Proxy units (4) +Alia…
+    ## # ℹ 14,035 more rows
 
 **Simple plotting**
 
@@ -215,9 +215,9 @@ PFM %>%
   PlotPFMs(max.replicates = 1)
 ```
 
-    ## Joining, by = c("stage", "scale")
-    ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
-    ## will replace the existing scale.
+    ## Joining with `by = join_by(stage, scale)`
+    ## Scale for alpha is already present. Adding another scale for alpha, which will
+    ## replace the existing scale.
 
 <img src="man/figures/README-default_plot-1.svg" width="100%" />
 
@@ -229,9 +229,9 @@ PFM %>%
   PlotPFMs(., max.replicates = 5, plot.stages = "simulated.proxy")
 ```
 
-    ## Joining, by = c("stage", "scale")
-    ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
-    ## will replace the existing scale.
+    ## Joining with `by = join_by(stage, scale)`
+    ## Scale for alpha is already present. Adding another scale for alpha, which will
+    ## replace the existing scale.
 
 <img src="man/figures/README-plot_reps-1.svg" width="100%" />
 
@@ -243,9 +243,9 @@ Sensor stage of the proxy system.
 
     ## Rescaling noise
 
-    ## Joining, by = c("stage", "scale")
-    ## Scale for 'alpha' is already present. Adding another scale for 'alpha', which
-    ## will replace the existing scale.
+    ## Joining with `by = join_by(stage, scale)`
+    ## Scale for alpha is already present. Adding another scale for alpha, which will
+    ## replace the existing scale.
 
 <img src="man/figures/README-MgCa_plot-1.svg" width="100%" />
 

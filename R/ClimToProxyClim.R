@@ -1003,7 +1003,7 @@ MakePFMDataframe <- function(PFM){
   rtn <- dplyr::bind_rows(df, df2, df.smoothed)
 
   rtn <- droplevels(dplyr::filter(rtn, stats::complete.cases(.data$value)))
-  rtn <- dplyr::left_join(rtn, dplyr::select(sedproxy::stages.key, stage, scale, .data$label), by = "stage")
+  rtn <- dplyr::left_join(rtn, dplyr::select(sedproxy::stages.key, stage, scale, "label"), by = "stage")
   #rtn <- select(rtn, -plotting.colour, -plotting.alpha)
 
   return(rtn)
