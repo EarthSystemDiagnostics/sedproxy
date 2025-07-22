@@ -659,11 +659,15 @@ ClimToProxyClim <- function(clim.signal,
   }
 
   # #return(out)
+  #browser()
   RestructOut <- function(out, n.replicates){
-    if (n.replicates == 1){
+    if (n.replicates == 1 & n.timepoints > 1){
       tmp <- apply(out, 1, function(x) simplify2array(x))
-      as.list(data.frame(apply(tmp, 2, as.vector)))
-    }else{
+      as.list(data.frame(apply(rbind(tmp), 2, as.vector)))
+    }else if (n.replicates == 1 & n.timepoints == 1){
+      tmp <- out 
+      as.list(data.frame(apply(rbind(tmp), 2, as.vector)))
+    } else {
       apply(out, 1, function(x) simplify2array(x))
     }
   }
